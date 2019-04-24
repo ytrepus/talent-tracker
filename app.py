@@ -1,8 +1,6 @@
 from flask import Flask, render_template, send_from_directory
-from flask_scss import Scss
 
 app = Flask(__name__)
-Scss(app)
 
 
 @app.route('/')
