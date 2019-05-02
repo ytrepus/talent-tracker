@@ -16,7 +16,7 @@ services:
       - POSTGRES_DB=talent-tracker
       - POSTGRES_HOST=postgres
       - FLASK_DEBUG=1
-      - DATABASE_URL=postgresql://user:password@localhost:5432/talent-tracker
+      - DATABASE_URL=postgresql://user:password@db:5432/talent-tracker
     ports:
       - "5000:5000"
 
@@ -37,3 +37,7 @@ services:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=talent-tracker
+
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+
