@@ -17,6 +17,14 @@ class Candidate(db.Model):
     scheme = db.Column(db.String(10))
     scheme_start_date = db.Column(db.Date(), index=True)
 
+
 class Organisation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), index=True, unique=True)
+
+
+class Role(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    organisation = db.Column(db.ForeignKey('candidate.id'))
+    date_started = db.Column(db.Date())
+
