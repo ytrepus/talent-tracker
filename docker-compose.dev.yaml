@@ -1,0 +1,39 @@
+version: '3'
+services:
+  web:
+    build:
+      .
+    volumes:
+      - ./:/code
+    entrypoint: flask run --host 0.0.0.0
+    depends_on:
+      - db
+    links:
+      - db
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=talent-tracker
+      - POSTGRES_HOST=postgres
+      - FLASK_DEBUG=1
+      - DATABASE_URL=postgresql://user:password@localhost:5432/talent-tracker
+    ports:
+      - "5000:5000"
+
+  python-tests:
+    build:
+      .
+    volumes:
+      - ./:/code
+    entrypoint: pytest
+    depends_on:
+      - db
+
+  db:
+    image: postgres:9.6
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=talent-tracker

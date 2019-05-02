@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  web:
+    image: jonodrew/talent-tracker
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+      - POSTGRES_HOST
+      - FLASK_APP=run.py
