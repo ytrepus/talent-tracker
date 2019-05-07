@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+
+{%  block content %}
+    {% for candidate in candidates %}
+    <h2 class="govuk-heading-l">
+        {{ candidate.personal_email }}
+    </h2>
+        {% for role in candidate.roles.all() %}
+            <p>{{ role.id }}</p>
+        {% endfor %}
+    {% endfor %}
+{% endblock %}
