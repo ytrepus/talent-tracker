@@ -6,7 +6,7 @@
         {{ candidate.personal_email }}
     </h2>
         {% for role in candidate.roles.all() %}
-            <p>{{ role.id }}</p>
+            <p>{{ role.organisation.name }}</p>
         {% endfor %}
     {% endfor %}
 {% endblock %}

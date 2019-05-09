@@ -16,4 +16,6 @@ def hello():
 @app.route('/results')
 def results():
     candidates = Candidate.query.all()
-    return render_template('results.html', candidates=candidates)
+    return render_template('results.html', candidates=candidates, heading='Search results', accordion_data=[
+        {'heading': 'Heading', 'content': 'Lorem ipsum, blah blah'}
+    ])

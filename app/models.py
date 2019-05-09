@@ -25,6 +25,7 @@ class Candidate(db.Model):
 class Organisation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), index=True, unique=True)
+    roles = db.relationship('Role', backref='organisation', lazy='dynamic')
 
     def __repr__(self):
         return f'<Org {self.name}>'
