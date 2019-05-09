@@ -16,15 +16,17 @@ class Candidate(db.Model):
     date_of_birth = db.Column(db.Date(), index=True)
     scheme = db.Column(db.String(10))
     scheme_start_date = db.Column(db.Date(), index=True)
+
     roles = db.relationship('Role', backref='candidate', lazy='dynamic')
 
     def __repr__(self):
         return f'<Candidate email {self.personal_email}>'
 
 
-class Organisation(db.Model):
+class Department(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), index=True, unique=True)
+
     roles = db.relationship('Role', backref='organisation', lazy='dynamic')
 
     def __repr__(self):
