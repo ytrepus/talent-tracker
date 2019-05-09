@@ -1,0 +1,7 @@
+<div class="govuk-accordion" data-module="accordion" id="accordion-default">
+
+  {% for item in accordion_data %}
+      <h1>{{ loop.counter }}</h1>
+    {% include 'partials/accordion-section.html' %}
+  {% endfor %}
+</div>
