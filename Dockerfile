@@ -5,6 +5,7 @@ COPY ./static/main.css /code/static/css/
 COPY assets/js /code/static/js
 COPY requirements.txt /code/
 COPY run.py /code/
+COPY migrations /code/migrations
 WORKDIR /code
 RUN pip install --no-cache-dir -r requirements.txt
 ENTRYPOINT flask run --host 0.0.0.0

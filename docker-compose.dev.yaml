@@ -5,6 +5,7 @@ services:
       .
     volumes:
       - ./app:/code/app
+      - ./migrations:/code/migrations
     entrypoint: flask run --host 0.0.0.0
     depends_on:
       - db
