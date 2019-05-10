@@ -2,6 +2,7 @@ from app.models import *
 from datetime import date
 import pytest
 
+
 def test_fls_questions_create_leadership_record(test_database):
     f = FLSLeadership(
         confident_leader=5,

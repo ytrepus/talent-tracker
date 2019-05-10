@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import validates
 
 db = SQLAlchemy()
 
@@ -20,6 +21,7 @@ class Candidate(db.Model):
     joining_grade = db.Column(db.ForeignKey('grade.id'))
 
     roles = db.relationship('Role', backref='candidate', lazy='dynamic')
+    applications = db.relationship('Application', backref='candidate', lazy='dynamic')
 
     def __repr__(self):
         return f'<Candidate email {self.personal_email}>'
@@ -69,6 +71,16 @@ class Application(db.Model):
     caring_responsibility = db.Column(db.Boolean())
     long_term_health_condition = db.Column(db.Boolean())
     fast_stream = db.Column(db.Boolean())
+
+    @validates('candidate_id')
+    def validate_candidate_is_employed(self, key, candidate_id):
+        candidate = Candidate.query.get(candidate_id)
+        current_role = candidate.roles.filter(Role.date_started < self.application_date).\
+            one_or_none()
+        if current_role is not None:
+            return candidate_id
+        else:
+            raise AssertionError("This candidate is not employed!")
 
 
 class SingleValueTable:

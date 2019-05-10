@@ -62,23 +62,6 @@ def test_database():
                 joining_grade=1
             )
         ],
-        'test_applications': [
-            Application(
-                age_range_id=1,
-                aspirational_grade=2,
-                belief_id=2,
-                working_pattern_id=1,
-                scheme_id=1,
-                candidate_id=1,
-                application_date=date(2018, 6, 1),
-                scheme_start_date=date(2019, 9, 1),
-                per_id=1,
-                employee_number='cab10101010',
-                caring_responsibility=False,
-                long_term_health_condition=False,
-                fast_stream=False
-            )
-        ],
         'test_roles': [
             Role(
                 organisation_id=2,
@@ -88,13 +71,32 @@ def test_database():
                 location_id=2,
                 grade_id=1
             )
-        ]
+        ],
     }
     for key in test_data.keys():
         db.session.bulk_save_objects(test_data.get(key))
         db.session.commit()
 
+    db.session.add(
+        Application(
+            age_range_id=1,
+            aspirational_grade=2,
+            belief_id=2,
+            working_pattern_id=1,
+            scheme_id=1,
+            application_date=date(2018, 6, 1),
+            scheme_start_date=date(2019, 9, 1),
+            per_id=1,
+            employee_number='cab10101010',
+            caring_responsibility=False,
+            long_term_health_condition=False,
+            fast_stream=False,
+            candidate_id=1,
+        )
+    )
+    db.session.commit()
     yield db  # this is where the testing happens!
 
     db.drop_all()
     os.remove(f'app/{random_string}')
+
