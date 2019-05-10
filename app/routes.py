@@ -1,19 +1,20 @@
-from flask import render_template
-from app import app
+from flask import render_template, Blueprint
 from app.models import Candidate
 
+route_blueprint = Blueprint('route_blueprint', __name__)
 
-@app.route('/')
+
+@route_blueprint.route('/')
 def hello_world():
     return render_template('index.html')
 
 
-@app.route('/hello')
+@route_blueprint.route('/hello')
 def hello():
     return 'Hello world'
 
 
-@app.route('/results')
+@route_blueprint.route('/results')
 def results():
     candidates = Candidate.query.all()
     return render_template('results.html', candidates=candidates, heading='Search results', accordion_data=[
