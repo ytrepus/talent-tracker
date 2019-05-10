@@ -18,5 +18,5 @@ def test_fls_questions_create_leadership_record(test_database):
 
 def test_candidate_grade_at_application_is_A():
     test_candidate = Candidate.query.first()
-    candidate_roles = test_candidate.roles.first()
-    assert 'Band A' == candidate_roles.grade
+    current_grade = test_candidate.roles.first().grade
+    assert 'Band A' == str(current_grade)

@@ -71,12 +71,19 @@ class Application(db.Model):
     fast_stream = db.Column(db.Boolean())
 
 
+class SingleValueTable:
+    value = None
+
+    def __repr__(self):
+        return f'{self.value}'
+
+
 class AgeRange(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(10))
 
 
-class Grade(db.Model):
+class Grade(SingleValueTable, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(50))
 
