@@ -122,7 +122,8 @@ class Leadership(db.Model):
     inspiring_leader = db.Column(db.Integer())
     when_new_role = db.Column(db.String(256))
     confidence_built = db.Column(db.Integer())
-    application_id = db.Column(db.ForeignKey('application.id'))
+
+    application_id = db.Column(db.ForeignKey('application.id'), nullable=False)
 
     type = db.Column(db.String(50))
 

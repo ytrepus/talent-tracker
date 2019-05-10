@@ -6,7 +6,8 @@ def test_fls_questions_create_leadership_record(test_database):
         confident_leader=5,
         inspiring_leader=4,
         when_new_role='As soon as possible',
-        confidence_built=4
+        confidence_built=4,
+        application_id=1
     )
     test_database.session.add(f)
     test_database.session.commit()
