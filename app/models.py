@@ -30,7 +30,7 @@ class Candidate(db.Model):
 class Organisation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), index=True, unique=True)
-    organisation_id = db.Column(db.ForeignKey('organisation.id'))
+    parent_organisation_id = db.Column(db.ForeignKey('organisation.id'), unique=False)
     department = db.Column(db.Boolean())
     arms_length_body = db.Column(db.Boolean())
 
