@@ -59,6 +59,7 @@ class Application(db.Model):
     belief_id = db.Column(db.ForeignKey('belief.id'))
     working_pattern_id = db.Column(db.ForeignKey('working_pattern.id'))
     scheme_id = db.Column(db.ForeignKey('scheme.id'))
+    candidate_id = db.Column(db.ForeignKey('candidate.id'), nullable=False)
 
     application_date = db.Column(db.Date())
     per_id = db.Column(db.Integer())
