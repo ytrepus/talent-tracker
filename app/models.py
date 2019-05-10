@@ -16,8 +16,6 @@ class Candidate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     personal_email = db.Column(db.String(120), unique=True)
     date_of_birth = db.Column(db.Date(), index=True)
-    scheme = db.Column(db.String(10))
-    scheme_start_date = db.Column(db.Date(), index=True)
     joining_date = db.Column(db.Date())
     joining_grade = db.Column(db.ForeignKey('grade.id'))
 
@@ -62,6 +60,7 @@ class Application(db.Model):
     candidate_id = db.Column(db.ForeignKey('candidate.id'), nullable=False)
 
     application_date = db.Column(db.Date())
+    scheme_start_date = db.Column(db.Date(), index=True)
     per_id = db.Column(db.Integer())
     employee_number = db.Column(db.String(25))
     caring_responsibility = db.Column(db.Boolean())
