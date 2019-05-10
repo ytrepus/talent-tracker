@@ -92,7 +92,6 @@ def test_database():
     }
     for key in test_data.keys():
         db.session.bulk_save_objects(test_data.get(key))
-        print(test_data.get(key))
         db.session.commit()
 
     yield db  # this is where the testing happens!
