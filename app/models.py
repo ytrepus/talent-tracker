@@ -42,9 +42,12 @@ class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     organisation_id = db.Column(db.ForeignKey('organisation.id'))
     candidate_id = db.Column(db.ForeignKey('candidate.id'))
-    date_started = db.Column(db.Date())
     profession_id = db.Column(db.ForeignKey('profession.id'))
     location_id = db.Column(db.ForeignKey('location.id'))
+    grade_id = db.Column(db.ForeignKey('grade.id'))
+
+    date_started = db.Column(db.Date())
+    grade = db.relationship('Grade', lazy='select')
 
     def __repr__(self):
         return f'<Role held by {self.candidate} at {self.organisation_id}>'

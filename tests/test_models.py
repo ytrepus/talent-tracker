@@ -13,3 +13,9 @@ def test_fls_questions_create_leadership_record(test_database):
     leadership = Leadership.query.first()
     fls = FLSLeadership.query.first()
     assert leadership.id == fls.id
+
+
+def test_candidate_grade_at_application_is_A():
+    test_candidate = Candidate.query.first()
+    candidate_roles = test_candidate.roles.first()
+    assert 'Band A' == candidate_roles.grade.value

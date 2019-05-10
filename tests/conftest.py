@@ -27,7 +27,7 @@ def test_client():
     ctx.pop()
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='module', autouse=True)
 def test_database():
     # Create the database and the database table
     db.create_all()
@@ -52,12 +52,12 @@ def test_database():
         'schemes': [Scheme(name='FLS'), Scheme(name='SLS')],
         'working_patterns': [WorkingPattern(value='Full time'), WorkingPattern(value='Part time')],
         'age_ranges': [AgeRange(value='25-34'), AgeRange(value='65+')],
+        'professions': [Profession(value='Digital Data and Technology'), Profession(value='Policy')],
+        'locations': [Location(value='London'), Location(value='Scotland')],
         'test_candidates': [
             Candidate(
                 personal_email='test.candidate@numberten.gov.uk',
                 date_of_birth=date(1970, 1, 5),
-                scheme=1,
-                scheme_start_date=date(2019, 9, 1),
                 joining_date=date(2018, 5, 1),
                 joining_grade=1
             )
@@ -69,12 +69,24 @@ def test_database():
                 belief_id=2,
                 working_pattern_id=1,
                 scheme_id=1,
+                candidate_id=1,
                 application_date=date(2018, 6, 1),
+                scheme_start_date=date(2019, 9, 1),
                 per_id=1,
                 employee_number='cab10101010',
                 caring_responsibility=False,
                 long_term_health_condition=False,
                 fast_stream=False
+            )
+        ],
+        'test_roles': [
+            Role(
+                organisation_id=2,
+                candidate_id=1,
+                date_started=date(2018, 1, 1),
+                profession_id=2,
+                location_id=2,
+                grade_id=1
             )
         ]
     }
