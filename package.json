@@ -1,34 +1,25 @@
 {
-  "name": "govuk-frontend-flask-python-boilderplate",
+  "name": "talent-tracker",
   "version": "1.0.0",
-  "description": "boilerplate flask webapp with govuk-frontend",
+  "description": "",
   "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack && flask run"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/igloosi/govuk-frontend-flask-python-boilderplate.git"
+    "url": "git+https://github.com/jonodrew/talent-tracker.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/igloosi/govuk-frontend-flask-python-boilderplate/issues"
+    "url": "https://github.com/jonodrew/talent-tracker/issues"
   },
-  "homepage": "https://github.com/igloosi/govuk-frontend-flask-python-boilderplate#readme",
+  "homepage": "https://github.com/jonodrew/talent-tracker#readme",
   "dependencies": {
-    "govuk-frontend": "^2.3.0"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.1.6",
-    "@babel/preset-env": "^7.1.6",
-    "babel-loader": "^8.0.4",
-    "css-loader": "^1.0.1",
-    "mini-css-extract-plugin": "^0.4.4",
-    "node-sass": "^4.10.0",
-    "sass-loader": "^7.1.0",
-    "webpack": "^4.25.1",
-    "webpack-cli": "^3.3.1"
+    "govuk-frontend": "^2.11.0"
   }
 }
