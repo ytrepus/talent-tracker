@@ -174,6 +174,7 @@ class SLSLeadership(Leadership):
 
 class SocioEconomic(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
+    candidate_id = db.Column(db.ForeignKey('candidate.id'))
     school_id = db.Column(db.ForeignKey('school_type.id'))
     qualification_level_id = db.Column(db.ForeignKey('qualification_level.id'))
     main_job_type_id = db.Column(db.ForeignKey('main_job_type.id'))
