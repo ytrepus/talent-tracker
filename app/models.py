@@ -71,6 +71,7 @@ class Application(db.Model):
     caring_responsibility = db.Column(db.Boolean())
     long_term_health_condition = db.Column(db.Boolean())
     fast_stream = db.Column(db.Boolean())
+    successful = db.Column(db.Boolean())
 
     @validates('candidate_id')
     def validate_candidate_is_employed(self, key, candidate_id):
