@@ -71,6 +71,7 @@ class Application(db.Model):
     caring_responsibility = db.Column(db.Boolean())
     long_term_health_condition = db.Column(db.Boolean())
     fast_stream = db.Column(db.Boolean())
+    successful = db.Column(db.Boolean())
 
     @validates('candidate_id')
     def validate_candidate_is_employed(self, key, candidate_id):
@@ -174,6 +175,7 @@ class SLSLeadership(Leadership):
 
 class SocioEconomic(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
+    candidate_id = db.Column(db.ForeignKey('candidate.id'))
     school_id = db.Column(db.ForeignKey('school_type.id'))
     qualification_level_id = db.Column(db.ForeignKey('qualification_level.id'))
     main_job_type_id = db.Column(db.ForeignKey('main_job_type.id'))
