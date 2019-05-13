@@ -1,7 +1,6 @@
-from flask import render_template, Blueprint
+from flask import render_template
 from app.models import Candidate
-
-route_blueprint = Blueprint('route_blueprint', __name__)
+from app.routes import route_blueprint
 
 
 @route_blueprint.route('/')
