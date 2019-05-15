@@ -1,12 +1,10 @@
 version: '3'
 services:
   web:
-    build:
-      .
+    image: jonodrew/talent-tracker:latest
     volumes:
       - ./app:/code/app
       - ./migrations:/code/migrations
-    entrypoint: flask run --host 0.0.0.0
     depends_on:
       - db
     links:
@@ -23,11 +21,10 @@ services:
       - "5000:5000"
 
   python-tests:
-    build:
-      .
+    image: jonodrew/talent-tracker:latest
     volumes:
-      - ./:/code
-    entrypoint: pytest
+      - ./tests:/code/tests
+    entrypoint: python -m pytest tests/
     depends_on:
       - db
 
