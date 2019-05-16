@@ -79,6 +79,7 @@ def test_database():
 
     db.session.add(
         Application(
+            id=1,
             age_range_id=1,
             aspirational_grade=2,
             belief_id=2,

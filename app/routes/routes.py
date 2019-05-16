@@ -19,3 +19,7 @@ def results():
     return render_template('results.html', candidates=candidates, heading='Search results', accordion_data=[
         {'heading': 'Heading', 'content': 'Lorem ipsum, blah blah'}
     ])
+
+@route_blueprint.route('/update/bulk', methods=['POST', 'GET'])
+def update_bulk():
+    return ("Posted", 200)
