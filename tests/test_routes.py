@@ -1,7 +1,8 @@
 import csv
 import os
 
-from app.models import FLSLeadership
+from app.models import FLSLeadership, SLSLeadership
+
 
 def test_home_status_code(test_client):
     # sends HTTP GET request to the application
@@ -10,6 +11,7 @@ def test_home_status_code(test_client):
 
     # assert the status code of the response
     assert result.status_code == 200
+
 
 def test_bulk_update(test_client):
     test_data = {
@@ -27,10 +29,13 @@ def test_bulk_update(test_client):
 
         writer.writeheader()
         writer.writerow(test_data)
-    data = dict()
-    data['file'] = os.path.join(f"tests/test_fls_leadership_data.csv")
-    test_client.post('/update/bulk', data=data, follow_redirects=True, content_type='multipart/form-data')
-    print(os.getcwd())
+    with open('tests/test_fls_leadership_data.csv', 'rb') as test_file:
+        data = {"update_type": "FLS", "file": (test_file, 'test_file.csv')}
+        request = test_client.post('/update/bulk', data=data, follow_redirects=True, content_type='multipart/form-data')
     os.remove(os.path.join(f"tests/test_fls_leadership_data.csv"))
+    os.remove(os.path.join(f"app/uploads/test_file.csv"))
     leadership_questions = FLSLeadership.query.get(1)
+    sls_questions = SLSLeadership.query.get(1)
+    assert request.status_code == 200
     assert leadership_questions is not None
+    assert sls_questions is None  # shouldn't make an SLSLeadership row
