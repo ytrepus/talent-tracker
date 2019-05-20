@@ -21,12 +21,6 @@ def results():
     ])
 
 
-@route_blueprint.route('/update', methods=["POST", "GET"])
-def update():
-    if request.method == "POST":
-        return redirect(url_for('route_blueprint.update_type', bulk_or_single=request.form.get("update-type")))
-    return render_template('update.html')
-
 @route_blueprint.route('/update/single/<string:update_type>')
 def single_update(update_type):
     update_types = {
