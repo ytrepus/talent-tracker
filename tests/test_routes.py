@@ -12,7 +12,7 @@ def test_home_status_code(test_client):
 
 class TestSingleUpdate:
     @pytest.mark.parametrize("update_type, form_title", [
-        ("role", "Role update"), ("fls_survey", "FLS Survey update"), ("sls_survey", "SLS Survey update")
+        ("role", "Role update"), ("fls-survey", "FLS Survey update"), ("sls-survey", "SLS Survey update")
     ])
     def test_get(self, update_type, form_title, test_client):
         result = test_client.get(f'/update/single/{update_type}')
