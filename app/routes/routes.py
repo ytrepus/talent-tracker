@@ -24,6 +24,6 @@ def results():
 @route_blueprint.route('/update/single/<string:update_type>')
 def single_update(update_type):
     update_types = {
-        "role": "Role update", "fls_survey": "FLS Survey update", "sls_survey": "SLS Survey update"
+        "role": "Role update", "fls-survey": "FLS Survey update", "sls-survey": "SLS Survey update"
     }
     return render_template('single_update.html', page_header=update_types.get(update_type))
