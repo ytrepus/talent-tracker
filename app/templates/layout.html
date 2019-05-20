@@ -73,9 +73,7 @@
       </p>
     </div>
     <main class="govuk-main-wrapper " id="main-content" role="main">
-    {% if page_header %}
-      <h1 class="govuk-heading-xl">{{ page_header }}</h1>
-    {% endif %}
+      <h1 class="govuk-heading-xl">{{ page_header or "Default page template"}}</h1>
         {% block content %}
         {% endblock %}
     </main>
