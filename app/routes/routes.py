@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, request, url_for, redirect
 from app.models import Candidate
 from app.routes import route_blueprint
 
@@ -20,6 +20,12 @@ def results():
         {'heading': 'Heading', 'content': 'Lorem ipsum, blah blah'}
     ])
 
+
+@route_blueprint.route('/update', methods=["POST", "GET"])
+def update():
+    if request.method == "POST":
+        return redirect(url_for('route_blueprint.update_type', bulk_or_single=request.form.get("update-type")))
+    return render_template('update.html')
 
 @route_blueprint.route('/update/single/<string:update_type>')
 def single_update(update_type):
