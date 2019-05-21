@@ -1,0 +1,58 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <form class="form" action="" method="post">
+        <div class="govuk-form-group">
+            <legend class="govuk-fieldset__legend--m">
+                <h2 class="govuk-fieldset__heading">
+                    Details of the new role
+                </h2>
+            </legend>
+            <label class="govuk-label" for="candidate-id">
+                Candidate ID
+            </label>
+            <input class="govuk-input govuk-input--width-10" id="candidate-id" name="candidate-id" type="number">
+            <br>
+            <br>
+            <label class="govuk-label" for="new-grade">
+                New grade
+            </label>
+          <select class="govuk-select" id="new-grade" name="new-grade">
+              <option value=10>Grade 7</option>
+              <option value=11>Grade 6</option>
+              <option value=12>Deputy Director/SCS1</option>
+              <option value=13>Director/SCS2</option>
+              <option value=14>Director General/SCS3</option>
+              <option value=15>Permanent Secretary/SCS4</option>
+          </select>
+            <br>
+            <br>
+          <div class="govuk-date-input" id="start-date">
+              <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                  <label class="govuk-label govuk-date-input__label" for="start-date-day">
+                    Day
+                  </label>
+                  <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="start-date-day" name="start-date-day" type="number" pattern="[0-9]*">
+                </div>
+              </div>
+              <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                  <label class="govuk-label govuk-date-input__label" for="start-date-month">
+                    Month
+                  </label>
+                  <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="start-date-month" name="start-date-month" type="number" pattern="[0-9]*">
+                </div>
+              </div>
+              <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                  <label class="govuk-label govuk-date-input__label" for="start-date-year">
+                    Year
+                  </label>
+                  <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="start-date-year" name="start-date-year" type="number" pattern="[0-9]*">
+                </div>
+              </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

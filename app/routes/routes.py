@@ -22,14 +22,16 @@ def results():
 
 
 @route_blueprint.route('/update', methods=["POST", "GET"])
-def update():
+def choose_update():
     if request.method == "POST":
-        return redirect(url_for('route_blueprint.update_type', bulk_or_single=request.form.get("update-type")))
-    return render_template('update.html')
+        return redirect(url_for('route_blueprint.update', bulk_or_single=request.form.get("bulk-single"),
+                                update_type=request.form.get("update-type")))
+    return render_template('choose_update.html')
 
-@route_blueprint.route('/update/single/<string:update_type>')
-def single_update(update_type):
+@route_blueprint.route('/update/<string:bulk_or_single>/<string:update_type>')
+def update(bulk_or_single, update_type):
     update_types = {
         "role": "Role update", "fls-survey": "FLS Survey update", "sls-survey": "SLS Survey update"
     }
-    return render_template('single_update.html', page_header=update_types.get(update_type))
+    template = f"updates/{bulk_or_single}-{update_type}.html"
+    return render_template(template, page_header=update_types.get(update_type))
