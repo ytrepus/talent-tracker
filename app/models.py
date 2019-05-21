@@ -16,8 +16,9 @@ class User(db.Model):
 class Candidate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     personal_email = db.Column(db.String(120), unique=True)
-    date_of_birth = db.Column(db.Date(), index=True)
     joining_date = db.Column(db.Date())
+    completed_fast_stream = db.Column(db.Boolean())
+
     joining_grade = db.Column(db.ForeignKey('grade.id'))
 
     roles = db.relationship('Role', backref='candidate', lazy='dynamic')
@@ -42,13 +43,14 @@ class Organisation(db.Model):
 
 class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    date_started = db.Column(db.Date())
+
     organisation_id = db.Column(db.ForeignKey('organisation.id'))
     candidate_id = db.Column(db.ForeignKey('candidate.id'))
     profession_id = db.Column(db.ForeignKey('profession.id'))
     location_id = db.Column(db.ForeignKey('location.id'))
     grade_id = db.Column(db.ForeignKey('grade.id'))
 
-    date_started = db.Column(db.Date())
     grade = db.relationship('Grade', lazy='select')
 
     def __repr__(self):
@@ -57,6 +59,7 @@ class Role(db.Model):
 
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+
     age_range_id = db.Column(db.ForeignKey('age_range.id'), nullable=False)
     aspirational_grade = db.Column(db.ForeignKey('grade.id'))
     belief_id = db.Column(db.ForeignKey('belief.id'))
@@ -68,8 +71,6 @@ class Application(db.Model):
     scheme_start_date = db.Column(db.Date(), index=True)
     per_id = db.Column(db.Integer())
     employee_number = db.Column(db.String(25))
-    caring_responsibility = db.Column(db.Boolean())
-    long_term_health_condition = db.Column(db.Boolean())
     fast_stream = db.Column(db.Boolean())
     successful = db.Column(db.Boolean())
 
@@ -101,11 +102,6 @@ class Grade(SingleValueTable, db.Model):
     value = db.Column(db.String(50))
 
 
-class Belief(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(50))
-
-
 class Profession(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(256))
@@ -128,7 +124,7 @@ class QualificationLevel(db.Model):
 
 class MainJobType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(128))
+    value = db.Column(db.String(512))
 
 
 class Location(db.Model):
@@ -189,3 +185,12 @@ class SocioEconomic(db.Model):
 class Scheme(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(16))
+
+
+class ProtectedCharacteristics(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    belief = db.Column(db.String(128))
+    gender = db.Column(db.String(256))
+    sexuality = db.Column(db.String(128))
+    caring_responsibility = db.Column(db.Boolean())
+    long_term_health_condition = db.Column(db.Boolean())
