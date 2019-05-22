@@ -41,6 +41,21 @@ class Organisation(db.Model):
         return f'<Org {self.name}>'
 
 
+class Grade(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(50))
+
+
+class Profession(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(256))
+
+
+class Location(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(128))
+
+
 class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date_started = db.Column(db.Date())
@@ -57,21 +72,23 @@ class Role(db.Model):
         return f'<Role held by {self.candidate} at {self.organisation_id}>'
 
 
+class Scheme(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(16))
+
+
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
-    age_range_id = db.Column(db.ForeignKey('age_range.id'), nullable=False)
     aspirational_grade = db.Column(db.ForeignKey('grade.id'))
-    belief_id = db.Column(db.ForeignKey('belief.id'))
-    working_pattern_id = db.Column(db.ForeignKey('working_pattern.id'))
     scheme_id = db.Column(db.ForeignKey('scheme.id'))
     candidate_id = db.Column(db.ForeignKey('candidate.id'), nullable=False)
+    changeable_protected_characteristics = db.Column(db.ForeignKey('changeable_protected_characteristics.id'))
 
     application_date = db.Column(db.Date())
     scheme_start_date = db.Column(db.Date(), index=True)
     per_id = db.Column(db.Integer())
     employee_number = db.Column(db.String(25))
-    fast_stream = db.Column(db.Boolean())
     successful = db.Column(db.Boolean())
 
     @validates('candidate_id')
@@ -83,53 +100,6 @@ class Application(db.Model):
             return candidate_id
         else:
             raise AssertionError("This candidate is not employed!")
-
-
-class SingleValueTable:
-    value = None
-
-    def __repr__(self):
-        return f'{self.value}'
-
-
-class AgeRange(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(10))
-
-
-class Grade(SingleValueTable, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(50))
-
-
-class Profession(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(256))
-
-
-class SchoolType(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(256))
-
-
-class WorkingPattern(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(128))
-
-
-class QualificationLevel(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(128))
-
-
-class MainJobType(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(512))
-
-
-class Location(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(128))
 
 
 class Leadership(db.Model):
@@ -169,28 +139,83 @@ class SLSLeadership(Leadership):
     }
 
 
+class QualificationLevel(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(128))
+
+
+class MainJobType(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(512))
+
+
+class SchoolType(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(256))
+
+
+class IncomeEarnerEmployeeStatus(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(512))
+
+
+class SupervisedOthers(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(512))
+
+
+class FreeSchoolMeals(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(512))
+
+
 class SocioEconomic(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
+    self_identify_lower_socio_economic_background = db.Column(db.String(256))
+
     candidate_id = db.Column(db.ForeignKey('candidate.id'))
     school_id = db.Column(db.ForeignKey('school_type.id'))
     qualification_level_id = db.Column(db.ForeignKey('qualification_level.id'))
     main_job_type_id = db.Column(db.ForeignKey('main_job_type.id'))
-    income_earner_employee = db.Column(db.Boolean())
-    people_employed = db.Column(db.String(64))
-    supervisor = db.Column(db.Boolean())
-    eligible_free_school_meals = db.Column(db.Boolean())
-    self_identify_lower_socio_economic = db.Column(db.Boolean())
+    income_earner_employee_status_id = db.Column(db.ForeignKey('income_earner_employee_status.id'))
+    supervised_others_id = db.Column(db.ForeignKey('supervised_others.id'))
+    free_school_meals_id = db.Column(db.ForeignKey('free_school_meals.id'))
 
 
-class Scheme(db.Model):
+class AgeRange(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(10))
+
+
+class WorkingPattern(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(128))
+
+
+class Belief(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(128))
+
+
+class Gender(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(128))
+
+
+class Sexuality(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(128))
+
+
+class ChangeableProtectedCharacteristics(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(16))
-
-
-class ProtectedCharacteristics(db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
-    belief = db.Column(db.String(128))
-    gender = db.Column(db.String(256))
-    sexuality = db.Column(db.String(128))
-    caring_responsibility = db.Column(db.Boolean())
+    caring_responsibility = db.Column(db.Boolean())  # TRUE: yes, FALSE: no, NULL: Prefer not to say
     long_term_health_condition = db.Column(db.Boolean())
+
+    age_range_id = db.Column(db.ForeignKey('age_range.id'), nullable=False)
+    application_id = db.Column(db.ForeignKey('application.id'))
+    working_pattern_id = db.Column(db.ForeignKey('working_pattern.id'))
+    belief_id = db.Column(db.ForeignKey('belief.id'))
+    sexuality_id = db.Column(db.ForeignKey('sexuality.id'))
+    gender_id = db.Column(db.ForeignKey('gender.id'))
+
