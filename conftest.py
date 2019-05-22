@@ -1,10 +1,10 @@
-from app.models import *
 import pytest
 import os
 import string
 import random
 from datetime import date
 from app import create_app
+from app.models import *
 
 
 random_string = ''.join(random.choices(string.ascii_uppercase + string.digits, k=16))
