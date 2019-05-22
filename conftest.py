@@ -3,7 +3,7 @@ import os
 import string
 import random
 from datetime import date
-from .app import create_app
+from app import create_app
 from app.models import *
 
 
