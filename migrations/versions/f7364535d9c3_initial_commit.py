@@ -23,94 +23,29 @@ def upgrade():
     sa.Column('value', sa.String(length=10), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('application',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('aspirational_grade', sa.Integer(), nullable=True),
-    sa.Column('scheme_id', sa.Integer(), nullable=True),
-    sa.Column('candidate_id', sa.Integer(), nullable=False),
-    sa.Column('changeable_protected_characteristics', sa.Integer(), nullable=True),
-    sa.Column('application_date', sa.Date(), nullable=True),
-    sa.Column('scheme_start_date', sa.Date(), nullable=True),
-    sa.Column('per_id', sa.Integer(), nullable=True),
-    sa.Column('employee_number', sa.String(length=25), nullable=True),
-    sa.Column('successful', sa.Boolean(), nullable=True),
-    sa.ForeignKeyConstraint(['aspirational_grade'], ['grade.id'], ),
-    sa.ForeignKeyConstraint(['candidate_id'], ['candidate.id'], ),
-    sa.ForeignKeyConstraint(['changeable_protected_characteristics'], ['changeable_protected_characteristics.id'], ),
-    sa.ForeignKeyConstraint(['scheme_id'], ['scheme.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_application_scheme_start_date'), 'application', ['scheme_start_date'], unique=False)
-    op.create_table('belief',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('value', sa.String(length=128), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('candidate',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('personal_email', sa.String(length=120), nullable=True),
-    sa.Column('joining_date', sa.Date(), nullable=True),
-    sa.Column('completed_fast_stream', sa.Boolean(), nullable=True),
-    sa.Column('joining_grade', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['joining_grade'], ['grade.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('personal_email')
-    )
-    op.create_table('changeable_protected_characteristics',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('caring_responsibility', sa.Boolean(), nullable=True),
-    sa.Column('long_term_health_condition', sa.Boolean(), nullable=True),
-    sa.Column('age_range_id', sa.Integer(), nullable=False),
-    sa.Column('application_id', sa.Integer(), nullable=True),
-    sa.Column('working_pattern_id', sa.Integer(), nullable=True),
-    sa.Column('belief_id', sa.Integer(), nullable=True),
-    sa.Column('sexuality_id', sa.Integer(), nullable=True),
-    sa.Column('gender_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['age_range_id'], ['age_range.id'], ),
-    sa.ForeignKeyConstraint(['application_id'], ['application.id'], ),
-    sa.ForeignKeyConstraint(['belief_id'], ['belief.id'], ),
-    sa.ForeignKeyConstraint(['gender_id'], ['gender.id'], ),
-    sa.ForeignKeyConstraint(['sexuality_id'], ['sexuality.id'], ),
-    sa.ForeignKeyConstraint(['working_pattern_id'], ['working_pattern.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('fls_leadership',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('increased_visibility', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['id'], ['leadership.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('free_school_meals',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('value', sa.String(length=512), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('gender',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('value', sa.String(length=128), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
     op.create_table('grade',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('value', sa.String(length=50), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('income_earner_employee_status',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('value', sa.String(length=512), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('leadership',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('confident_leader', sa.Integer(), nullable=True),
-    sa.Column('inspiring_leader', sa.Integer(), nullable=True),
-    sa.Column('when_new_role', sa.String(length=256), nullable=True),
-    sa.Column('confidence_built', sa.Integer(), nullable=True),
-    sa.Column('application_id', sa.Integer(), nullable=False),
-    sa.Column('type', sa.String(length=50), nullable=True),
-    sa.ForeignKeyConstraint(['application_id'], ['application.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
+                    sa.Column('id', sa.Integer(), nullable=False),
+                    sa.Column('value', sa.String(length=50), nullable=True),
+                    sa.PrimaryKeyConstraint('id')
+                    )
+
+    op.create_table('scheme',
+                    sa.Column('id', sa.Integer(), nullable=False),
+                    sa.Column('name', sa.String(length=16), nullable=True),
+                    sa.PrimaryKeyConstraint('id')
+                    )
+    op.create_table('belief',
+                    sa.Column('id', sa.Integer(), nullable=False),
+                    sa.Column('value', sa.String(length=128), nullable=True),
+                    sa.PrimaryKeyConstraint('id')
+                    )
+
+    op.create_table('working_pattern',
+                    sa.Column('id', sa.Integer(), nullable=False),
+                    sa.Column('value', sa.String(length=128), nullable=True),
+                    sa.PrimaryKeyConstraint('id')
+                    )
+
     op.create_table('location',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('value', sa.String(length=128), nullable=True),
@@ -124,10 +59,10 @@ def upgrade():
     op.create_table('organisation',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=200), nullable=True),
-    sa.Column('parent_organisation_id', sa.Integer(), nullable=True),
+    sa.Column('organisation_id', sa.Integer(), nullable=True),
     sa.Column('department', sa.Boolean(), nullable=True),
     sa.Column('arms_length_body', sa.Boolean(), nullable=True),
-    sa.ForeignKeyConstraint(['parent_organisation_id'], ['organisation.id'], ),
+    sa.ForeignKeyConstraint(['organisation_id'], ['organisation.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_organisation_name'), 'organisation', ['name'], unique=True)
@@ -141,68 +76,96 @@ def upgrade():
     sa.Column('value', sa.String(length=128), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('role',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('date_started', sa.Date(), nullable=True),
-    sa.Column('organisation_id', sa.Integer(), nullable=True),
-    sa.Column('candidate_id', sa.Integer(), nullable=True),
-    sa.Column('profession_id', sa.Integer(), nullable=True),
-    sa.Column('location_id', sa.Integer(), nullable=True),
-    sa.Column('grade_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['candidate_id'], ['candidate.id'], ),
-    sa.ForeignKeyConstraint(['grade_id'], ['grade.id'], ),
-    sa.ForeignKeyConstraint(['location_id'], ['location.id'], ),
-    sa.ForeignKeyConstraint(['organisation_id'], ['organisation.id'], ),
-    sa.ForeignKeyConstraint(['profession_id'], ['profession.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('scheme',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(length=16), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
+
     op.create_table('school_type',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('value', sa.String(length=256), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('sexuality',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('value', sa.String(length=128), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('sls_leadership',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('work_differently', sa.Integer(), nullable=True),
-    sa.Column('using_tools', sa.Integer(), nullable=True),
-    sa.Column('feel_ready', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['id'], ['leadership.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
+    op.create_table('candidate',
+                    sa.Column('id', sa.Integer(), nullable=False),
+                    sa.Column('personal_email', sa.String(length=120), nullable=True),
+                    sa.Column('joining_date', sa.Date(), nullable=True),
+                    sa.Column('joining_grade', sa.Integer(), nullable=True),
+                    sa.Column('scheme', sa.String(length=10), nullable=True),
+                    sa.Column('scheme_start_date', sa.Date(), nullable=True),
+                    sa.Column('date_of_birth', sa.Date(), nullable=True),
+                    sa.ForeignKeyConstraint(['joining_grade'], ['grade.id'], ),
+                    sa.PrimaryKeyConstraint('id'),
+                    sa.UniqueConstraint('personal_email')
+                    )
+    op.create_index(op.f('ix_candidate_date_of_birth'), 'candidate', ['date_of_birth'], unique=False)
+
+    op.create_table('role',
+                    sa.Column('id', sa.Integer(), nullable=False),
+                    sa.Column('date_started', sa.Date(), nullable=True),
+                    sa.Column('organisation_id', sa.Integer(), nullable=True),
+                    sa.Column('candidate_id', sa.Integer(), nullable=True),
+                    sa.Column('profession_id', sa.Integer(), nullable=True),
+                    sa.Column('location_id', sa.Integer(), nullable=True),
+                    sa.ForeignKeyConstraint(['candidate_id'], ['candidate.id'], ),
+                    sa.ForeignKeyConstraint(['location_id'], ['location.id'], ),
+                    sa.ForeignKeyConstraint(['organisation_id'], ['organisation.id'], ),
+                    sa.ForeignKeyConstraint(['profession_id'], ['profession.id'], ),
+                    sa.PrimaryKeyConstraint('id')
+                    )
     op.create_table('socio_economic',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('self_identify_lower_socio_economic_background', sa.String(length=256), nullable=True),
-    sa.Column('candidate_id', sa.Integer(), nullable=True),
-    sa.Column('school_id', sa.Integer(), nullable=True),
-    sa.Column('qualification_level_id', sa.Integer(), nullable=True),
-    sa.Column('main_job_type_id', sa.Integer(), nullable=True),
-    sa.Column('income_earner_employee_status_id', sa.Integer(), nullable=True),
-    sa.Column('supervised_others_id', sa.Integer(), nullable=True),
-    sa.Column('free_school_meals_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['candidate_id'], ['candidate.id'], ),
-    sa.ForeignKeyConstraint(['free_school_meals_id'], ['free_school_meals.id'], ),
-    sa.ForeignKeyConstraint(['income_earner_employee_status_id'], ['income_earner_employee_status.id'], ),
-    sa.ForeignKeyConstraint(['main_job_type_id'], ['main_job_type.id'], ),
-    sa.ForeignKeyConstraint(['qualification_level_id'], ['qualification_level.id'], ),
-    sa.ForeignKeyConstraint(['school_id'], ['school_type.id'], ),
-    sa.ForeignKeyConstraint(['supervised_others_id'], ['supervised_others.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('supervised_others',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('value', sa.String(length=512), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
+                    sa.Column('id', sa.Integer(), nullable=False),
+                    sa.Column('self_identify_lower_socio_economic_background', sa.String(length=256), nullable=True),
+                    sa.Column('school_id', sa.Integer(), nullable=True),
+                    sa.Column('qualification_level_id', sa.Integer(), nullable=True),
+                    sa.Column('main_job_type_id', sa.Integer(), nullable=True),
+                    sa.Column('income_earner', sa.Boolean(), nullable=True),
+                    sa.Column('income_earner_employee', sa.Boolean()),
+                    sa.Column('supervisor', sa.Boolean()),
+                    sa.Column('free_school_meals', sa.Boolean()),
+                    sa.Column('eligible_free_school_meals', sa.Boolean),
+                    sa.Column('people_employed', sa.Boolean),
+                    sa.ForeignKeyConstraint(['main_job_type_id'], ['main_job_type.id'], ),
+                    sa.ForeignKeyConstraint(['qualification_level_id'], ['qualification_level.id'], ),
+                    sa.ForeignKeyConstraint(['school_id'], ['school_type.id'], ),
+                    sa.PrimaryKeyConstraint('id')
+                    )
+
+    op.create_table('application',
+                    sa.Column('id', sa.Integer(), nullable=False),
+                    sa.Column('aspirational_grade', sa.Integer(), nullable=True),
+                    sa.Column('scheme_id', sa.Integer(), nullable=True),
+                    sa.Column('application_date', sa.Date(), nullable=True),
+                    sa.Column('per_id', sa.Integer(), nullable=True),
+                    sa.Column('employee_number', sa.String(length=25), nullable=True),
+                    sa.Column('fast_stream', sa.Boolean(), nullable=True),
+                    sa.ForeignKeyConstraint(['aspirational_grade'], ['grade.id'], ),
+                    sa.ForeignKeyConstraint(['scheme_id'], ['scheme.id'], ),
+                    sa.PrimaryKeyConstraint('id')
+                    )
+
+
+    op.create_table('leadership',
+                    sa.Column('id', sa.Integer(), nullable=False),
+                    sa.Column('confident_leader', sa.Integer(), nullable=True),
+                    sa.Column('inspiring_leader', sa.Integer(), nullable=True),
+                    sa.Column('when_new_role', sa.String(length=256), nullable=True),
+                    sa.Column('confidence_built', sa.Integer(), nullable=True),
+                    sa.Column('type', sa.String(length=50), nullable=True),
+                    sa.PrimaryKeyConstraint('id')
+                    )
+    op.create_table('fls_leadership',
+                    sa.Column('id', sa.Integer(), nullable=False),
+                    sa.Column('increased_visibility', sa.Integer(), nullable=True),
+                    sa.ForeignKeyConstraint(['id'], ['leadership.id'], ),
+                    sa.PrimaryKeyConstraint('id')
+                    )
+
+    op.create_table('sls_leadership',
+                    sa.Column('id', sa.Integer(), nullable=False),
+                    sa.Column('work_differently', sa.Integer(), nullable=True),
+                    sa.Column('using_tools', sa.Integer(), nullable=True),
+                    sa.Column('feel_ready', sa.Integer(), nullable=True),
+                    sa.ForeignKeyConstraint(['id'], ['leadership.id'], ),
+                    sa.PrimaryKeyConstraint('id')
+                    )
+
     op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('email', sa.String(length=120), nullable=True),
@@ -210,11 +173,7 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_user_email'), 'user', ['email'], unique=True)
-    op.create_table('working_pattern',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('value', sa.String(length=128), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
+
     # ### end Alembic commands ###
 
 
@@ -223,10 +182,8 @@ def downgrade():
     op.drop_table('working_pattern')
     op.drop_index(op.f('ix_user_email'), table_name='user')
     op.drop_table('user')
-    op.drop_table('supervised_others')
     op.drop_table('socio_economic')
     op.drop_table('sls_leadership')
-    op.drop_table('sexuality')
     op.drop_table('school_type')
     op.drop_table('scheme')
     op.drop_table('role')
@@ -237,12 +194,8 @@ def downgrade():
     op.drop_table('main_job_type')
     op.drop_table('location')
     op.drop_table('leadership')
-    op.drop_table('income_earner_employee_status')
     op.drop_table('grade')
-    op.drop_table('gender')
-    op.drop_table('free_school_meals')
     op.drop_table('fls_leadership')
-    op.drop_table('changeable_protected_characteristics')
     op.drop_table('candidate')
     op.drop_table('belief')
     op.drop_index(op.f('ix_application_scheme_start_date'), table_name='application')

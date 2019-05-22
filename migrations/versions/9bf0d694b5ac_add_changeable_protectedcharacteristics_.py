@@ -28,19 +28,9 @@ def upgrade():
     sa.Column('age_range_id', sa.Integer(), nullable=False),
     sa.Column('application_id', sa.Integer(), nullable=True),
     sa.Column('working_pattern_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['age_range_id'], ['age_range.id'], ),
     sa.ForeignKeyConstraint(['application_id'], ['application.id'], ),
-    sa.ForeignKeyConstraint(['working_pattern_id'], ['working_pattern.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.drop_constraint('application_age_range_id_fkey', 'application', type_='foreignkey')
-    op.drop_constraint('application_belief_id_fkey', 'application', type_='foreignkey')
-    op.drop_constraint('application_working_pattern_id_fkey', 'application', type_='foreignkey')
-    op.drop_column('application', 'caring_responsibility')
-    op.drop_column('application', 'long_term_health_condition')
-    op.drop_column('application', 'age_range_id')
-    op.drop_column('application', 'working_pattern_id')
-    op.drop_column('application', 'belief_id')
     op.drop_table('belief')
     # ### end Alembic commands ###
 
@@ -52,13 +42,5 @@ def downgrade():
                     sa.Column('value', sa.VARCHAR(length=50), autoincrement=False, nullable=True),
                     sa.PrimaryKeyConstraint('id', name='belief_pkey')
                     )
-    op.add_column('application', sa.Column('belief_id', sa.INTEGER(), autoincrement=False, nullable=True))
-    op.add_column('application', sa.Column('working_pattern_id', sa.INTEGER(), autoincrement=False, nullable=True))
-    op.add_column('application', sa.Column('age_range_id', sa.INTEGER(), autoincrement=False, nullable=False))
-    op.add_column('application', sa.Column('long_term_health_condition', sa.BOOLEAN(), autoincrement=False, nullable=True))
-    op.add_column('application', sa.Column('caring_responsibility', sa.BOOLEAN(), autoincrement=False, nullable=True))
-    op.create_foreign_key('application_working_pattern_id_fkey', 'application', 'working_pattern', ['working_pattern_id'], ['id'])
-    op.create_foreign_key('application_belief_id_fkey', 'application', 'belief', ['belief_id'], ['id'])
-    op.create_foreign_key('application_age_range_id_fkey', 'application', 'age_range', ['age_range_id'], ['id'])
     op.drop_table('changeable_protected_characteristics')
     # ### end Alembic commands ###
