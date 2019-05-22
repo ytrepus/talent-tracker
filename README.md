@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jonodrew/talent-tracker.svg?branch=master)](https://travis-ci.org/jonodrew/talent-tracker)
+
 # Talent Tracking
 
 This is a simple database-backed web app. It's for tracking data about individuals through a frequent survey. 
