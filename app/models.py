@@ -44,6 +44,7 @@ class Organisation(db.Model):
 class Grade(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(50))
+    rank = db.Column(db.Integer, nullable=False)
 
 
 class Profession(db.Model):
@@ -59,7 +60,6 @@ class Location(db.Model):
 class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date_started = db.Column(db.Date())
-    rank = db.Column(db.Integer)
 
     organisation_id = db.Column(db.ForeignKey('organisation.id'))
     candidate_id = db.Column(db.ForeignKey('candidate.id'))
