@@ -1,4 +1,4 @@
-from app.models import FLSLeadership, Application, Leadership, Candidate, Role
+from app.models import FLSLeadership, Application, Leadership, Candidate, Role, Grade
 from datetime import date
 import pytest
 
@@ -37,3 +37,15 @@ def test_candidate_cannot_apply_without_role(test_candidate):
                     employee_number='cab10101010',
                     candidate_id=1,
                 )
+
+
+class TestGrade:
+    def test_eligible_returns_correct_grades(self, test_database):
+        grades = [
+            Grade(value='Grade 7'), Grade(value='Grade 6'), Grade(value='Deputy Director (SCS1)'),
+            Grade(value='Admin Assistant (AA)')
+        ]
+        test_database.session.add_all(grades)
+        test_database.session.commit()
+        assert ['Grade 7', 'Grade 6'] == [grade.value for grade in Grade.eligible('FLS')]
+        assert ['Deputy Director (SCS1)'] == [grade.value for grade in Grade.eligible('SLS')]

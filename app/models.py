@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import validates
+from sqlalchemy import or_
 
 db = SQLAlchemy()
 
@@ -45,6 +46,21 @@ class Grade(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(50))
     rank = db.Column(db.Integer, nullable=False)
+
+    @staticmethod
+    def eligible(scheme: str):
+        """
+        This method returns those Grades that are eligible for specific schemes.
+        :param scheme: name of the scheme
+        :type scheme: str
+        :return: A list of eligible Grades
+        :rtype: List[Grade]
+        """
+        if scheme == 'FLS':
+            eligible_grades = Grade.query.filter(Grade.value.like('Grade%')).all()
+        else:
+            eligible_grades = Grade.query.filter(Grade.value.like('Deputy%'))
+        return eligible_grades
 
 
 class Profession(db.Model):
