@@ -247,4 +247,3 @@ class ChangeableProtectedCharacteristics(db.Model):
     belief_id = db.Column(db.ForeignKey('belief.id'))
     sexuality_id = db.Column(db.ForeignKey('sexuality.id'))
     gender_id = db.Column(db.ForeignKey('gender.id'))
-
