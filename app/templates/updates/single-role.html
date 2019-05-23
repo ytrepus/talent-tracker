@@ -18,12 +18,9 @@
                 New grade
             </label>
           <select class="govuk-select" id="new-grade" name="new-grade">
-              <option value=10>Grade 7</option>
-              <option value=11>Grade 6</option>
-              <option value=12>Deputy Director/SCS1</option>
-              <option value=13>Director/SCS2</option>
-              <option value=14>Director General/SCS3</option>
-              <option value=15>Permanent Secretary/SCS4</option>
+              {% for grade in data.promotable_grades %}
+                <option value={{ grade.id }}>{{ grade.value }}</option>
+              {% endfor %}
           </select>
             <br>
             <br>
@@ -66,7 +63,10 @@
               </fieldset>
             </div>
 
+        </div>
 
+        <div class="input submit">
+            <input type="submit" value="Continue" class="govuk-button">
         </div>
     </form>
 {% endblock %}
