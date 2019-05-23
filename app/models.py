@@ -72,7 +72,7 @@ class Grade(db.Model):
         :rtype: List[Grade]
         """
         current_rank = current_grade.rank
-        return Grade.query.filter(Grade.rank <= current_rank)
+        return Grade.query.filter(Grade.rank <= current_rank).order_by(Grade.rank.asc()).all()
 
 
 class Profession(db.Model):
