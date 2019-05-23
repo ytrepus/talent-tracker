@@ -40,12 +40,6 @@ def test_candidate_cannot_apply_without_role(test_candidate):
 
 
 class TestGrade:
-    def test_eligible_returns_correct_grades(self, test_database):
-        grades = [
-            Grade(value='Grade 7'), Grade(value='Grade 6'), Grade(value='Deputy Director (SCS1)'),
-            Grade(value='Admin Assistant (AA)')
-        ]
-        test_database.session.add_all(grades)
-        test_database.session.commit()
+    def test_eligible_returns_correct_grades(self, test_database, test_grades):
         assert ['Grade 7', 'Grade 6'] == [grade.value for grade in Grade.eligible('FLS')]
         assert ['Deputy Director (SCS1)'] == [grade.value for grade in Grade.eligible('SLS')]
