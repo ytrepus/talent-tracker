@@ -40,7 +40,7 @@ def test_database():
 @pytest.fixture()
 def test_candidate(test_database):
     test_data = {
-        'grades': [Grade(value='Band A'), Grade(value='SCS3')],
+        'grades': [Grade(value='Band A', rank=2), Grade(value='SCS3', rank=1)],
         'test_candidates': [
             Candidate(
                 personal_email='test.candidate@numberten.gov.uk',
