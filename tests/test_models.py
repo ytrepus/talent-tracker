@@ -49,6 +49,9 @@ class TestGrade:
         promotion_roles = set([grade.value for grade in Grade.promotion_roles(current_grade)])
         assert {'Grade 6', 'Deputy Director (SCS1)'} == promotion_roles
         assert 'Admin Assistant (AA)' not in promotion_roles
+
+    def test_promotions_returns_grades_in_rank_order(self, test_database, test_grades):
+        current_grade = Grade(value='One below SCS', rank=5)
         promotion_roles = [grade.value for grade in Grade.promotion_roles(current_grade)]
         assert ['Grade 6', 'Deputy Director (SCS1)'] == promotion_roles
         assert 'Admin Assistant (AA)' not in promotion_roles
