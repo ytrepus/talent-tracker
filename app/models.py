@@ -59,6 +59,7 @@ class Location(db.Model):
 class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date_started = db.Column(db.Date())
+    rank = db.Column(db.Integer)
 
     organisation_id = db.Column(db.ForeignKey('organisation.id'))
     candidate_id = db.Column(db.ForeignKey('candidate.id'))
