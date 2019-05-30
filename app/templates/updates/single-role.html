@@ -58,6 +58,39 @@
               </fieldset>
             </div>
 
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="new-org">
+                    New organisation
+                </label>
+                <select class="govuk-select" id="new-org" name="new-org">
+                  {% for organisation in data.organisations %}
+                    <option value={{ organisation.id }}>{{ organisation.name }}</option>
+                  {% endfor %}
+              </select>
+            </div>
+
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="new-profession">
+                    New profession
+                </label>
+                <select class="govuk-select" id="new-profession" name="new-profession">
+                  {% for profession in data.professions %}
+                    <option value={{ profession.id }}>{{ profession.value }}</option>
+                  {% endfor %}
+              </select>
+            </div>
+
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="new-location">
+                    New location
+                </label>
+                <select class="govuk-select" id="new-location" name="new-location">
+                  {% for location in data.locations %}
+                    <option value={{ location.id }}>{{ location.value }}</option>
+                  {% endfor %}
+              </select>
+            </div>
+
         </div>
 
         <div class="input submit">

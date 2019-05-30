@@ -1,5 +1,5 @@
 from flask import render_template, request, url_for, redirect, session
-from app.models import Candidate, Grade, db, Role
+from app.models import Candidate, Grade, db, Role, Organisation, Location, Profession
 from app.routes import route_blueprint
 from datetime import date
 
@@ -47,19 +47,24 @@ def search_candidate():
 def update(bulk_or_single, update_type):
     candidate = Candidate.query.filter_by(personal_email=session.get('candidate-email')).one_or_none()
     if request.method == 'POST':
+        form_dict = {k: int(v[0]) for k, v in request.form.to_dict(flat=False).items()}
         db.session.add(Role(
             date_started=date(
-                year=int(request.form.get('start-date-year')), month=int(request.form.get('start-date-month')),
-                day=int(request.form.get('start-date-day'))
+                year=form_dict.get('start-date-year'), month=form_dict.get('start-date-month'),
+                day=form_dict.get('start-date-day')
             ),
-            organisation_id=request.form.get('new-org'), candidate_id=candidate.id,
-            profession_id=request.form.get('new-profession'), location_id=request.form.get('new-location'),
-            grade_id=request.form.get('new-grade')
+            organisation_id=form_dict.get('new-org'), candidate_id=candidate.id,
+            profession_id=form_dict.get('new-profession'), location_id=form_dict.get('new-location'),
+            grade_id=form_dict.get('new-grade')
         ))
-        return str(request.form)
+        db.session.commit()
+        return redirect(url_for('route_blueprint.complete'))
     # TODO: if candidate doesn't exist, return user to search page
     update_types = {
-        "role": {'title': "Role update", "promotable_grades": Grade.promotion_roles(Grade(value='Grade name', rank=7))},
+        "role": {'title': "Role update", "promotable_grades": Grade.promotion_roles(Grade(value='Grade name', rank=7)),
+                 "organisations": Organisation.query.all(), "locations": Location.query.all(),
+                 "professions": Profession.query.all()
+                 },
         "fls-survey": "FLS Survey update", "sls-survey": "SLS Survey update"
     }
     template = f"updates/{bulk_or_single}-{update_type}.html"
