@@ -70,3 +70,8 @@ def update(bulk_or_single, update_type):
     template = f"updates/{bulk_or_single}-{update_type}.html"
     return render_template(template, page_header=update_types.get(update_type).get('title'),
                            data=update_types.get(update_type), candidate=candidate)
+
+
+@route_blueprint.route('/update/complete', methods=["GET"])
+def complete():
+    return render_template('updates/complete.html')
