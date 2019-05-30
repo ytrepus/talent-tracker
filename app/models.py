@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import validates
+from sqlalchemy import or_
 
 db = SQLAlchemy()
 
@@ -45,6 +46,33 @@ class Grade(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(50))
     rank = db.Column(db.Integer, nullable=False)
+
+    @staticmethod
+    def eligible(scheme: str):
+        """
+        This method returns those Grades that are eligible for specific schemes.
+        :param scheme: name of the scheme
+        :type scheme: str
+        :return: A list of eligible Grades
+        :rtype: List[Grade]
+        """
+        if scheme == 'FLS':
+            eligible_grades = Grade.query.filter(Grade.value.like('Grade%')).all()
+        else:
+            eligible_grades = Grade.query.filter(Grade.value.like('Deputy%'))
+        return eligible_grades
+
+    @staticmethod
+    def promotion_roles(current_grade: 'Grade'):
+        """
+        Grades that are equal to, or more senior than, `current_grade`
+        :param current_grade: Grade object, describing the current Grade of Candidate
+        :type current_grade: Grade
+        :return: A list of grades more senior or at the same level
+        :rtype: List[Grade]
+        """
+        current_rank = current_grade.rank
+        return Grade.query.filter(Grade.rank <= current_rank).order_by(Grade.rank.asc()).all()
 
 
 class Profession(db.Model):
@@ -219,4 +247,3 @@ class ChangeableProtectedCharacteristics(db.Model):
     belief_id = db.Column(db.ForeignKey('belief.id'))
     sexuality_id = db.Column(db.ForeignKey('sexuality.id'))
     gender_id = db.Column(db.ForeignKey('gender.id'))
-

@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <form class="form" action="" method="post">
+        <div class="govuk-form-group">
+            <legend class="govuk-fieldset__legend--m">
+                <h2 class="govuk-fieldset__heading">
+                    Search for a candidate by email address
+                </h2>
+            </legend>
+            <label class="govuk-label" for="candidate-email">
+                Most recent candidate email address
+            </label>
+            <input class="govuk-input govuk-input--width-30" id="candidate-email" name="candidate-email" type="text">
+
+        </div>
+
+        <div class="input submit">
+            <input type="submit" value="Search" class="govuk-button">
+        </div>
+    </form>
+
+{% endblock %}

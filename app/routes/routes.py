@@ -1,6 +1,7 @@
-from flask import render_template
-from app.models import Candidate
+from flask import render_template, request, url_for, redirect, session
+from app.models import Candidate, Grade, db, Role, Organisation, Location, Profession
 from app.routes import route_blueprint
+from datetime import date
 
 
 @route_blueprint.route('/')
@@ -21,9 +22,56 @@ def results():
     ])
 
 
-@route_blueprint.route('/update/single/<string:update_type>')
-def single_update(update_type):
-    update_types = {
-        "role": "Role update", "fls_survey": "FLS Survey update", "sls_survey": "SLS Survey update"
+@route_blueprint.route('/update', methods=["POST", "GET"])
+def choose_update():
+    next_steps = {
+        'role': 'route_blueprint.search_candidate'
     }
-    return render_template('single_update.html', page_header=update_types.get(update_type))
+    if request.method == "POST":
+        session['bulk-single'] = request.form.get("bulk-single")
+        session['update-type'] = request.form.get("update-type")
+        return redirect(url_for(next_steps.get(request.form.get("update-type"))))
+    return render_template('choose-update.html')
+
+
+@route_blueprint.route('/update/search-candidate', methods=["POST", "GET"])
+def search_candidate():
+    if request.method == "POST":
+        session['candidate-email'] = request.form.get('candidate-email')
+        return redirect(url_for('route_blueprint.update', bulk_or_single=session.get('bulk-single'),
+                                update_type=session.get('update-type')))
+    return render_template('search-candidate.html')
+
+
+@route_blueprint.route('/update/<string:bulk_or_single>/<string:update_type>', methods=["POST", "GET"])
+def update(bulk_or_single, update_type):
+    candidate = Candidate.query.filter_by(personal_email=session.get('candidate-email')).one_or_none()
+    if request.method == 'POST':
+        form_dict = {k: int(v[0]) for k, v in request.form.to_dict(flat=False).items()}
+        db.session.add(Role(
+            date_started=date(
+                year=form_dict.get('start-date-year'), month=form_dict.get('start-date-month'),
+                day=form_dict.get('start-date-day')
+            ),
+            organisation_id=form_dict.get('new-org'), candidate_id=candidate.id,
+            profession_id=form_dict.get('new-profession'), location_id=form_dict.get('new-location'),
+            grade_id=form_dict.get('new-grade')
+        ))
+        db.session.commit()
+        return redirect(url_for('route_blueprint.complete'))
+    # TODO: if candidate doesn't exist, return user to search page
+    update_types = {
+        "role": {'title': "Role update", "promotable_grades": Grade.promotion_roles(Grade(value='Grade name', rank=7)),
+                 "organisations": Organisation.query.all(), "locations": Location.query.all(),
+                 "professions": Profession.query.all()
+                 },
+        "fls-survey": "FLS Survey update", "sls-survey": "SLS Survey update"
+    }
+    template = f"updates/{bulk_or_single}-{update_type}.html"
+    return render_template(template, page_header=update_types.get(update_type).get('title'),
+                           data=update_types.get(update_type), candidate=candidate)
+
+
+@route_blueprint.route('/update/complete', methods=["GET"])
+def complete():
+    return render_template('updates/complete.html')

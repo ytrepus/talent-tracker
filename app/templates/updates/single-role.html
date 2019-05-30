@@ -1,0 +1,100 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <form class="form" action="" method="post">
+        <div class="govuk-form-group">
+            <legend class="govuk-fieldset__legend--m">
+                <h2 class="govuk-fieldset__heading">
+                    Details of the new role for {{ candidate.personal_email }}
+                </h2>
+            </legend>
+
+            <label class="govuk-label" for="new-grade">
+                New grade
+            </label>
+          <select class="govuk-select" id="new-grade" name="new-grade">
+              {% for grade in data.promotable_grades %}
+                <option value={{ grade.id }}>{{ grade.value }}</option>
+              {% endfor %}
+          </select>
+            <br>
+            <br>
+            <div class="govuk-form-group">
+              <fieldset class="govuk-fieldset" aria-describedby="start-date-hint" role="group">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                  <h1 class="govuk-fieldset__heading">
+                      When did the candidate start their new role?
+                  </h1>
+                </legend>
+                <span id="start-date-hint" class="govuk-hint">
+                  If they don't know the exact date, use the 1st of the month
+                </span>
+                <div class="govuk-date-input" id="start-date">
+                  <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                      <label class="govuk-label govuk-date-input__label" for="start-date-day">
+                        Day
+                      </label>
+                      <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="start-date-day" name="start-date-day" type="number" pattern="[0-9]*">
+                    </div>
+                  </div>
+                  <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                      <label class="govuk-label govuk-date-input__label" for="start-date-month">
+                        Month
+                      </label>
+                      <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="start-date-month" name="start-date-month" type="number" pattern="[0-9]*">
+                    </div>
+                  </div>
+                  <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                      <label class="govuk-label govuk-date-input__label" for="start-date-year">
+                        Year
+                      </label>
+                      <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="start-date-year" name="start-date-year" type="number" pattern="[0-9]*">
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="new-org">
+                    New organisation
+                </label>
+                <select class="govuk-select" id="new-org" name="new-org">
+                  {% for organisation in data.organisations %}
+                    <option value={{ organisation.id }}>{{ organisation.name }}</option>
+                  {% endfor %}
+              </select>
+            </div>
+
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="new-profession">
+                    New profession
+                </label>
+                <select class="govuk-select" id="new-profession" name="new-profession">
+                  {% for profession in data.professions %}
+                    <option value={{ profession.id }}>{{ profession.value }}</option>
+                  {% endfor %}
+              </select>
+            </div>
+
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="new-location">
+                    New location
+                </label>
+                <select class="govuk-select" id="new-location" name="new-location">
+                  {% for location in data.locations %}
+                    <option value={{ location.id }}>{{ location.value }}</option>
+                  {% endfor %}
+              </select>
+            </div>
+
+        </div>
+
+        <div class="input submit">
+            <input type="submit" value="Continue" class="govuk-button">
+        </div>
+    </form>
+{% endblock %}

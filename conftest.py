@@ -19,7 +19,7 @@ def test_client():
     testing_client = flask_app.test_client()
 
     # Establish an application context before running the tests.
-    ctx = flask_app.app_context()
+    ctx = flask_app.test_request_context()
     ctx.push()
 
     yield testing_client  # this is where the testing happens!
@@ -53,12 +53,24 @@ def test_candidate(test_database):
     for key in test_data.keys():
         test_database.session.bulk_save_objects(test_data.get(key))
         test_database.session.commit()
-    yield
+    yield Candidate.query.first()
     Grade.query.delete()
     Candidate.query.delete()
     db.session.commit()
 
 
+@pytest.fixture()
+def test_grades(test_database):
+    grades = [
+        Grade(value='Grade 7', rank=6), Grade(value='Grade 6', rank=5), Grade(value='Deputy Director (SCS1)', rank=4),
+        Grade(value='Admin Assistant (AA)', rank=7)
+    ]
+    test_database.session.add_all(grades)
+    test_database.session.commit()
+    yield
+
+    Grade.query.delete()
+    db.session.commit()
 
 
 # test_data = {
