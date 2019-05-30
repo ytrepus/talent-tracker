@@ -1,6 +1,7 @@
 from flask import render_template, request, url_for, redirect, session
-from app.models import Candidate, Grade
+from app.models import Candidate, Grade, db, Role
 from app.routes import route_blueprint
+from datetime import date
 
 
 @route_blueprint.route('/')
@@ -42,9 +43,20 @@ def search_candidate():
     return render_template('search-candidate.html')
 
 
-@route_blueprint.route('/update/<string:bulk_or_single>/<string:update_type>')
+@route_blueprint.route('/update/<string:bulk_or_single>/<string:update_type>', methods=["POST", "GET"])
 def update(bulk_or_single, update_type):
     candidate = Candidate.query.filter_by(personal_email=session.get('candidate-email')).one_or_none()
+    if request.method == 'POST':
+        db.session.add(Role(
+            date_started=date(
+                year=int(request.form.get('start-date-year')), month=int(request.form.get('start-date-month')),
+                day=int(request.form.get('start-date-day'))
+            ),
+            organisation_id=request.form.get('new-org'), candidate_id=candidate.id,
+            profession_id=request.form.get('new-profession'), location_id=request.form.get('new-location'),
+            grade_id=request.form.get('new-grade')
+        ))
+        return str(request.form)
     # TODO: if candidate doesn't exist, return user to search page
     update_types = {
         "role": {'title': "Role update", "promotable_grades": Grade.promotion_roles(Grade(value='Grade name', rank=7))},
