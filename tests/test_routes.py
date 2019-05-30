@@ -35,7 +35,8 @@ class TestSingleUpdate:
                 sess['candidate-email'] = 'test.candidate@numberten.gov.uk'
             data = {
                 'new-grade': higher_grade.id, 'start-date-day': '1', 'start-date-month': '1', 'start-date-year': '2019',
-                'new-org': new_org.id, 'new-profession': new_profession.id, 'new-location': new_location.id,
+                'new-org': str(new_org.id), 'new-profession': str(new_profession.id),
+                'new-location': str(new_location.id),
             }
             test_client.post('/update/single/role', data=data)
             saved_role = Role.query.first()
