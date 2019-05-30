@@ -26,7 +26,7 @@ def choose_update():
     if request.method == "POST":
         return redirect(url_for('route_blueprint.update', bulk_or_single=request.form.get("bulk-single"),
                                 update_type=request.form.get("update-type")))
-    return render_template('choose_update.html')
+    return render_template('choose-update.html')
 
 
 @route_blueprint.route('/update/<string:bulk_or_single>/<string:update_type>')
