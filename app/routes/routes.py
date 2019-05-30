@@ -29,12 +29,23 @@ def choose_update():
     return render_template('choose-update.html')
 
 
+@route_blueprint.route('/update/search-candidate', methods=["POST", "GET"])
+def search_candidate():
+    if request.method == "POST":
+        session['candidate-email'] = request.form.get('candidate-email')
+        return redirect(url_for('route_blueprint.update', bulk_or_single=session.get('bulk-single'),
+                                update_type=session.get('update-type')))
+    return render_template('search-candidate.html')
+
+
 @route_blueprint.route('/update/<string:bulk_or_single>/<string:update_type>')
 def update(bulk_or_single, update_type):
+    candidate = Candidate.query.filter_by(personal_email=session.get('candidate-email')).one_or_none()
+    # TODO: if candidate doesn't exist, return user to search page
     update_types = {
         "role": {'title': "Role update", "promotable_grades": Grade.promotion_roles(Grade(value='Grade name', rank=7))},
         "fls-survey": "FLS Survey update", "sls-survey": "SLS Survey update"
     }
     template = f"updates/{bulk_or_single}-{update_type}.html"
     return render_template(template, page_header=update_types.get(update_type).get('title'),
-                           data=update_types.get(update_type))
+                           data=update_types.get(update_type), candidate=candidate)
