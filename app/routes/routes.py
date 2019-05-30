@@ -1,4 +1,4 @@
-from flask import render_template, request, url_for, redirect
+from flask import render_template, request, url_for, redirect, session
 from app.models import Candidate, Grade
 from app.routes import route_blueprint
 
@@ -23,9 +23,13 @@ def results():
 
 @route_blueprint.route('/update', methods=["POST", "GET"])
 def choose_update():
+    next_steps = {
+        'role': 'route_blueprint.search_candidate'
+    }
     if request.method == "POST":
-        return redirect(url_for('route_blueprint.update', bulk_or_single=request.form.get("bulk-single"),
-                                update_type=request.form.get("update-type")))
+        session['bulk-single'] = request.form.get("bulk-single")
+        session['update-type'] = request.form.get("update-type")
+        return redirect(url_for(next_steps.get(request.form.get("update-type"))))
     return render_template('choose-update.html')
 
 
