@@ -1,10 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{%  extends 'layout.html' %}
 
-</body>
-</html>
+{% block content %}
+    <form class="govuk-form-group" action="" method="post">
+        <div class="govuk-form-group">
+            <label class="govuk-label" for="email-address">
+                User name
+            </label>
+            <input class="govuk-input" id="email-address" name="email-address" type="text">
+
+            <label class="govuk-label" for="password">
+                Password
+            </label>
+            <input class="govuk-input" id="password" name="password" type="password">
+        </div>
+        <div class="input submit">
+            <input type="submit" value="Login" class="govuk-button">
+        </div>
+    </form>
+{% endblock %}

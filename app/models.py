@@ -1,17 +1,33 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import validates
-from sqlalchemy import or_
+from werkzeug.security import check_password_hash, generate_password_hash
+from flask_login import UserMixin
+from flask_migrate import Migrate
+from flask_login import LoginManager
 
 db = SQLAlchemy()
+migrate = Migrate()
+login_manager = LoginManager()
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
 
+    def check_password(self, password_to_check: str) -> bool:
+        return check_password_hash(self.password_hash, password_to_check)
+
+    def set_password(self, password: str) -> None:
+        self.password_hash = generate_password_hash(password)
+
     def __repr__(self):
         return '<User {}>'.format(self.email)
+
+
+@login_manager.user_loader
+def load_user(id):
+    return User.query.get(int(id))
 
 
 class Candidate(db.Model):
