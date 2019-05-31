@@ -62,3 +62,8 @@ class TestSearchCandidate:
 
 def test_login(logged_in_user):
     assert current_user.is_authenticated
+def test_non_logged_in_users_are_redirected_to_login(test_client):
+    response = test_client.get('/', follow_redirects=False)
+    print(current_user)
+    assert response.status_code == 302  # 302 is the redirect code
+    assert response.location == url_for('auth.login', _external=True)
