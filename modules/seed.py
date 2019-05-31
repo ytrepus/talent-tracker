@@ -22,7 +22,7 @@ def generate_random_fixed_data():
                  "South West England", "Wales", "West Midlands", "Yorkshire & the Humber"]
 
     organisations = [Organisation(name=string) for string in organisations]
-    grades = [Grade(value=string, rank=i) for string, i in enumerate(grades)]
+    grades = [Grade(value=string, rank=i) for i, string in enumerate(grades)]
     professions = [Profession(value=string) for string in professions]
     locations = [Location(value=string) for string in locations]
 
