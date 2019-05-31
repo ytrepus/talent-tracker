@@ -17,7 +17,7 @@ def generate_random_fixed_data():
         'orgs': ["Ministry of", "Department of", "Their Majesty's"]
     }
 
-    organisations = [f"{random.choice(choices['orgs'])} {random_string(16)}" for i in range(450)]
+    organisations = [f"{random.choice(choices['orgs'])} {random_string(16)}" for i in range(45)]
     grades = [f"Grade {i}" for i in range(12)]
     professions = [f"{random_string(12)}".capitalize() for i in range(15)]
     locations = ["East Midlands", "East of England", "London", "North East England", "North West England",
