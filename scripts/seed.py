@@ -33,7 +33,7 @@ def generate_random_fixed_data():
 
 
 def generate_random_candidate():
-    return Candidate(personal_email=f"{random_string(8)}@gov.uk",
+    return Candidate(personal_email="staging.candidate@gov.uk",
                      joining_date=date(random.randrange(1960, 2018), random.randrange(1, 12), random.randrange(1, 28)),
                      completed_fast_stream=random.choice([True, False]),
                      joining_grade=random.choice(Grade.query.all()).id
