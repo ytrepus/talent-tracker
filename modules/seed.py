@@ -1,10 +1,7 @@
 import random
 from string import ascii_lowercase
-from app import create_app
 from app.models import *
 from datetime import date
-
-create_app()
 
 
 def random_string(length: int) -> str:
