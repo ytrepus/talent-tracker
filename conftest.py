@@ -82,3 +82,4 @@ def logged_in_user(test_client, test_database):
     with test_client:
         test_client.post('/auth/login', data={'email-address': "Test User", 'password': 'Password'})
         yield
+        test_client.get('/auth/logout')
