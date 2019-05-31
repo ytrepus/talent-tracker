@@ -31,6 +31,10 @@ def test_client():
 def test_database():
     # Create the database and the database table
     db.create_all()
+    test_user = User(email='Test User')
+    test_user.set_password("Password")
+    db.session.add(test_user)
+    db.session.commit()
     yield db  # this is where the testing happens!
 
     db.drop_all()
@@ -73,53 +77,8 @@ def test_grades(test_database):
     db.session.commit()
 
 
-# test_data = {
-#             'departments': [
-#                 Organisation(
-#                     id=1,
-#                     name='Cabinet Office',
-#                     department=True,
-#                     arms_length_body=False
-#                 ),
-#                 Organisation(
-#                     id=2,
-#                     name='Number Ten',
-#                     parent_organisation_id=1,
-#                     department=False,
-#                     arms_length_body=True
-#                 )
-#             ],
-# 'schemes': [Scheme(name='FLS'), Scheme(name='SLS')],
-#             'working_patterns': [WorkingPattern(value='Full time'), WorkingPattern(value='Part time')],
-#             'age_ranges': [AgeRange(value='25-34'), AgeRange(value='65+')],
-#             'professions': [Profession(value='Digital Data and Technology'), Profession(value='Policy')],
-#             'locations': [Location(value='London'), Location(value='Scotland')],
-#
-# 'test_roles': [
-#                 Role(
-#                     organisation_id=2,
-#                     candidate_id=1,
-#                     date_started=date(2018, 1, 1),
-#                     profession_id=2,
-#                     location_id=2,
-#                     grade_id=1
-#                 )
-#             ],
-#
-#     db.session.add(
-#         Application(
-#             age_range_id=1,
-#             aspirational_grade=2,
-#             belief_id=2,
-#             working_pattern_id=1,
-#             scheme_id=1,
-#             application_date=date(2018, 6, 1),
-#             scheme_start_date=date(2019, 9, 1),
-#             per_id=1,
-#             employee_number='cab10101010',
-#             caring_responsibility=False,
-#             long_term_health_condition=False,
-#             fast_stream=False,
-#             candidate_id=1,
-#         ),
-#     )
+@pytest.fixture
+def logged_in_user(test_client, test_database):
+    with test_client:
+        test_client.post('/auth/login', data={'email-address': "Test User", 'password': 'Password'})
+        yield

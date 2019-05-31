@@ -58,3 +58,7 @@ class TestSearchCandidate:
             result = test_client.post('/update/search-candidate', data=data, follow_redirects=True,
                                       headers={'content-type': 'application/x-www-form-urlencoded'})
             assert b'Details of the new role for test.candidate@numberten.gov.uk' in result.data
+
+
+def test_login(logged_in_user):
+    assert current_user.is_authenticated
