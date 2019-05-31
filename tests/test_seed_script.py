@@ -1,4 +1,4 @@
-from scripts.seed import commit_data, clear_old_data
+from modules.seed import commit_data, clear_old_data
 from app.models import Candidate, Organisation, Profession, Grade
 
 
