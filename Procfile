@@ -1,2 +1,2 @@
-release: flask db upgrade
+release: ./deploy.sh
 web: gunicorn "app:create_app()"
