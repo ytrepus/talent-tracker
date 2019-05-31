@@ -1,26 +1,7 @@
 from flask import render_template, request, url_for, redirect, session
-from app.models import Candidate, Grade, db, Role, Organisation, Location, Profession, User
+from app.models import Candidate, Grade, db, Role, Organisation, Location, Profession
 from app.routes import route_blueprint
-from flask_login import login_user
 from datetime import date
-from flask import flash
-
-
-@route_blueprint.route('/login', methods=["POST", "GET"])
-def login():
-    if request.method == "POST":
-        user = User.query.filter_by(email=request.form.get('email-address')).first()
-        if user is None or not user.check_password(request.form.get('password')):
-            return redirect(url_for('auth.login'))
-        login_user(user)
-
-        flash('Logged in successfully.')
-
-        next = request.args.get('next')
-
-        return redirect(next or url_for('route_blueprint.choose_update'))
-    return render_template('login.html')
-
 
 
 @route_blueprint.route('/')
