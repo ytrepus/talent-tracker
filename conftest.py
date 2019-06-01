@@ -1,18 +1,14 @@
 import pytest
 import os
-import string
-import random
 from datetime import date
 from app import create_app
 from app.models import *
+from config import TestConfig
 
 
-random_string = ''.join(random.choices(string.ascii_uppercase + string.digits, k=16))
 @pytest.fixture(scope='module', autouse=True)
 def test_client():
-    flask_app = create_app()
-    flask_app.config['TESTING'] = True
-    flask_app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{random_string}'
+    flask_app = create_app(TestConfig)
 
     # Flask provides a way to test your application by exposing the Werkzeug test Client
     # and handling the context locals for you.
@@ -38,7 +34,7 @@ def test_database():
     yield db  # this is where the testing happens!
 
     db.drop_all()
-    os.remove(f'app/{random_string}')
+    os.remove('app/testing-database')
 
 
 @pytest.fixture()

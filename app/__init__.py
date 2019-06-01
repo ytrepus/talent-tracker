@@ -1,15 +1,12 @@
 from flask import Flask
-import secrets
-
-import os
+from config import Config, TestConfig
 
 
-def create_app():
+def create_app(configuration=Config):
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-    app.secret_key = os.environ.get('SECRET_KEY') or secrets.token_urlsafe(64)
 
     from app.models import db, login_manager, migrate
+    app.config.from_object(configuration)
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
