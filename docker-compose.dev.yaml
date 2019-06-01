@@ -16,7 +16,7 @@ services:
       - POSTGRES_HOST=postgres
       - FLASK_DEBUG=1
       - DATABASE_URL=postgresql://user:password@db:5432/talent-tracker
-      - FLASK_APP=app
+      - FLASK_APP=run.py
     ports:
       - "5000:5000"
 
