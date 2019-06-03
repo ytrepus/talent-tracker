@@ -79,16 +79,18 @@ class Grade(db.Model):
         return eligible_grades
 
     @staticmethod
-    def promotion_roles(current_grade: 'Grade'):
+    def new_grades(current_grade: 'Grade'):
         """
-        Grades that are equal to, or more senior than, `current_grade`
+        Grades that are one below, equal to, or more senior than, `current_grade`. We include grades one below because
+        candidates may be coming off temporary promotion. Remember that the more senior the role, the lower the rank
+        value!
         :param current_grade: Grade object, describing the current Grade of Candidate
         :type current_grade: Grade
         :return: A list of grades more senior or at the same level
         :rtype: List[Grade]
         """
         current_rank = current_grade.rank
-        return Grade.query.filter(Grade.rank <= current_rank).order_by(Grade.rank.asc()).all()
+        return Grade.query.filter(Grade.rank <= (current_rank + 1)).order_by(Grade.rank.asc()).all()
 
 
 class Profession(db.Model):

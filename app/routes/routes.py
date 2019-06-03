@@ -66,7 +66,7 @@ def update(bulk_or_single, update_type, candidate_id=None):
         db.session.commit()
         return redirect(url_for('route_blueprint.complete'))
     update_types = {
-        "role": {'title': "Role update", "promotable_grades": Grade.promotion_roles(Grade(value='Grade name', rank=7)),
+        "role": {'title': "Role update", "promotable_grades": Grade.new_grades(Grade(value='Grade name', rank=7)),
                  "organisations": Organisation.query.all(), "locations": Location.query.all(),
                  "professions": Profession.query.all()
                  },
