@@ -37,15 +37,21 @@ def choose_update():
 @route_blueprint.route('/update/search-candidate', methods=["POST", "GET"])
 def search_candidate():
     if request.method == "POST":
-        session['candidate-email'] = request.form.get('candidate-email')
+        try:
+            candidate_id = Candidate.query.filter_by(personal_email=request.form.get('candidate-email')).one_or_none().id
+        except AttributeError:
+            session['error'] = "That email does not exist"
+            return redirect(url_for('route_blueprint.search_candidate'))
         return redirect(url_for('route_blueprint.update', bulk_or_single=session.get('bulk-single'),
-                                update_type=session.get('update-type')))
-    return render_template('search-candidate.html')
+                                update_type=session.get('update-type'), candidate_id=candidate_id))
+    return render_template('search-candidate.html', error=session.pop('error', None))
 
 
-@route_blueprint.route('/update/<string:bulk_or_single>/<string:update_type>', methods=["POST", "GET"])
-def update(bulk_or_single, update_type):
-    candidate = Candidate.query.filter_by(personal_email=session.get('candidate-email')).one_or_none()
+@route_blueprint.route('/update/<string:bulk_or_single>/<string:update_type>/<int:candidate_id>', methods=["POST", "GET"])
+def update(bulk_or_single, update_type, candidate_id=None):
+    if not candidate_id:
+        return redirect(url_for('route_blueprint.search_candidate'))
+    candidate = Candidate.query.get(candidate_id)
     if request.method == 'POST':
         form_dict = {k: int(v[0]) for k, v in request.form.to_dict(flat=False).items()}
         db.session.add(Role(
@@ -59,7 +65,6 @@ def update(bulk_or_single, update_type):
         ))
         db.session.commit()
         return redirect(url_for('route_blueprint.complete'))
-    # TODO: if candidate doesn't exist, return user to search page
     update_types = {
         "role": {'title': "Role update", "promotable_grades": Grade.promotion_roles(Grade(value='Grade name', rank=7)),
                  "organisations": Organisation.query.all(), "locations": Location.query.all(),
