@@ -106,6 +106,7 @@ class Location(db.Model):
 class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date_started = db.Column(db.Date())
+    temporary_promotion = db.Column(db.Boolean(), default=False)
 
     organisation_id = db.Column(db.ForeignKey('organisation.id'))
     candidate_id = db.Column(db.ForeignKey('candidate.id'))
