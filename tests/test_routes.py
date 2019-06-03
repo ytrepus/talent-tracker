@@ -19,8 +19,8 @@ class TestSingleUpdate:
     @pytest.mark.parametrize("update_type, form_title", [
         ("role", "Role update"),
     ])
-    def test_get(self, update_type, form_title, test_client, logged_in_user):
-        result = test_client.get(f'/update/single/{update_type}', follow_redirects=True)
+    def test_get(self, update_type, form_title, test_client, test_candidate, logged_in_user):
+        result = test_client.get(f'/update/single/{update_type}/1', follow_redirects=False)
         assert f'<h1 class="govuk-heading-xl">{form_title}</h1>' in result.data.decode('UTF-8')
 
     def test_post(self, test_client, test_candidate, test_database, logged_in_user):
@@ -34,14 +34,12 @@ class TestSingleUpdate:
         new_org = Organisation.query.first()
         new_profession = Profession.query.first()
         new_location = Location.query.first()
-        with test_client.session_transaction() as sess:
-            sess['candidate-email'] = 'test.candidate@numberten.gov.uk'
         data = {
             'new-grade': higher_grade.id, 'start-date-day': '1', 'start-date-month': '1', 'start-date-year': '2019',
             'new-org': str(new_org.id), 'new-profession': str(new_profession.id),
             'new-location': str(new_location.id),
         }
-        test_client.post('/update/single/role', data=data)
+        test_client.post('/update/single/role/1', data=data)
         saved_role = Role.query.first()
         assert saved_role.date_started == date(2019, 1, 1)
         assert saved_role.candidate_id == test_candidate.id

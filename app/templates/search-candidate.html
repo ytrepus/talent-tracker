@@ -11,6 +11,11 @@
             <label class="govuk-label" for="candidate-email">
                 Most recent candidate email address
             </label>
+            {% if error %}
+                <span id="candidate-email-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> {{ error }}
+                </span>
+            {% endif %}
             <input class="govuk-input govuk-input--width-30" id="candidate-email" name="candidate-email" type="text">
 
         </div>

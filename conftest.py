@@ -47,6 +47,7 @@ def test_candidate(test_database):
         'grades': [Grade(value='Band A', rank=2), Grade(value='SCS3', rank=1)],
         'test_candidates': [
             Candidate(
+                id=1,
                 personal_email='test.candidate@numberten.gov.uk',
                 completed_fast_stream=True,
                 joining_date=date(2018, 5, 1),
