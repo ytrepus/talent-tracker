@@ -10,4 +10,4 @@ def restrict_to_logged_in_users():
         return redirect(url_for('auth.login'))
 
 
-from app.routes import routes
+from app.routes import routes  # noqa: E402,F401

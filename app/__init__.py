@@ -1,5 +1,5 @@
 from flask import Flask
-from config import Config, TestConfig
+from config import Config
 
 
 def create_app(configuration=Config):
@@ -19,5 +19,3 @@ def create_app(configuration=Config):
     app.register_blueprint(auth_blueprint, url_prefix='/auth/')
 
     return app
-
-

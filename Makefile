@@ -6,3 +6,7 @@ dev-build:
 
 stop:
 	docker-compose -f docker-compose.yaml -f docker-compose.dev.yaml down
+
+test:
+	flake8 app/
+	pytest
