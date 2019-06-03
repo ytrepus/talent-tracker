@@ -61,6 +61,18 @@ class TestSearchCandidate:
                                   headers={'content-type': 'application/x-www-form-urlencoded'})
         assert b'Details of the new role for test.candidate@numberten.gov.uk' in result.data
 
+    def test_given_candidate_email_doesnt_exist_when_user_searches_then_user_is_redirected_to_new_search(self,
+                                                                                                         test_client,
+                                                                                                         logged_in_user):
+        with test_client.session_transaction() as sess:
+            sess['bulk-single'] = "single"
+            sess['update-type'] = 'role'
+        data = {'candidate-email': 'no-such-candidate@numberten.gov.uk'}
+        result = test_client.post('/update/search-candidate', data=data, follow_redirects=False,
+                                  headers={'content-type': 'application/x-www-form-urlencoded'})
+        assert result.status_code == 302
+        assert result.location == f"http://localhost{url_for('route_blueprint.search_candidate')}"
+
 
 def test_login(logged_in_user):
     assert current_user.is_authenticated
