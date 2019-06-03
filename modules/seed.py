@@ -15,7 +15,7 @@ def generate_random_fixed_data():
     }
 
     organisations = [f"{random.choice(choices['orgs'])} {random_string(16)}" for i in range(45)]
-    grades = [f"Grade {i}" for i in range(12)]
+    grades = [f"Grade {i}" for i in range(1, 12)]
     professions = [f"{random_string(12)}".capitalize() for i in range(15)]
     locations = ["East Midlands", "East of England", "London", "North East England", "North West England",
                  "Northern Ireland", "Overseas", "Prefer not to say", "Scotland", "South East England",
@@ -33,7 +33,7 @@ def generate_random_candidate():
     return Candidate(personal_email="staging.candidate@gov.uk",
                      joining_date=date(random.randrange(1960, 2018), random.randrange(1, 12), random.randrange(1, 28)),
                      completed_fast_stream=random.choice([True, False]),
-                     joining_grade=random.choice(Grade.query.all()).id
+                     joining_grade=(Grade.query.filter_by(rank=6).first()).id
                      )
 
 

@@ -6,7 +6,7 @@ def test_commit_data(test_database):
     commit_data()
     assert len(Candidate.query.all()) == 1
     assert len(Organisation.query.all()) == 45
-    assert len(Grade.query.all()) == 12
+    assert len(Grade.query.all()) == 11
     assert len(Profession.query.all()) == 15
 
 
