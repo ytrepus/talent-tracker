@@ -37,12 +37,13 @@ class TestSingleUpdate:
         data = {
             'new-grade': higher_grade.id, 'start-date-day': '1', 'start-date-month': '1', 'start-date-year': '2019',
             'new-org': str(new_org.id), 'new-profession': str(new_profession.id),
-            'new-location': str(new_location.id),
+            'new-location': str(new_location.id), 'temporary-promotion': '1'
         }
         test_client.post('/update/single/role/1', data=data)
         saved_role = Role.query.first()
         assert saved_role.date_started == date(2019, 1, 1)
         assert saved_role.candidate_id == test_candidate.id
+        assert saved_role.temporary_promotion
 
 
 class TestSearchCandidate:

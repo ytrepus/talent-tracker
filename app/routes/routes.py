@@ -61,7 +61,7 @@ def update(bulk_or_single, update_type, candidate_id=None):
             ),
             organisation_id=form_dict.get('new-org'), candidate_id=candidate.id,
             profession_id=form_dict.get('new-profession'), location_id=form_dict.get('new-location'),
-            grade_id=form_dict.get('new-grade')
+            grade_id=form_dict.get('new-grade'), temporary_promotion=bool(form_dict.get('temporary-promotion'))
         ))
         db.session.commit()
         return redirect(url_for('route_blueprint.complete'))

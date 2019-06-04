@@ -1,14 +1,12 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+
+    <h2 class="govuk-heading-l">
+        Details of the new role for {{ candidate.personal_email }}
+    </h2>
     <form class="form" action="" method="post">
         <div class="govuk-form-group">
-            <legend class="govuk-fieldset__legend--m">
-                <h2 class="govuk-fieldset__heading">
-                    Details of the new role for {{ candidate.personal_email }}
-                </h2>
-            </legend>
-
             <label class="govuk-label" for="new-grade">
                 New grade
             </label>
@@ -17,8 +15,30 @@
                 <option value={{ grade.id }}>{{ grade.value }}</option>
               {% endfor %}
           </select>
-            <br>
-            <br>
+        </div>
+        <div class="govuk-form-group">
+          <fieldset class="govuk-fieldset" aria-describedby="temporary-promotion-hint">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                Is this a temporary promotion?
+            </legend>
+            <span id="temporary-promotion-hint" class="govuk-hint">
+              Temporary promotion is also known as TP, or getting 'TDA' - temporary duties allowance
+            </span>
+            <div class="govuk-radios govuk-radios--inline">
+              <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="temporary-promotion-1" name="temporary-promotion" type="radio" value="1">
+                <label class="govuk-label govuk-radios__label" for="temporary-promotion-1">
+                  Yes
+                </label> </div>
+              <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="temporary-promotion-2" name="temporary-promotion" type="radio" value="0" checked>
+                <label class="govuk-label govuk-radios__label" for="temporary-promotion-2">
+                  No
+                </label>
+              </div>
+            </div>
+          </fieldset>
+        </div>
             <div class="govuk-form-group">
               <fieldset class="govuk-fieldset" aria-describedby="start-date-hint" role="group">
                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
@@ -90,8 +110,6 @@
                   {% endfor %}
               </select>
             </div>
-
-        </div>
 
         <div class="input submit">
             <input type="submit" value="Continue" class="govuk-button">
