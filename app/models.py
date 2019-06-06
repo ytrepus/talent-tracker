@@ -109,6 +109,7 @@ class Profession(db.Model):
 class Location(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(128))
+    location_tag = db.Column(db.String(16), index=True)  # London, Overseas, Regions, or Devolved
 
 
 class Role(db.Model):
