@@ -30,6 +30,13 @@ def load_user(id):
     return User.query.get(int(id))
 
 
+class Ethnicity(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(512))
+    bame = db.Column(db.Boolean)
+
+
 class Candidate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     personal_email = db.Column(db.String(120), unique=True)
@@ -37,6 +44,7 @@ class Candidate(db.Model):
     completed_fast_stream = db.Column(db.Boolean())
 
     joining_grade = db.Column(db.ForeignKey('grade.id'))
+    ethnicity_id = db.Column(db.ForeignKey('ethnicity.id'))
 
     roles = db.relationship('Role', backref='candidate', lazy='dynamic')
     applications = db.relationship('Application', backref='candidate', lazy='dynamic')
