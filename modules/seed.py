@@ -28,7 +28,7 @@ def generate_random_fixed_data():
         'AO – Administrative Officer',
         'EO – Executive Officer',
         'HEO – Higher Executive Officer',
-        'HEO (D) – Higher Executive Officer (Development) / Faststream',
+        'HEO (D) – Faststream',
         'SEO – Senior Executive Officer',
         'Grade 7',
         'Grade 6',
