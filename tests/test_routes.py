@@ -1,7 +1,7 @@
 import pytest
 from flask import url_for, session
 
-from app.models import Grade, Organisation, Profession, Location
+from app.models import Grade, Organisation, Profession, Location, Role
 from flask_login import current_user
 
 
@@ -83,6 +83,23 @@ class TestSearchCandidate:
                                   headers={'content-type': 'application/x-www-form-urlencoded'})
         assert result.status_code == 302
         assert result.location == f"http://localhost{url_for('route_blueprint.search_candidate')}"
+
+
+def test_check_details(logged_in_user, test_client, test_database, test_candidate, test_grades):
+    higher_grade = Grade.query.filter(Grade.value == 'SCS3').first()
+    new_org = Organisation.query.first()
+    new_profession = Profession.query.first()
+    new_location = Location.query.first()
+    with test_client.session_transaction() as sess:
+        sess['new-role'] = {
+            'new-grade': higher_grade.id, 'start-date-day': 1, 'start-date-month': 1, 'start-date-year': 2019,
+            'new-org': new_org.id, 'new-profession': new_profession.id,
+            'new-location': new_location.id, 'temporary-promotion': 1
+        }
+        sess['human-readable-new-role'] = dict()
+    test_client.post('/update/check-your-answers')
+    latest_role = test_candidate.roles.order_by(Role.id.desc()).first()
+    assert "Number 11" == Organisation.query.get(latest_role.organisation_id).name
 
 
 def test_login(logged_in_user):
