@@ -34,8 +34,8 @@ class TestSingleUpdate:
     @pytest.mark.parametrize("update_type, form_title", [
         ("role", "Role update"),
     ])
-    def test_get(self, update_type, form_title, test_client, test_candidate, logged_in_user):
-        result = test_client.get(f'/update/single/{update_type}/1', follow_redirects=False)
+    def test_get(self, update_type, form_title, test_client, test_candidate, logged_in_user, test_roles):
+        result = test_client.get(f'/update/single/{update_type}', follow_redirects=False)
         assert f'<h1 class="govuk-heading-xl">{form_title}</h1>' in result.data.decode('UTF-8')
 
     def test_post(self, test_client, test_candidate, test_database, logged_in_user):
@@ -54,11 +54,8 @@ class TestSingleUpdate:
             'new-org': str(new_org.id), 'new-profession': str(new_profession.id),
             'new-location': str(new_location.id), 'temporary-promotion': '1'
         }
-        test_client.post('/update/single/role/1', data=data)
-        saved_role = Role.query.first()
-        assert saved_role.date_started == date(2019, 1, 1)
-        assert saved_role.candidate_id == test_candidate.id
-        assert saved_role.temporary_promotion
+        test_client.post('/update/single/role', data=data)
+        assert data.keys() == session.get('new-role').keys()
 
 
 class TestSearchCandidate:
@@ -66,7 +63,7 @@ class TestSearchCandidate:
         result = test_client.get('/update/search-candidate')
         assert b"Most recent candidate email address" in result.data
 
-    def test_post(self, test_client, test_candidate, logged_in_user):
+    def test_post(self, test_client, test_candidate, logged_in_user, test_roles):
         with test_client.session_transaction() as sess:
             sess['bulk-single'] = "single"
             sess['update-type'] = 'role'
@@ -74,6 +71,8 @@ class TestSearchCandidate:
         result = test_client.post('/update/search-candidate', data=data, follow_redirects=True,
                                   headers={'content-type': 'application/x-www-form-urlencoded'})
         assert b'Details of the new role for test.candidate@numberten.gov.uk' in result.data
+
+        assert 1 == session.get('candidate-id')
 
     def test_given_candidate_email_doesnt_exist_when_user_searches_then_user_is_redirected_to_new_search(self,
                                                                                                          test_client,

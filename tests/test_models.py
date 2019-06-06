@@ -18,25 +18,31 @@ def test_fls_questions_create_leadership_record(test_database):
     assert leadership.id == fls.id
 
 
-def test_candidate_grade_at_application_is_A(test_candidate, test_database):
-    candidate = Candidate.query.first()
-    test_database.session.add(Role(grade_id=1, candidate_id=candidate.id))
-    test_database.session.commit()
-    current_grade = candidate.roles.first().grade
-    assert 'Band A' == current_grade.value
+class TestCandidate:
+    def test_candidate_cannot_apply_without_role(self, test_candidate):
+        with pytest.raises(AssertionError):
+            Application(
+                aspirational_grade=2,
+                scheme_id=1,
+                application_date=date(2018, 6, 1),
+                scheme_start_date=date(2019, 9, 1),
+                per_id=1,
+                employee_number='cab10101010',
+                candidate_id=1,
+            )
 
-
-def test_candidate_cannot_apply_without_role(test_candidate):
-    with pytest.raises(AssertionError):
-        Application(
-                    aspirational_grade=2,
-                    scheme_id=1,
-                    application_date=date(2018, 6, 1),
-                    scheme_start_date=date(2019, 9, 1),
-                    per_id=1,
-                    employee_number='cab10101010',
-                    candidate_id=1,
-                )
+    def test_current_grade_returns_correct_grade(self, test_candidate, test_database, test_grades):
+        grades = Grade.query.order_by(Grade.rank.asc()).all()
+        test_database.session.add_all(
+            [
+                Role(date_started=date(2017, 1, 1), candidate_id=test_candidate.id, grade=grades[0]),
+                Role(date_started=date(2018, 1, 1), candidate_id=test_candidate.id, grade=grades[1]),
+                Role(date_started=date(2019, 1, 1), candidate_id=test_candidate.id, grade=grades[2])
+            ]
+        )
+        test_database.session.commit()
+        print(test_candidate.roles.order_by(Role.date_started.desc()).all())
+        assert Candidate.query.get(test_candidate.id).current_grade().value == 'Deputy Director (SCS1)'
 
 
 class TestGrade:
