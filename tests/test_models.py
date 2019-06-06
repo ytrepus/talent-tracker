@@ -41,7 +41,6 @@ class TestCandidate:
             ]
         )
         test_database.session.commit()
-        print(test_candidate.roles.order_by(Role.date_started.desc()).all())
         assert Candidate.query.get(test_candidate.id).current_grade().value == 'Deputy Director (SCS1)'
 
 

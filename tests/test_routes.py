@@ -1,8 +1,7 @@
 import pytest
 from flask import url_for, session
 
-from app.models import Grade, Organisation, Role, Profession, Location
-from datetime import date
+from app.models import Grade, Organisation, Profession, Location
 from flask_login import current_user
 
 
@@ -24,7 +23,6 @@ class TestNewEmail:
 
         with test_client.session_transaction() as sess:
             sess['candidate-id'] = 1
-        # print(logged_in_user)
         data = {"update-email-address": "true", "new-email-address": "new-test-email@gov.uk"}
         test_client.post('/update/email-address', data=data)
         assert "new-test-email@gov.uk" == session.get("new-email")
