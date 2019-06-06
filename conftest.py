@@ -37,13 +37,12 @@ def test_database():
     os.remove('app/testing-database')
 
 
-@pytest.fixture()
+@pytest.fixture(scope="class")
 def test_candidate(test_database):
     test_data = {
         'grades': [Grade(value='Band A', rank=2), Grade(value='SCS3', rank=1)],
         'test_candidates': [
             Candidate(
-                id=1,
                 personal_email='test.candidate@numberten.gov.uk',
                 completed_fast_stream=True,
                 joining_date=date(2018, 5, 1),
@@ -60,11 +59,22 @@ def test_candidate(test_database):
     db.session.commit()
 
 
-@pytest.fixture()
+@pytest.fixture(scope="class")
+def test_roles(test_database, test_candidate):
+    roles = [Role(date_started=date(2019, 1, 1), candidate_id=test_candidate.id,
+                  grade_id=Grade.query.filter(Grade.value == 'Band A').first().id)]
+    test_database.session.add_all(roles)
+    test_database.session.commit()
+    yield
+    Role.query.delete()
+    db.session.commit()
+
+
+@pytest.fixture(scope="class")
 def test_grades(test_database):
     grades = [
-        Grade(value='Grade 7', rank=6), Grade(value='Grade 6', rank=5), Grade(value='Deputy Director (SCS1)', rank=4),
-        Grade(value='Admin Assistant (AA)', rank=7)
+        Grade(value='Grade 7', rank=6), Grade(value='Grade 6', rank=5),
+        Grade(value='Deputy Director (SCS1)', rank=4), Grade(value='Admin Assistant (AA)', rank=7)
     ]
     test_database.session.add_all(grades)
     test_database.session.commit()

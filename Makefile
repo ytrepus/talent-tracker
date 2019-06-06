@@ -8,5 +8,5 @@ stop:
 	docker-compose -f docker-compose.yaml -f docker-compose.dev.yaml down
 
 test:
-	flake8 app/
+	python3 -m flake8
 	pytest

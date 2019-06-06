@@ -1,0 +1,13 @@
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+        {{ key }}
+    </dt>
+    <dd class="govuk-summary-list__value">
+        {{ value }}
+    </dd>
+    <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="{{ url_for('route_blueprint.update', bulk_or_single='single', update_type='role') }}">
+            Change<span class="govuk-visually-hidden"> {{ key }}</span>
+        </a>
+    </dd>
+</div>

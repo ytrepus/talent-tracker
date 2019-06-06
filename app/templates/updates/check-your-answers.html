@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h2 class="govuk-heading-l">
+        Check the details of the new role for {{ candidate_email }}
+    </h2>
+    <form class="form" action="" method="post">
+        <div class="govuk-form-group">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Email address
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ candidate_email }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" href="{{ url_for('route_blueprint.email_address') }}">
+                            Change<span class="govuk-visually-hidden"> email</span>
+                        </a>
+                    </dd>
+                </div>
+                {% for key, value in role_data.items() %}
+                    {% include 'partials/summary-section.html' %}
+                {% endfor %}
+            </dl>
+        </div>
+        <div class="input submit">
+            <input type="submit" value="Add role" class="govuk-button">
+        </div>
+    </form>
+{% endblock %}
