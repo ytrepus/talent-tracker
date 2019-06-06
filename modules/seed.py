@@ -14,23 +14,51 @@ def generate_random_fixed_data():
         'orgs': ["Ministry of", "Department of", "Their Majesty's"]
     }
 
-    organisations = [f"{random.choice(choices['orgs'])} {random_string(16)}" for i in range(45)]
-    grades = [f"Grade {i}" for i in range(1, 12)]
+    organisations = [f"{random.choice(choices['orgs'])} {random_string(16)}" for i in range(44)]
     professions = [f"{random_string(12)}".capitalize() for i in range(15)]
     locations = ["East Midlands", "East of England", "London", "North East England", "North West England",
                  "Northern Ireland", "Overseas", "Prefer not to say", "Scotland", "South East England",
                  "South West England", "Wales", "West Midlands", "Yorkshire & the Humber"]
 
     organisations = [Organisation(name=string) for string in organisations]
-    grades = [Grade(value=string, rank=i) for i, string in enumerate(grades)]
+    organisations.append(Organisation(name='Cabinet Office'))
+    grades = [
+        'Prefer not to say',
+        'AA – Administrative Assistant',
+        'AO – Administrative Officer',
+        'EO – Executive Officer',
+        'HEO – Higher Executive Officer',
+        'HEO (D) – Higher Executive Officer (Development) / Faststream',
+        'SEO – Senior Executive Officer',
+        'Grade 7',
+        'Grade 6',
+        'SCS1 – Deputy Director',
+        'SCS2 – Director',
+        'SCS3 – Director General',
+        'SCS 4 – Permanent Secretary',
+    ]
+    grades.reverse()
+    grades = [Grade(value=grade, rank=i) for i, grade in enumerate(grades)]
     professions = [Profession(value=string) for string in professions]
     locations = [Location(value=string) for string in locations]
 
     return {'organisations': organisations, 'grades': grades, 'professions': professions, 'locations': locations}
 
 
+def generate_known_candidate():
+    return Candidate(
+        personal_email="staging.candidate@gov.uk", joining_date=date(2015, 9, 1),
+        completed_fast_stream=True,
+        joining_grade=Grade.query.filter(Grade.value.like("%Faststream%")).first().id,
+        roles=[Role(date_started=date(2015, 9, 2), temporary_promotion=False,
+                    organisation_id=Organisation.query.filter(Organisation.name == 'Cabinet Office').first().id,
+                    grade=Grade.query.filter(Grade.value.like("%Faststream%")).first())
+               ]
+    )
+
+
 def generate_random_candidate():
-    return Candidate(personal_email="staging.candidate@gov.uk",
+    return Candidate(personal_email=f"{random_string(16)}@gov.uk",
                      joining_date=date(random.randrange(1960, 2018), random.randrange(1, 12), random.randrange(1, 28)),
                      completed_fast_stream=random.choice([True, False]),
                      joining_grade=(Grade.query.filter_by(rank=6).first()).id
@@ -40,7 +68,8 @@ def generate_random_candidate():
 def commit_data():
     for key, value in generate_random_fixed_data().items():
         db.session.add_all(value)
-    db.session.add(generate_random_candidate())
+    candidate = generate_known_candidate()
+    db.session.add(candidate)
     db.session.commit()
 
 
