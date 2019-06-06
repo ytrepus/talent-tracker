@@ -46,17 +46,15 @@ def generate_random_fixed_data():
 
 
 def generate_known_candidate():
-    return Candidate(personal_email="staging.candidate@gov.uk", joining_date=date(2015, 9, 1),
-                     completed_fast_stream=True,
-                     joining_grade=Grade.query.filter(Grade.value.like("%Faststream%")).first().id,
-                     roles=[
-                         Role(date_started=date(2015, 9, 2), temporary_promotion=False,
-                              organisation_id=Organisation.query.filter(Organisation.name == 'Cabinet Office').
-                                                                          first().id,
-                              grade=Grade.query.filter(Grade.value.like("%Faststream%")).first()
-                              )
-                     ]
-                     )
+    return Candidate(
+        personal_email="staging.candidate@gov.uk", joining_date=date(2015, 9, 1),
+        completed_fast_stream=True,
+        joining_grade=Grade.query.filter(Grade.value.like("%Faststream%")).first().id,
+        roles=[Role(date_started=date(2015, 9, 2), temporary_promotion=False,
+                    organisation_id=Organisation.query.filter(Organisation.name == 'Cabinet Office').first().id,
+                    grade=Grade.query.filter(Grade.value.like("%Faststream%")).first())
+               ]
+    )
 
 
 def generate_random_candidate():
