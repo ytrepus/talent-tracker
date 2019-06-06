@@ -31,7 +31,10 @@ def load_user(id):
 
 
 class Ethnicity(db.Model):
-
+    """
+    The ethnicity table has a boolean flag for bame, allowing us to query candidates (and therefore data connected to
+    candidates) according to ethnicity at a broad, BAME level
+    """
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(512))
     bame = db.Column(db.Boolean)
@@ -107,9 +110,13 @@ class Profession(db.Model):
 
 
 class Location(db.Model):
+    """
+    The location_tag value is for one of four values: London, Region, Overseas, or Devolved. This allows for easier
+    data retrieval when searching for promotions or applications from a broad space
+    """
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(128))
-    location_tag = db.Column(db.String(16), index=True)  # London, Overseas, Regions, or Devolved
+    location_tag = db.Column(db.String(16), index=True)
 
 
 class Role(db.Model):
