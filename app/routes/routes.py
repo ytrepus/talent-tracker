@@ -77,6 +77,21 @@ def update(bulk_or_single, update_type, candidate_id=None):
                            data=update_types.get(update_type), candidate=candidate)
 
 
+@route_blueprint.route('/update/email-address', methods=["POST", "GET"])
+def email_address():
+    if request.method == "POST":
+        if request.form.get("update-email-address") == "true":
+            session['new-email'] = request.form.get("new-email-address")
+            candidate = Candidate.query.get(session.get('candidate-id'))
+            candidate.personal_email = request.form.get("new-email-address")
+            db.session.add(candidate)
+            db.session.commit()
+
+        return redirect(url_for('route_blueprint.complete'))
+
+    return render_template('updates/email-address.html')
+
+
 @route_blueprint.route('/update/complete', methods=["GET"])
 def complete():
     return render_template('updates/complete.html')
