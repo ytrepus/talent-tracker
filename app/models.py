@@ -42,7 +42,6 @@ class Ethnicity(db.Model):
 
 class Candidate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    personal_email = db.Column(db.String(120), unique=True)
     joining_date = db.Column(db.Date())
     completed_fast_stream = db.Column(db.Boolean())
     first_name = db.Column(db.String(128))
