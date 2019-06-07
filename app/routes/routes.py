@@ -39,7 +39,7 @@ def choose_update():
 @route_blueprint.route('/update/search-candidate', methods=["POST", "GET"])
 def search_candidate():
     if request.method == "POST":
-        candidate = Candidate.query.filter_by(personal_email=request.form.get('candidate-email')).one_or_none()
+        candidate = Candidate.query.filter_by(email_address=request.form.get('candidate-email')).one_or_none()
         if candidate:
             session['candidate-id'] = candidate.id
         else:
@@ -100,7 +100,7 @@ def check_your_answers():
         )
         new_email = session.get('new-email')
         if new_email:
-            candidate.personal_email = new_email
+            candidate.email_address = new_email
         db.session.add_all([candidate, new_role])
         db.session.commit()
 
@@ -128,7 +128,7 @@ def check_your_answers():
         return data
     session['human-readable-new-role'] = human_readable_role(session['new-role'])
     return render_template('updates/check-your-answers.html',
-                           candidate_email=session.get('new-email', candidate.personal_email),
+                           candidate_email=session.get('new-email', candidate.email_address),
                            role_data=session.get('human-readable-new-role'))
 
 

@@ -56,7 +56,7 @@ class Candidate(db.Model):
     applications = db.relationship('Application', backref='candidate', lazy='dynamic')
 
     def __repr__(self):
-        return f'<Candidate email {self.personal_email}>'
+        return f'<Candidate email {self.email_address}>'
 
     def current_grade(self):
         return self.roles.order_by(Role.date_started.desc()).first().grade

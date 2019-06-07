@@ -3,7 +3,7 @@
 {%  block content %}
     {% for candidate in candidates %}
     <h2 class="govuk-heading-l">
-        {{ candidate.personal_email }}
+        {{ candidate.email_address }}
     </h2>
         {% for role in candidate.roles.all() %}
             <p>{{ role.organisation.name }}</p>
