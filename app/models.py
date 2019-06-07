@@ -47,6 +47,7 @@ class Candidate(db.Model):
     completed_fast_stream = db.Column(db.Boolean())
     first_name = db.Column(db.String(128))
     last_name = db.Column(db.String(128))
+    email_address = db.Column(db.String(120), unique=True)
 
     joining_grade = db.Column(db.ForeignKey('grade.id'))
     ethnicity_id = db.Column(db.ForeignKey('ethnicity.id'))
