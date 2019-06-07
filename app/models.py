@@ -42,11 +42,12 @@ class Ethnicity(db.Model):
 
 class Candidate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    email_address = db.Column(db.String(120), unique=True)
+    personal_email = db.Column(db.String(120), unique=True)
     joining_date = db.Column(db.Date())
     completed_fast_stream = db.Column(db.Boolean())
     first_name = db.Column(db.String(128))
     last_name = db.Column(db.String(128))
+    email_address = db.Column(db.String(120), unique=True)
 
     joining_grade = db.Column(db.ForeignKey('grade.id'))
     ethnicity_id = db.Column(db.ForeignKey('ethnicity.id'))
