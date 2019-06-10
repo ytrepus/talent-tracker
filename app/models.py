@@ -161,6 +161,7 @@ class Application(db.Model):
     successful = db.Column(db.Boolean())
     meta = db.Column(db.Boolean, default=False)
     delta = db.Column(db.Boolean, default=False)
+    cohort = db.Column(db.Integer, unique=False)
 
     @validates('candidate_id')
     def validate_candidate_is_employed(self, key, candidate_id):
