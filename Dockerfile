@@ -5,6 +5,7 @@ COPY requirements.txt /code/
 COPY run.py /code/
 COPY migrations /code/migrations
 COPY config.py /code/config.py
+COPY reporting /code/reporting
 WORKDIR /code
 RUN pip install --no-cache-dir -r requirements.txt
 ENTRYPOINT flask run --host 0.0.0.0
