@@ -43,6 +43,15 @@ class TestCandidate:
         test_database.session.commit()
         assert Candidate.query.get(test_candidate.id).current_grade().value == 'Deputy Director (SCS1)'
 
+    def test_promoted_when_started(self, test_candidate, test_database, test_grades):
+        grades = Grade.query.order_by(Grade.rank.asc()).all()
+        test_candidate.roles = [
+            Role(date_started=date(2019, 1, 1), candidate_id=test_candidate.id, grade=grades[0]),
+            Role(date_started=date(2020, 6, 1), candidate_id=test_candidate.id, grade=grades[-1])
+        ]
+        test_database.session.add(test_candidate)
+        assert test_candidate.promoted('2019-09-01')
+
 
 class TestGrade:
     def test_eligible_returns_correct_grades(self, test_database, test_grades):
