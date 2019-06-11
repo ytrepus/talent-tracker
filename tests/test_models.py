@@ -1,4 +1,4 @@
-from app.models import FLSLeadership, Application, Leadership, Candidate, Role, Grade, Scheme
+from app.models import FLSLeadership, Application, Leadership, Candidate, Role, Grade
 from datetime import date
 import pytest
 

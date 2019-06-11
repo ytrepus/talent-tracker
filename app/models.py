@@ -4,7 +4,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
 from flask_migrate import Migrate
 from flask_login import LoginManager
-from datetime import datetime, date
+from datetime import datetime
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -39,6 +39,8 @@ class Ethnicity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(512))
     bame = db.Column(db.Boolean)
+
+    candidates = db.relationship('Candidate')
 
 
 class Candidate(db.Model):
