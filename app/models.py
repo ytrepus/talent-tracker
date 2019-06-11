@@ -4,6 +4,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from datetime import datetime, date
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -59,6 +60,18 @@ class Candidate(db.Model):
 
     def current_grade(self):
         return self.roles.order_by(Role.date_started.desc()).first().grade
+
+    def promoted(self, promoted_after_date):
+        """
+        Returns whether this candidate was promoted after the passed date
+        :param promoted_after_date:
+        :type promoted_after_date:
+        :return:
+        :rtype:
+        """
+        roles_after_date = self.roles.filter(
+            Role.date_started >= datetime.strptime('Jun 1 2005', '%b %d %Y').date()).all()
+        return len(roles_after_date) > 0
 
 
 class Organisation(db.Model):
