@@ -72,12 +72,11 @@ class Candidate(db.Model):
         :rtype:
         """
         roles_after_date = self.roles.filter(
-            Role.date_started >= datetime.strptime('Jun 1 2005', '%b %d %Y').date()).all()
+            Role.date_started >= datetime.strptime(promoted_after_date, '%Y-%m-%d').date()).all()
         return len(roles_after_date) > 0
 
     def current_scheme(self):
         return Scheme.query.get(self.applications.order_by(Application.application_date.desc()).first().scheme_id).name
-
 
 
 class Organisation(db.Model):
@@ -126,6 +125,9 @@ class Grade(db.Model):
         """
         current_rank = current_grade.rank
         return Grade.query.filter(Grade.rank <= (current_rank + 1)).order_by(Grade.rank.asc()).all()
+
+    def __repr__(self):
+        return f"Grade {self.value}"
 
 
 class Profession(db.Model):
