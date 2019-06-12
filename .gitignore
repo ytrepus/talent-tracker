@@ -4,3 +4,5 @@ __pycache__/
 postgres-data
 
 \.DS_Store
+
+app/testing-database
