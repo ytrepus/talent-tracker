@@ -20,7 +20,7 @@ def test_fls_questions_create_leadership_record(test_session):
 class TestCandidate:
     def test_current_grade_returns_correct_grade(self, test_candidate, test_session):
         grades = Grade.query.order_by(Grade.rank.asc()).all()
-        roles = [Role(date_started=date(2017+i, 1, 1), grade=grades[i]) for i in range(3)]
+        roles = [Role(date_started=date(2017 + i, 1, 1), grade=grades[i]) for i in range(3)]
         test_candidate.roles.extend(roles)
         test_session.add(test_candidate)
         test_session.commit()

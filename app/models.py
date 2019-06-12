@@ -1,5 +1,4 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import validates
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
 from flask_migrate import Migrate
@@ -75,8 +74,8 @@ class Candidate(db.Model):
             Role.date_started >= datetime.strptime(promoted_after_date, '%Y-%m-%d').date()).all()
         return len(roles_after_date) > 0
 
-    def current_scheme(self):
-        return Scheme.query.get(self.applications.order_by(Application.application_date.desc()).first().scheme_id).name
+    def current_scheme(self) -> 'Scheme':
+        return Scheme.query.get(self.applications.order_by(Application.application_date.desc()).first().scheme_id)
 
 
 class Organisation(db.Model):

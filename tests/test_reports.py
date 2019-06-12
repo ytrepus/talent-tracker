@@ -9,9 +9,9 @@ class TestReports:
         "report_type, parameters, white_british_promoted, black_british_promoted, scheme_id, expected_output",
         [
             (PromotionReport, ['ethnicity', 'FLS', '2019-09-01'], .5, .7, 1,
-             ['characteristic,number promoted,percentage promoted\r', 'White British,5,50%\r', 'Black British,7,70%\r','']),
+             ['characteristic,number promoted,percentage promoted\r', 'White British,5,50%\r', 'Black British,7,70%\r', '']),
             (PromotionReport, ['ethnicity', 'SLS', '2019-09-01'], .4, .6, 2,
-             ['characteristic,number promoted,percentage promoted\r', 'White British,4,40%\r', 'Black British,6,60%\r','']),
+             ['characteristic,number promoted,percentage promoted\r', 'White British,4,40%\r', 'Black British,6,60%\r', '']),
         ]
     )
     def test_reports(self, report_type: Report, parameters: List[str], white_british_promoted, black_british_promoted,

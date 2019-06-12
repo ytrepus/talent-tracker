@@ -1,4 +1,4 @@
-from app.models import Ethnicity, Scheme, Candidate
+from app.models import Ethnicity, Scheme
 from abc import ABC, abstractmethod
 from io import StringIO
 from werkzeug.datastructures import Headers
@@ -9,8 +9,8 @@ import csv
 class Report(ABC):
     def __init__(self):
         self.tables = {
-                'ethnicity': Ethnicity
-            }
+            'ethnicity': Ethnicity
+        }
         super(Report, self).__init__()
 
     @abstractmethod
@@ -47,16 +47,13 @@ class PromotionReport(Report):
         output = []
         characteristics = self.table.query.all()
         for characteristic in characteristics:
-            print([candidate for candidate in characteristic.candidates
-                                       if candidate.promoted(self.promoted_before_date)
-                                       and candidate.current_scheme() == self.scheme
-                                       ])
-            promoted_candidates = len([candidate for candidate in characteristic.candidates
-                                       if candidate.promoted(self.promoted_before_date)
-                                       and candidate.current_scheme() == self.scheme
-                                       ])
+            promoted_candidates = len(
+                [candidate for candidate in characteristic.candidates if
+                 candidate.promoted(self.promoted_before_date) and candidate.current_scheme() == self.scheme
+                 ]
+            )
             total_candidates = len(characteristic.candidates)
-            output.append((f"{characteristic.value}", promoted_candidates, promoted_candidates/total_candidates))
+            output.append((f"{characteristic.value}", promoted_candidates, promoted_candidates / total_candidates))
         data = StringIO()
         w = csv.writer(data)
 
@@ -77,4 +74,3 @@ class PromotionReport(Report):
             yield data.getvalue()
             data.seek(0)
             data.truncate(0)
-
