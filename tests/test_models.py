@@ -1,6 +1,5 @@
-from app.models import FLSLeadership, Application, Leadership, Candidate, Role, Grade
+from app.models import FLSLeadership, Leadership, Candidate, Role, Grade
 from datetime import date
-import pytest
 
 
 def test_fls_questions_create_leadership_record(test_session):
