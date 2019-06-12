@@ -182,16 +182,6 @@ class Application(db.Model):
     delta = db.Column(db.Boolean, default=False)
     cohort = db.Column(db.Integer, unique=False)
 
-    @validates('candidate_id')
-    def validate_candidate_is_employed(self, key, candidate_id):
-        candidate = Candidate.query.get(candidate_id)
-        current_role = candidate.roles.filter(Role.date_started < self.application_date).\
-            one_or_none()
-        if current_role is not None:
-            return candidate_id
-        else:
-            raise AssertionError("This candidate is not employed!")
-
 
 class Leadership(db.Model):
     id = db.Column(db.Integer, primary_key=True)
