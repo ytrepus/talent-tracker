@@ -123,7 +123,7 @@ def check_your_answers():
         data['New location'] = Location.query.get(data['New location']).value
         data['New org'] = Organisation.query.get(data['New org']).name
         data['New profession'] = Profession.query.get(data['New profession']).value
-        data['Temporary promotion'] = str(bool(data['Temporary promotion']))
+        data['Temporary promotion'] = "Yes" if bool(data['Temporary promotion']) else "No"
 
         return data
     session['human-readable-new-role'] = human_readable_role(session['new-role'])
