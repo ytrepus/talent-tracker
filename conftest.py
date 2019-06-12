@@ -46,7 +46,13 @@ def test_session(db):
     test_user = User(email='Test User')
     test_user.set_password("Password")
     db.session.add(test_user)
+
     db.session.add_all([Scheme(id=1, name='FLS'), Scheme(id=2, name='SLS')])
+    db.session.add_all([
+        Grade(id=2, value='Grade 7', rank=6), Grade(id=3, value='Grade 6', rank=5),
+        Grade(id=4, value='Deputy Director (SCS1)', rank=4), Grade(id=1, value='Admin Assistant (AA)', rank=7)
+    ])
+    db.session.add(Candidate(id=1))
     db.session.commit()
 
     yield session_
@@ -58,13 +64,12 @@ def test_session(db):
 
 @pytest.fixture
 def test_candidate(test_session):
-    candidate = Candidate(
-                email_address='test.candidate@numberten.gov.uk',
-                completed_fast_stream=True,
-                joining_date=date(2010, 5, 1),
-                joining_grade=1,
-            )
-    candidate.roles.append(Role(date_started=date(2010, 5, 1), temporary_promotion=False))
+    candidate = Candidate.query.get(1)
+    candidate.email_address = 'test.candidate@numberten.gov.uk'
+    candidate.completed_fast_stream = True
+    candidate.joining_date = date(2010, 5, 1)
+    candidate.joining_grade = 1
+    candidate.roles.append(Role(date_started=date(2010, 5, 1), temporary_promotion=False, grade_id=2))
     test_data = {
         'grades': [Grade(value='Band A', rank=2), Grade(value='SCS3', rank=1)],
         'test_candidates': [candidate],
@@ -77,7 +82,6 @@ def test_candidate(test_session):
 
 @pytest.fixture
 def test_candidate_applied_to_fls(test_candidate, test_session):
-    print(test_candidate.roles.all())
     test_candidate.applications.append(Application(application_date=date(2019, 6, 1), scheme_id=1))
     test_session.add(test_candidate)
     test_session.commit()
@@ -97,17 +101,6 @@ def test_roles(test_session, test_candidate):
     roles = [Role(date_started=date(2019, 1, 1), candidate_id=test_candidate.id,
                   grade_id=Grade.query.filter(Grade.value == 'Band A').first().id)]
     test_session.add_all(roles)
-    test_session.commit()
-    yield
-
-
-@pytest.fixture
-def test_grades(test_session):
-    grades = [
-        Grade(value='Grade 7', rank=6), Grade(value='Grade 6', rank=5),
-        Grade(value='Deputy Director (SCS1)', rank=4), Grade(value='Admin Assistant (AA)', rank=7)
-    ]
-    test_session.add_all(grades)
     test_session.commit()
     yield
 
