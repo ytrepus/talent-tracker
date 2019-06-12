@@ -108,12 +108,21 @@ def test_check_details(logged_in_user, test_client, test_session, test_candidate
     assert "Organisation 1" == Organisation.query.get(latest_role.organisation_id).name
 
 
-def test_login(logged_in_user):
-    assert current_user.is_authenticated
+class TestAuthentication:
+    def test_login(self, logged_in_user):
+        assert current_user.is_authenticated
+
+    @pytest.mark.parametrize(
+        "url",
+        ["/update/search-candidate", "/reports/", "update/search-candidate"]
+    )
+    def test_non_logged_in_users_are_redirected_to_login(self, url, test_client):
+        with test_client:
+            response = test_client.get(url, follow_redirects=False)
+            assert response.status_code == 302  # 302 is the redirect code
+            assert response.location == url_for('auth.login', _external=True)
 
 
-def test_non_logged_in_users_are_redirected_to_login(test_client):
-    with test_client:
-        response = test_client.get('/', follow_redirects=False)
-        assert response.status_code == 302  # 302 is the redirect code
-        assert response.location == url_for('auth.login', _external=True)
+class TestReports:
+    def test_get(self, logged_in_user):
+        pass

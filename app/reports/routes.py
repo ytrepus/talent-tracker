@@ -10,9 +10,8 @@ def reports():
     }
     if request.method == "POST":
         form_data = request.form.to_dict()
-        report_details = report_classes.get(form_data.pop('report-type'))
+        report_class = report_classes.get(form_data.pop('report-type'))
         params = form_data
-        report_class = report_details[0]
         initialised_class = report_class(*params)
-        return initialised_class.return_data("promotions-ethnicity-fls.csv")
+        return initialised_class.return_data("promotions-ethnicity-fls")
     return "Hello"
