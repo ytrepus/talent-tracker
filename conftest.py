@@ -46,6 +46,7 @@ def test_session(db):
     test_user = User(email='Test User')
     test_user.set_password("Password")
     db.session.add(test_user)
+    db.session.add_all([Scheme(id=1, name='FLS'), Scheme(id=2, name='SLS')])
     db.session.commit()
 
     yield session_
@@ -77,7 +78,7 @@ def test_candidate(test_session):
 @pytest.fixture
 def test_candidate_applied_to_fls(test_candidate, test_session):
     print(test_candidate.roles.all())
-    test_candidate.applications.append(Application(application_date=date(2019, 6, 1)))
+    test_candidate.applications.append(Application(application_date=date(2019, 6, 1), scheme_id=1))
     test_session.add(test_candidate)
     test_session.commit()
     yield Candidate.query.first()
