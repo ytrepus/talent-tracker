@@ -15,7 +15,7 @@ class Report(ABC):
 
     @abstractmethod
     def generate_report_data(self):
-        pass
+        print("Not implemented yet!")
 
     def return_data(self, filename: str):
         headers = Headers()
@@ -29,34 +29,39 @@ class Report(ABC):
 
 
 class PromotionReport(Report):
-    def __init__(self, characteristic: str, scheme: str):
+    def __init__(self, characteristic: str, scheme: str, cutoff_date: str):
         super().__init__()
-        self.table = self.tables.get(characteristic)
-        self.scheme = Scheme.query.filter_by(name=f'{scheme}')
+        self.characteristic = characteristic
+        self.table = self.tables.get(self.characteristic)
+        self.scheme = Scheme.query.filter_by(name=f'{scheme}').first()
+        self.promoted_before_date = cutoff_date
         self.headers = ['characteristic', 'number promoted', 'percentage promoted']
 
     def generate_report_data(self):
-        # output = [
-        #     ('white', .5, 90),
-        #     ('bame', .33, 5),
-        # ]
         """
         Search for promoted candidates and group them by characteristic. Provide an absolute number promoted
         and the percentage of that group promoted
         :return:
         :rtype:
         """
-
         output = []
-        selected_characteristic = self.table.query.all()
-        for characteristic in selected_characteristic:
-            output.append([characteristic, 'word', 'word'])
-
+        characteristics = self.table.query.all()
+        for characteristic in characteristics:
+            print([candidate for candidate in characteristic.candidates
+                                       if candidate.promoted(self.promoted_before_date)
+                                       and candidate.current_scheme() == self.scheme
+                                       ])
+            promoted_candidates = len([candidate for candidate in characteristic.candidates
+                                       if candidate.promoted(self.promoted_before_date)
+                                       and candidate.current_scheme() == self.scheme
+                                       ])
+            total_candidates = len(characteristic.candidates)
+            output.append((f"{characteristic.value}", promoted_candidates, promoted_candidates/total_candidates))
         data = StringIO()
         w = csv.writer(data)
 
         # write header
-        w.writerow(('characteristic', 'percentage promoted', 'number promoted'))
+        w.writerow(self.headers)
         yield data.getvalue()
         data.seek(0)
         data.truncate(0)
@@ -65,8 +70,9 @@ class PromotionReport(Report):
         for item in output:
             w.writerow((
                 item[0],
-                "{0:.0%}".format(item[1]),  # format decimal as percentage
-                item[2]
+                item[1],
+                "{0:.0%}".format(item[2]),  # format decimal as percentage
+
             ))
             yield data.getvalue()
             data.seek(0)
