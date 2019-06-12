@@ -75,6 +75,10 @@ class Candidate(db.Model):
             Role.date_started >= datetime.strptime('Jun 1 2005', '%b %d %Y').date()).all()
         return len(roles_after_date) > 0
 
+    def current_scheme(self):
+        return Scheme.query.get(self.applications.order_by(Application.application_date.desc()).first().scheme_id).name
+
+
 
 class Organisation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
