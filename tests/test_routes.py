@@ -89,7 +89,7 @@ class TestSearchCandidate:
         assert result.location == f"http://localhost{url_for('route_blueprint.search_candidate')}"
 
 
-def test_check_details(logged_in_user, test_client, test_session, test_candidate, test_grades, test_locations,
+def test_check_details(logged_in_user, test_client, test_session, test_candidate, test_locations,
                        test_orgs, test_professions):
     higher_grade = Grade.query.filter(Grade.value == 'SCS3').first()
     new_org = Organisation.query.first()

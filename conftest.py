@@ -129,7 +129,7 @@ def test_professions(test_session):
 
 @pytest.fixture
 def test_ethnicities(test_session):
-    test_session.add_all([Ethnicity(value="White British"), Ethnicity(value="Black British", bame=True)])
+    test_session.add_all([Ethnicity(id=1, value="White British"), Ethnicity(id=2, value="Black British", bame=True)])
     test_session.commit()
     yield
 
@@ -143,31 +143,22 @@ def test_multiple_candidates_multiple_ethnicities(test_session, test_ethnicities
 
 
 @pytest.fixture
-def test_promoted_candidates(test_session, test_multiple_candidates_multiple_ethnicities):
-    bb_candidates = Candidate.query.filter_by(ethnicity_id=Ethnicity.query.filter_by(value="Black British").first().id).all()
-    wb_candidates = Candidate.query.filter_by(ethnicity_id=Ethnicity.query.filter_by(value="White British").first().id).all()
-    test_session.add_all(
-        [candidate.roles.extend(
-            [Role(date_started=date(2019, 1, 1)), Role(date_started=date(2020, 1, 1))])
-            for candidate in bb_candidates[0:7]]
-    )
-    test_session.add_all(
-        [candidate.roles.extend(
-            [Role(date_started=date(2019, 1, 1)), Role(date_started=date(2020, 1, 1))])
-            for candidate in wb_candidates[0:5]]
-    )
-    test_session.commit()
-    yield
+def candidates_promoter():
+    def _promoter(candidates_to_promote, decimal_ratio):
+        for candidate in candidates_to_promote[0:int(len(candidates_to_promote) * decimal_ratio)]:
+            candidate.roles.extend([Role(date_started=date(2019, 1, 1)), Role(date_started=date(2020, 1, 1))])
+        return candidates_to_promote
+
+    return _promoter
 
 
 @pytest.fixture
-def test_applications(test_session, test_promoted_candidates):
-    test_session.add_all(
-        [
-            candidate.applications.append(Application(application_date=date(2019, 6, 1)))
-            for candidate in Candidate.query.all()
-        ]
-    )
+def scheme_appender(test_session):
+    def _add_scheme(candidates_to_add, scheme_id_to_add):
+        for candidate in candidates_to_add:
+            candidate.applications.append(Application(application_date=date(2019, 6, 1), scheme_id=scheme_id_to_add))
+    return _add_scheme
+
 
 @pytest.fixture
 def logged_in_user(test_client):
