@@ -1,16 +1,11 @@
-from modules.seed import commit_data, clear_old_data
+from modules.seed import clear_old_data
 from app.models import Candidate, Organisation, Profession, Grade
 import pytest
 
 
-@pytest.mark.parametrize("model, count", [
-    (Candidate, 101), (Organisation, 45), (Grade, 13), (Profession, 15)
-])
-# the extra candidates and grades come from loading the data in at db creation time
-def test_commit_data(model, count):
-    clear_old_data()
-    commit_data()
-    assert count == len(model.query.all())
+def test_commit_data(seed_data):
+    for item in [(Candidate, 101), (Organisation, 45), (Grade, 13), (Profession, 15)]:
+        assert item[1] == len(item[0].query.all())
 
 
 @pytest.mark.parametrize("model", [Candidate, Organisation, Grade, Profession])

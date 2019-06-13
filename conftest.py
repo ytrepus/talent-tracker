@@ -4,6 +4,7 @@ from app import create_app
 from app.models import db as _db
 from config import TestConfig
 from app.models import *
+from modules.seed import clear_old_data, commit_data
 
 
 @pytest.fixture(scope='session', autouse=True)
@@ -166,3 +167,14 @@ def logged_in_user(test_client):
         test_client.post('/auth/login', data={'email-address': "Test User", 'password': 'Password'})
         yield
         test_client.get('/auth/logout')
+
+
+@pytest.fixture
+def seed_data(test_client):
+    print("Seeding!")
+    with test_client:
+        clear_old_data()
+        commit_data()
+        yield
+        print("Clearing!")
+        clear_old_data()
