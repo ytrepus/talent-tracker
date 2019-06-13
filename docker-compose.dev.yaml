@@ -5,6 +5,8 @@ services:
     volumes:
       - ./app:/code/app
       - ./migrations:/code/migrations
+      - ./reporting:/code/reporting
+      - ./modules:/code/modules
     depends_on:
       - db
     links:
