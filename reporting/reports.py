@@ -30,12 +30,12 @@ class Report(ABC):
 
 
 class PromotionReport(Report):
-    def __init__(self, characteristic: str, scheme: str, year: int):
+    def __init__(self, characteristic: str, scheme: str, year: str):
         super().__init__()
         self.characteristic = characteristic
         self.table = self.tables.get(self.characteristic)
         self.scheme = Scheme.query.filter_by(name=f'{scheme}').first()
-        self.promoted_before_date = date(year + 1, 3, 1)  # can't take credit for promotions within first 3 months
+        self.promoted_before_date = date(int(year) + 1, 3, 1)  # can't take credit for promotions within first 3 months
         self.headers = ['characteristic', 'number promoted', 'percentage promoted']
         self.filename = f"{characteristic}-{scheme}-{year}"
 

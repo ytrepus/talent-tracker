@@ -12,6 +12,6 @@ def reports():
         form_data = request.form.to_dict()
         report_class = report_classes.get(form_data.pop('report-type'))
         params = form_data
-        initialised_class = report_class(*params)
-        return initialised_class.return_data("promotions-ethnicity-fls")
+        initialised_class = report_class(**params)
+        return initialised_class.return_data()
     return "Hello"
