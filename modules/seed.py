@@ -38,11 +38,38 @@ def generate_random_fixed_data():
         'SCS 4 – Permanent Secretary',
     ]
     grades.reverse()
+
+    bame_ethnic_groups = [
+        "Any other Asian background"
+        "Any other Black/African/Caribbean background",
+        "Any other Ethnic background",
+        "Any other mixed/multiple ethnic background",
+        "Arab",
+        "Asian or Asian British - Bangladeshi",
+        "Asian or Asian British - Chinese",
+        "Asian or Asian British - Indian",
+        "Asian or Asian British - Pakistani",
+        "Black or Black British African",
+        "Black or Black British Caribbean",
+        "Mixed - White and Asian",
+        "Mixed - White and Black African",
+        "Mixed - White and Black Caribbean",
+    ]
+    non_bame_ethnic_groups = [
+        "Any other white background",
+        "Prefer not to say",
+        "White - Gypsy or Irish Traveller",
+        "White - Irish",
+        "White English/Welsh/Scottish/Northern Irish/British",
+    ]
+    ethnic_groups = [Ethnicity(value=item, bame=True) for item in bame_ethnic_groups]
+    ethnic_groups.extend([Ethnicity(value=item, bame=False) for item in non_bame_ethnic_groups])
     grades = [Grade(value=grade, rank=i) for i, grade in enumerate(grades)]
     professions = [Profession(value=string) for string in professions]
     locations = [Location(value=string) for string in locations]
 
-    return {'organisations': organisations, 'grades': grades, 'professions': professions, 'locations': locations}
+    return {'organisations': organisations, 'grades': grades, 'professions': professions, 'locations': locations,
+            'ethnicities': ethnic_groups}
 
 
 def generate_known_candidate():
