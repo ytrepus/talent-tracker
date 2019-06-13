@@ -40,7 +40,7 @@ def generate_random_fixed_data():
     grades.reverse()
 
     bame_ethnic_groups = [
-        "Any other Asian background"
+        "Any other Asian background",
         "Any other Black/African/Caribbean background",
         "Any other Ethnic background",
         "Any other mixed/multiple ethnic background",
@@ -54,11 +54,11 @@ def generate_random_fixed_data():
         "Mixed - White and Asian",
         "Mixed - White and Black African",
         "Mixed - White and Black Caribbean",
+        "White - Gypsy or Irish Traveller",
     ]
     non_bame_ethnic_groups = [
         "Any other white background",
         "Prefer not to say",
-        "White - Gypsy or Irish Traveller",
         "White - Irish",
         "White English/Welsh/Scottish/Northern Irish/British",
     ]
@@ -69,7 +69,7 @@ def generate_random_fixed_data():
     locations = [Location(value=string) for string in locations]
 
     return {'organisations': organisations, 'grades': grades, 'professions': professions, 'locations': locations,
-            'ethnicities': ethnic_groups}
+            'ethnicities': ethnic_groups, 'schemes': [Scheme(name='FLS'), Scheme(name='SLS')]}
 
 
 def generate_known_candidate():
@@ -88,8 +88,21 @@ def generate_random_candidate():
     return Candidate(email_address=f"{random_string(16)}@gov.uk",
                      joining_date=date(random.randrange(1960, 2018), random.randrange(1, 12), random.randrange(1, 28)),
                      completed_fast_stream=random.choice([True, False]),
-                     joining_grade=(Grade.query.filter_by(rank=6).first()).id
+                     joining_grade=(Grade.query.filter_by(rank=6).first()).id,
+                     ethnicity_id=random.choice(Ethnicity.query.all()).id
                      )
+
+
+def apply_candidate_to_scheme(scheme_name: str, candidate: Candidate):
+    candidate.applications.append(
+        Application(scheme_id=Scheme.query.filter_by(name=scheme_name).first().id, successful=True)
+    )
+    return candidate
+
+
+def promote_candidate(candidate: Candidate):
+    candidate.roles.extend([Role(date_started=date(2018, 1, 1)), Role(date_started=date(2019, 6, 1))])
+    return candidate
 
 
 def commit_data():
@@ -97,11 +110,16 @@ def commit_data():
         db.session.add_all(value)
     candidate = generate_known_candidate()
     db.session.add(candidate)
+    random_candidates = [generate_random_candidate() for i in range(100)]
+    random_fls_candidates = list(map(lambda x: apply_candidate_to_scheme('FLS', x), random_candidates))
+    random_promoted_fls_candidates = [promote_candidate(candidate) if i % 2 == 0 else candidate
+                                      for i, candidate in enumerate(random_fls_candidates)]
+    db.session.add_all(list(random_promoted_fls_candidates))
     db.session.commit()
 
 
 def clear_old_data():
-    tables = [Role, Candidate, Organisation, Profession, Grade, Location]
+    tables = [Application, Role, Candidate, Organisation, Profession, Grade, Location, Ethnicity, Scheme]
     for table in tables:
         table.query.delete()
         db.session.commit()
