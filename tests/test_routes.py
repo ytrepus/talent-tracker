@@ -33,17 +33,21 @@ class TestSingleUpdate:
         ("role", "Role update"),
     ])
     def test_get(self, update_type, form_title, test_client, test_candidate, logged_in_user, test_roles):
+        with test_client.session_transaction() as sess:
+            sess['candidate-id'] = 1
         result = test_client.get(f'/update/single/{update_type}', follow_redirects=False)
+        print(session)
+        print(result.data)
         assert f'<h1 class="govuk-heading-xl">{form_title}</h1>' in result.data.decode('UTF-8')
 
-    def test_post(self, test_client, test_candidate, test_database, logged_in_user):
+    def test_post(self, test_client, test_candidate, test_session, logged_in_user):
         higher_grade = Grade.query.filter(Grade.value == 'SCS3').first()
-        test_database.session.bulk_save_objects([
+        test_session.bulk_save_objects([
             Organisation(name="Number 11", department=False),
             Profession(value="Digital, Data and Technology"),
             Location(value="London")]
         )
-        test_database.session.commit()
+        test_session.commit()
         new_org = Organisation.query.first()
         new_profession = Profession.query.first()
         new_location = Location.query.first()
@@ -85,7 +89,8 @@ class TestSearchCandidate:
         assert result.location == f"http://localhost{url_for('route_blueprint.search_candidate')}"
 
 
-def test_check_details(logged_in_user, test_client, test_database, test_candidate, test_grades):
+def test_check_details(logged_in_user, test_client, test_session, test_candidate, test_locations,
+                       test_orgs, test_professions):
     higher_grade = Grade.query.filter(Grade.value == 'SCS3').first()
     new_org = Organisation.query.first()
     new_profession = Profession.query.first()
@@ -97,17 +102,38 @@ def test_check_details(logged_in_user, test_client, test_database, test_candidat
             'new-location': new_location.id, 'temporary-promotion': 1
         }
         sess['human-readable-new-role'] = dict()
+        sess['candidate-id'] = test_candidate.id
     test_client.post('/update/check-your-answers')
     latest_role = test_candidate.roles.order_by(Role.id.desc()).first()
-    assert "Number 11" == Organisation.query.get(latest_role.organisation_id).name
+    assert "Organisation 1" == Organisation.query.get(latest_role.organisation_id).name
 
 
-def test_login(logged_in_user):
-    assert current_user.is_authenticated
+class TestAuthentication:
+    def test_login(self, logged_in_user):
+        assert current_user.is_authenticated
 
-
-def test_non_logged_in_users_are_redirected_to_login(test_client):
-    with test_client:
-        response = test_client.get('/', follow_redirects=False)
+    @pytest.mark.parametrize(
+        "url",
+        ["/update/search-candidate", "/reports/", "update/search-candidate"]
+    )
+    def test_non_logged_in_users_are_redirected_to_login(self, url, test_client):
+        with test_client:
+            response = test_client.get(url, follow_redirects=False)
         assert response.status_code == 302  # 302 is the redirect code
         assert response.location == url_for('auth.login', _external=True)
+
+
+class TestReports:
+    def test_get(self, test_client, logged_in_user):
+        result = test_client.get('/reports/')
+        assert "Select report" in result.data.decode("utf-8")
+
+    def test_post(self, test_client, logged_in_user):
+        data = {
+            'report-type': 'promotions',
+            'scheme': 'FLS',
+            'year': 2018,
+            'characteristic': 'ethnicity'
+        }
+        result = test_client.post('/reports/', data=data)
+        assert 200 == result.status_code

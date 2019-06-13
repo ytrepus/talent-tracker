@@ -4,16 +4,17 @@ import pytest
 
 
 @pytest.mark.parametrize("model, count", [
-    (Candidate, 1), (Organisation, 45), (Grade, 13), (Profession, 15)
+    (Candidate, 2), (Organisation, 45), (Grade, 17), (Profession, 15)
 ])
-def test_commit_data(model, count, test_database):
+# the extra candidates and grades come from loading the data in at db creation time
+def test_commit_data(model, count, test_session):
     commit_data()
     assert count == len(model.query.all())
-    clear_old_data()
 
 
 @pytest.mark.parametrize("model", [Candidate, Organisation, Grade, Profession])
-def test_clear_old_data(model, test_database):
-    clear_old_data()
-    assert 0 == len(model.query.all())
-    commit_data()
+def test_clear_old_data(model, test_session, test_client):
+    with test_client:
+        clear_old_data()
+        for model in [Candidate, Organisation, Grade, Profession]:
+            assert 0 == len(model.query.all())

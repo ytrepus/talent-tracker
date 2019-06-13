@@ -1,5 +1,4 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import validates
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
 from flask_migrate import Migrate
@@ -63,7 +62,7 @@ class Candidate(db.Model):
     def current_grade(self):
         return self.roles.order_by(Role.date_started.desc()).first().grade
 
-    def promoted(self, promoted_after_date):
+    def promoted(self, promoted_after_date: datetime.date):
         """
         Returns whether this candidate was promoted after the passed date
         :param promoted_after_date:
@@ -72,8 +71,11 @@ class Candidate(db.Model):
         :rtype:
         """
         roles_after_date = self.roles.filter(
-            Role.date_started >= datetime.strptime('Jun 1 2005', '%b %d %Y').date()).all()
+            Role.date_started >= promoted_after_date).all()
         return len(roles_after_date) > 0
+
+    def current_scheme(self) -> 'Scheme':
+        return Scheme.query.get(self.applications.order_by(Application.application_date.desc()).first().scheme_id)
 
 
 class Organisation(db.Model):
@@ -122,6 +124,9 @@ class Grade(db.Model):
         """
         current_rank = current_grade.rank
         return Grade.query.filter(Grade.rank <= (current_rank + 1)).order_by(Grade.rank.asc()).all()
+
+    def __repr__(self):
+        return f"Grade {self.value}"
 
 
 class Profession(db.Model):
@@ -177,16 +182,6 @@ class Application(db.Model):
     meta = db.Column(db.Boolean, default=False)
     delta = db.Column(db.Boolean, default=False)
     cohort = db.Column(db.Integer, unique=False)
-
-    @validates('candidate_id')
-    def validate_candidate_is_employed(self, key, candidate_id):
-        candidate = Candidate.query.get(candidate_id)
-        current_role = candidate.roles.filter(Role.date_started < self.application_date).\
-            one_or_none()
-        if current_role is not None:
-            return candidate_id
-        else:
-            raise AssertionError("This candidate is not employed!")
 
 
 class Leadership(db.Model):

@@ -18,4 +18,7 @@ def create_app(configuration=Config):
     from app.auth import auth_blueprint
     app.register_blueprint(auth_blueprint, url_prefix='/auth/')
 
+    from app.reports import reports_bp
+    app.register_blueprint(reports_bp, url_prefix='/reports/')
+
     return app
