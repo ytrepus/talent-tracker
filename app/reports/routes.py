@@ -14,4 +14,4 @@ def reports():
         params = form_data
         initialised_class = report_class(**params)
         return initialised_class.return_data()
-    return "Hello"
+    return "Select report"

@@ -119,8 +119,8 @@ class TestAuthentication:
     def test_non_logged_in_users_are_redirected_to_login(self, url, test_client):
         with test_client:
             response = test_client.get(url, follow_redirects=False)
-            assert response.status_code == 302  # 302 is the redirect code
-            assert response.location == url_for('auth.login', _external=True)
+        assert response.status_code == 302  # 302 is the redirect code
+        assert response.location == url_for('auth.login', _external=True)
 
 
 class TestReports:
