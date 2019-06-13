@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <form class="form" action="" method="post">
+        <div class="govuk-form-group">
+            <legend class="govuk-fieldset__legend--m">
+                <h2 class="govuk-fieldset__heading">
+                    Select report
+                </h2>
+            </legend>
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="report-type">
+                    Report type
+                </label>
+                <select class="govuk-select" id="report-type" name="report-type">
+                    <option value="promotions">Promotions</option>
+                </select>
+            </div>
+
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="characteristic">
+                    Select the characteristic you'd like to measure on this report
+                </label>
+                <select class="govuk-select" id="characteristic" name="characteristic">
+                    <option value="ethnicity">Ethnicity</option>
+                </select>
+            </div>
+
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="scheme">
+                    Select scheme
+                </label>
+                <select class="govuk-select" id="scheme" name="scheme">
+                    <option value="FLS">Future Leaders Scheme</option>
+                    <option value="SLS">Senior Leaders Scheme</option>
+                </select>
+            </div>
+
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="year">
+                    Select year this group started
+                </label>
+                <select class="govuk-select" id="year" name="year">
+                    <option value="2018">2018</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="input submit">
+            <input type="submit" value="Generate report" class="govuk-button">
+        </div>
+    </form>
+{% endblock %}
