@@ -46,6 +46,12 @@ class PromotionReport(Report):
         :return:
         :rtype:
         """
+        def decimal_or_none(first_number, second_number):
+            try:
+                return first_number / second_number
+            except ZeroDivisionError:
+                return 0
+
         output = []
         characteristics = self.table.query.all()
         for characteristic in characteristics:
@@ -55,7 +61,8 @@ class PromotionReport(Report):
                  ]
             )
             total_candidates = len(characteristic.candidates)
-            output.append((f"{characteristic.value}", promoted_candidates, promoted_candidates / total_candidates))
+            output.append((f"{characteristic.value}", promoted_candidates,
+                           decimal_or_none(promoted_candidates, total_candidates)))
         data = StringIO()
         w = csv.writer(data)
 
