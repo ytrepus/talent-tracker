@@ -124,5 +124,15 @@ class TestAuthentication:
 
 
 class TestReports:
-    def test_get(self, logged_in_user):
-        pass
+    def test_get(self, test_client, logged_in_user):
+        result = test_client.get('/reports/')
+        assert "Select report" in result.data.decode("utf-8")
+
+    def test_post(self, test_client, logged_in_user):
+        data = {
+            'report-type': 'promotions',
+            'scheme': 'FLS',
+            'year': 2018,
+        }
+        result = test_client.post('/reports/', data=data)
+        assert 200 == result.status_code
