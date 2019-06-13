@@ -4,10 +4,11 @@ import pytest
 
 
 @pytest.mark.parametrize("model, count", [
-    (Candidate, 2), (Organisation, 45), (Grade, 17), (Profession, 15)
+    (Candidate, 101), (Organisation, 45), (Grade, 13), (Profession, 15)
 ])
 # the extra candidates and grades come from loading the data in at db creation time
-def test_commit_data(model, count, test_session):
+def test_commit_data(model, count):
+    clear_old_data()
     commit_data()
     assert count == len(model.query.all())
 
