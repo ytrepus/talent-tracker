@@ -1,3 +1,4 @@
+from datetime import date
 from app.models import Ethnicity, Scheme
 from abc import ABC, abstractmethod
 from io import StringIO
@@ -11,15 +12,15 @@ class Report(ABC):
         self.tables = {
             'ethnicity': Ethnicity
         }
-        super(Report, self).__init__()
+        self.filename = None
 
     @abstractmethod
     def generate_report_data(self):
         print("Not implemented yet!")
 
-    def return_data(self, filename: str):
+    def return_data(self):
         headers = Headers()
-        headers["Content-Disposition"] = f"attachment; filename={filename}.csv"
+        headers["Content-Disposition"] = f"attachment; filename={self.filename}.csv"
         headers["Content-type"] = "text/csv"
 
         return Response(
@@ -29,13 +30,14 @@ class Report(ABC):
 
 
 class PromotionReport(Report):
-    def __init__(self, characteristic: str, scheme: str, cutoff_date: str):
+    def __init__(self, characteristic: str, scheme: str, year: int):
         super().__init__()
         self.characteristic = characteristic
         self.table = self.tables.get(self.characteristic)
         self.scheme = Scheme.query.filter_by(name=f'{scheme}').first()
-        self.promoted_before_date = cutoff_date
+        self.promoted_before_date = date(year + 1, 3, 1)  # can't take credit for promotions within first 3 months
         self.headers = ['characteristic', 'number promoted', 'percentage promoted']
+        self.filename = f"{characteristic}-{scheme}-{year}"
 
     def generate_report_data(self):
         """

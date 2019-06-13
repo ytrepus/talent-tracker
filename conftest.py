@@ -146,7 +146,7 @@ def test_multiple_candidates_multiple_ethnicities(test_session, test_ethnicities
 def candidates_promoter():
     def _promoter(candidates_to_promote, decimal_ratio):
         for candidate in candidates_to_promote[0:int(len(candidates_to_promote) * decimal_ratio)]:
-            candidate.roles.extend([Role(date_started=date(2019, 1, 1)), Role(date_started=date(2020, 1, 1))])
+            candidate.roles.extend([Role(date_started=date(2019, 1, 1)), Role(date_started=date(2020, 3, 1))])
         return candidates_to_promote
 
     return _promoter

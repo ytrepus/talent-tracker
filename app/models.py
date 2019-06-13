@@ -62,7 +62,7 @@ class Candidate(db.Model):
     def current_grade(self):
         return self.roles.order_by(Role.date_started.desc()).first().grade
 
-    def promoted(self, promoted_after_date):
+    def promoted(self, promoted_after_date: datetime.date):
         """
         Returns whether this candidate was promoted after the passed date
         :param promoted_after_date:
@@ -71,7 +71,7 @@ class Candidate(db.Model):
         :rtype:
         """
         roles_after_date = self.roles.filter(
-            Role.date_started >= datetime.strptime(promoted_after_date, '%Y-%m-%d').date()).all()
+            Role.date_started >= promoted_after_date).all()
         return len(roles_after_date) > 0
 
     def current_scheme(self) -> 'Scheme':
