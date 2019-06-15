@@ -116,15 +116,9 @@ def generate_known_candidate():
         age_range_id=2, ethnicity_id=1, working_pattern_id=1, belief_id=1, gender_id=1, sexuality_id=1,
         roles=[Role(date_started=date(2015, 9, 2), temporary_promotion=False,
                     organisation_id=Organisation.query.filter(Organisation.name == 'Cabinet Office').first().id,
-<<<<<<< HEAD
                     grade=Grade.query.filter(Grade.value.like("%Faststream%")).first())
                ],
         applications=[Application(scheme_id=1, scheme_start_date=date(2018, 3, 1))]
-=======
-                    grade=Grade.query.filter(Grade.value.like("%Faststream%")).first(),
-                    location_id=Location.query.filter_by(value="London").first().id,)
-               ]
->>>>>>> Further improve seed data
     )
 
 
@@ -134,8 +128,17 @@ def generate_random_candidate():
                      joining_date=date(random.randrange(1960, 2018), random.randrange(1, 12), random.randrange(1, 28)),
                      completed_fast_stream=random.choice([True, False]),
                      joining_grade=(Grade.query.filter_by(rank=6).first()).id,
-                     ethnicity_id=random.choice(Ethnicity.query.all()).id,
-                     roles=[Role(location_id=Location.query.first().id)],
+                     ethnicity=random.choice(Ethnicity.query.all()),
+                     age_range=random.choice(AgeRange.query.all()),
+                     gender_id=random.choice(Gender.query.all()).id,
+                     long_term_health_condition=random.choice([True, False, False]),
+                     caring_responsibility=random.choice([True, False, False]),
+                     belief=random.choice(Belief.query.all()), sexuality=random.choice(Sexuality.query.all()),
+                     working_pattern=random.choice(WorkingPattern.query.all()),
+                     roles=[Role(date_started=date(2015, 9, 2), temporary_promotion=False,
+                                 organisation_id=random.choice(Organisation.query.all()).id,
+                                 grade=Grade.query.filter(Grade.value.like("%Faststream%")).first())
+                            ]
                      )
 
 
