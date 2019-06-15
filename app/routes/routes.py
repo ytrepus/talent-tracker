@@ -178,5 +178,5 @@ def complete():
 
 @route_blueprint.route('/candidate')
 def candidate():
-    return render_template('profile.html', roles=Role.query.order_by(Role.date_started.desc()).all(),
+    return render_template('candidates/profile.html', roles=Role.query.order_by(Role.date_started.desc()).all(),
                            candidate=Candidate.query.get(2))

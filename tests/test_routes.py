@@ -120,7 +120,7 @@ class TestAuthentication:
 
     @pytest.mark.parametrize(
         "url",
-        ["/update/search-candidate", "/reports/", "update/search-candidate"]
+        ["/update/search-candidate", "/reports/", "/update/search-candidate", "/candidates/candidate/1"]
     )
     def test_non_logged_in_users_are_redirected_to_login(self, url, test_client):
         with test_client:
@@ -143,3 +143,9 @@ class TestReports:
         }
         result = test_client.post('/reports/', data=data)
         assert 200 == result.status_code
+
+
+class TestProfile:
+    def test_get(self, test_client, logged_in_user):
+        result = test_client.get('/candidates/candidate/1')
+        assert "Career profile for Test Candidate" in result.data.decode("utf-8")
