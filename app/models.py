@@ -64,18 +64,20 @@ class Candidate(db.Model):
     def current_grade(self) -> 'Grade':
         return self.roles.order_by(Role.date_started.desc()).first().grade
 
-    def promoted(self, promoted_after_date: datetime.date):
+    def promoted(self, promoted_after_date: datetime.date, temporary=False):
         """
         Returns whether this candidate was promoted after the passed date. Promotions are only considered if they're
-        substantive
+        substantive. There is a flag is users want to see temporary promotions instead
         :param promoted_after_date:
         :type promoted_after_date:
+        :param temporary: Whether the user wants temporary or substantive promotions
+        :type temporary: bool
         :return:
         :rtype:
         """
         roles_after_date = self.roles.filter(and_(
             Role.date_started >= promoted_after_date,
-            Role.temporary_promotion.is_(False),
+            Role.temporary_promotion.is_(temporary),
         )).order_by(Role.date_started.desc()).all()
         return len(roles_after_date) > 0
 

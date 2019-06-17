@@ -36,7 +36,8 @@ class PromotionReport(Report):
         self.table = self.tables.get(self.characteristic)
         self.scheme = Scheme.query.filter_by(name=f'{scheme}').first()
         self.promoted_before_date = date(int(year) + 1, 3, 1)  # can't take credit for promotions within first 3 months
-        self.headers = ['characteristic', 'number promoted', 'percentage promoted']
+        self.headers = ['characteristic', 'number substantively promoted', 'percentage substantively promoted',
+                        'number temporarily promoted', 'percentage temporarily promoted', 'total in group']
         self.filename = f"{characteristic}-{scheme}-{year}"
 
     def generate_report_data(self):
@@ -52,17 +53,26 @@ class PromotionReport(Report):
             except ZeroDivisionError:
                 return 0
 
+        def promoted_candidates(characteristic, temporary):
+            candidates = len([candidate for candidate in characteristic.candidates
+                              if candidate.promoted(self.promoted_before_date, temporary=temporary)
+                              and candidate.current_scheme() == self.scheme])  # noqa
+            total_candidates = len(characteristic.candidates)
+            return [candidates, decimal_or_none(candidates, total_candidates)]
+
+        def line_writer(characteristic):
+            line = [f"{characteristic.value}"]
+            line.extend(promoted_candidates(characteristic, False))
+            line.extend(promoted_candidates(characteristic, True))
+            line.append(len(characteristic.candidates))
+            return line
+
         output = []
         characteristics = self.table.query.all()
         for characteristic in characteristics:
-            promoted_candidates = len(
-                [candidate for candidate in characteristic.candidates if
-                 candidate.promoted(self.promoted_before_date) and candidate.current_scheme() == self.scheme
-                 ]
-            )
-            total_candidates = len(characteristic.candidates)
-            output.append((f"{characteristic.value}", promoted_candidates,
-                           decimal_or_none(promoted_candidates, total_candidates)))
+            output.append(line_writer(characteristic))
+        print(output)
+
         data = StringIO()
         w = csv.writer(data)
 
@@ -78,8 +88,11 @@ class PromotionReport(Report):
                 item[0],
                 item[1],
                 "{0:.0%}".format(item[2]),  # format decimal as percentage
-
-            ))
+                item[3],
+                "{0:.0%}".format(item[4]),  # format decimal as percentage
+                item[5]
+            )
+            )
             yield data.getvalue()
             data.seek(0)
             data.truncate(0)
