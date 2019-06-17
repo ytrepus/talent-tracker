@@ -59,7 +59,7 @@ class Candidate(db.Model):
     def __repr__(self):
         return f'<Candidate email {self.email_address}>'
 
-    def current_grade(self):
+    def current_grade(self) -> 'Grade':
         return self.roles.order_by(Role.date_started.desc()).first().grade
 
     def promoted(self, promoted_after_date: datetime.date):
@@ -159,6 +159,10 @@ class Role(db.Model):
 
     def __repr__(self):
         return f'<Role held by {self.candidate} at {self.organisation_id}>'
+
+    def is_promotion(self):
+        role_before_this = self.candidate.roles.order_by(Role.date_started.desc()).first()
+        return self.grade.rank > role_before_this.grade.rank
 
 
 class Scheme(db.Model):
