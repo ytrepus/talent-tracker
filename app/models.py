@@ -4,6 +4,8 @@ from flask_login import UserMixin
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from datetime import datetime
+from sqlalchemy import and_
+
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -64,14 +66,17 @@ class Candidate(db.Model):
 
     def promoted(self, promoted_after_date: datetime.date):
         """
-        Returns whether this candidate was promoted after the passed date
+        Returns whether this candidate was promoted after the passed date. Promotions are only considered if they're
+        substantive
         :param promoted_after_date:
         :type promoted_after_date:
         :return:
         :rtype:
         """
-        roles_after_date = self.roles.filter(
-            Role.date_started >= promoted_after_date).all()
+        roles_after_date = self.roles.filter(and_(
+            Role.date_started >= promoted_after_date,
+            Role.temporary_promotion.is_(False),
+        )).order_by(Role.date_started.desc()).all()
         return len(roles_after_date) > 0
 
     def current_scheme(self) -> 'Scheme':
@@ -162,7 +167,7 @@ class Role(db.Model):
 
     def is_promotion(self):
         role_before_this = self.candidate.roles.order_by(Role.date_started.desc()).first()
-        return self.grade.rank > role_before_this.grade.rank
+        return self.grade.rank > role_before_this.grade.rank and not self.temporary_promotion
 
 
 class Scheme(db.Model):
