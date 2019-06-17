@@ -57,7 +57,7 @@ class TestCandidate:
             (  # definitely a promotion, but one that we can't take credit for
                     [
                         {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
-                        {'date-started': date(2019, 10, 1), 'grade-value': "Grade 7", 'temporary': False}
+                        {'date-started': date(2019, 8, 1), 'grade-value': "Grade 6", 'temporary': False}
                     ],
                     False
 
@@ -65,7 +65,7 @@ class TestCandidate:
             (  # level transfer that we can't take credit for
                     [
                         {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
-                        {'date-started': date(2019, 10, 1), 'grade-value': "Grade 7"}
+                        {'date-started': date(2019, 8, 1), 'grade-value': "Grade 7"}
                     ],
                     False
 
