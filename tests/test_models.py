@@ -76,10 +76,10 @@ class TestCandidate:
         test_candidate.roles.extend([
             Role(date_started=list_of_role_data[0].get('date-started'),
                  grade=Grade.query.filter_by(value=list_of_role_data[0].get('grade-value')).first(),
-                 temporary_promotion=list_of_role_data[0].get('temporary')),
+                 temporary_promotion=False),
             Role(date_started=list_of_role_data[1].get('date-started'),
                  grade=Grade.query.filter_by(value=list_of_role_data[1].get('grade-value')).first(),
-                 temporary_promotion=list_of_role_data[0].get('temporary'))
+                 temporary_promotion=list_of_role_data[1].get('temporary'))
         ])
         assert test_candidate.promoted('2019-09-01') is expected_outcome
 
@@ -106,13 +106,15 @@ class TestGrade:
 
 class TestRole:
 
-    @pytest.mark.parametrize("role_values, expected_outcome", [
-        (["Grade 7", "Grade 6"], True),
-        (["Grade 7", "Grade 7"], False)
+    @pytest.mark.parametrize("roles_values, expected_outcome", [
+        (["Grade 7", "Grade 6", False], True),  # substantive promotion
+        (["Grade 7", "Grade 7", True], False),  # level transfer
     ])
-    def test_is_promoted_returns_correct_values(self, role_values, expected_outcome, test_session, test_candidate):
+    def test_is_promoted_returns_correct_values(self, roles_values, expected_outcome, test_session, test_candidate):
         test_candidate.roles.extend([
-                    Role(date_started=date(2019, 1, 1), grade=Grade.query.filter_by(value=role_values[0]).first()),
-                    Role(date_started=date(2020, 6, 1), grade=Grade.query.filter_by(value=role_values[1]).first())
+                    Role(date_started=date(2019, 1, 1), grade=Grade.query.filter_by(value=roles_values[0]).first(),
+                         temporary_promotion=False),
+                    Role(date_started=date(2020, 6, 1), grade=Grade.query.filter_by(value=roles_values[1]).first(),
+                         temporary_promotion=roles_values[2])
                 ])
         assert test_candidate.roles[0].is_promotion() is expected_outcome
