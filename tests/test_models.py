@@ -31,43 +31,43 @@ class TestCandidate:
         "list_of_role_data, expected_outcome",
         [
             (  # substantive promotion after the date
-                    [
-                        {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
-                        {'date-started': date(2020, 6, 1), 'grade-value': "Grade 6", 'temporary': False}
-                    ],
-                    True
+                [
+                    {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
+                    {'date-started': date(2020, 6, 1), 'grade-value': "Grade 6", 'temporary': False}
+                ],
+                True
 
             ),
             (  # temporary promotion after the date
-                    [
-                        {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
-                        {'date-started': date(2020, 6, 1), 'grade-value': "Grade 6", 'temporary': True}
-                    ],
-                    False
+                [
+                    {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
+                    {'date-started': date(2020, 6, 1), 'grade-value': "Grade 6", 'temporary': True}
+                ],
+                False
 
             ),
             (  # level transfer after the date
-                    [
-                        {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
-                        {'date-started': date(2020, 6, 1), 'grade-value': "Grade 7"}
-                    ],
-                    False
+                [
+                    {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
+                    {'date-started': date(2020, 6, 1), 'grade-value': "Grade 7"}
+                ],
+                False
 
             ),
             (  # definitely a promotion, but one that we can't take credit for
-                    [
-                        {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
-                        {'date-started': date(2019, 8, 1), 'grade-value': "Grade 6", 'temporary': False}
-                    ],
-                    False
+                [
+                    {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
+                    {'date-started': date(2019, 8, 1), 'grade-value': "Grade 6", 'temporary': False}
+                ],
+                False
 
             ),
             (  # level transfer that we can't take credit for
-                    [
-                        {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
-                        {'date-started': date(2019, 8, 1), 'grade-value': "Grade 7"}
-                    ],
-                    False
+                [
+                    {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
+                    {'date-started': date(2019, 8, 1), 'grade-value': "Grade 7"}
+                ],
+                False
 
             ),
         ]
@@ -112,9 +112,9 @@ class TestRole:
     ])
     def test_is_promoted_returns_correct_values(self, roles_values, expected_outcome, test_session, test_candidate):
         test_candidate.roles.extend([
-                    Role(date_started=date(2019, 1, 1), grade=Grade.query.filter_by(value=roles_values[0]).first(),
-                         temporary_promotion=False),
-                    Role(date_started=date(2020, 6, 1), grade=Grade.query.filter_by(value=roles_values[1]).first(),
-                         temporary_promotion=roles_values[2])
-                ])
+            Role(date_started=date(2019, 1, 1), grade=Grade.query.filter_by(value=roles_values[0]).first(),
+                 temporary_promotion=False),
+            Role(date_started=date(2020, 6, 1), grade=Grade.query.filter_by(value=roles_values[1]).first(),
+                 temporary_promotion=roles_values[2])
+        ])
         assert test_candidate.roles[0].is_promotion() is expected_outcome
