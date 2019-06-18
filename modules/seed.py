@@ -100,8 +100,9 @@ def apply_candidate_to_scheme(scheme_name: str, candidate: Candidate):
     return candidate
 
 
-def promote_candidate(candidate: Candidate):
-    candidate.roles.extend([Role(date_started=date(2018, 1, 1)), Role(date_started=date(2019, 6, 1))])
+def promote_candidate(candidate: Candidate, temporary=random.choice([True, False])):
+    candidate.roles.extend([Role(date_started=date(2018, 1, 1), temporary_promotion=False),
+                            Role(date_started=date(2019, 6, 1), temporary_promotion=temporary)])
     return candidate
 
 
