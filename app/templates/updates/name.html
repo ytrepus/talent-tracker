@@ -1,0 +1,25 @@
+{% extends 'updates/update-layout.html' %}
+    {% block form_content %}
+        <div class="govuk-form-group">
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="first-name">
+                    New first name
+                </label>
+                <span id="first-name-hint" class="govuk-hint">
+                    If this hasn't changed, please retype it here. If you don't, the candidate's name will be blank
+                </span>
+                <input class="govuk-input" id="first-name" name="first-name" type="text">
+            </div>
+        
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="last-name">
+                    New last name
+                </label>
+                <span id="last-name-hint" class="govuk-hint">
+                    If this hasn't changed, please retype it here. If you don't, the candidate's name will be blank
+                </span>
+                <input class="govuk-input" id="last-name" name="last-name" type="text">
+            </div>
+        </div>
+        {% endblock %}
+
