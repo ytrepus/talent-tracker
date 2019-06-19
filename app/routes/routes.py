@@ -57,6 +57,7 @@ def update_role():
         return redirect(url_for('route_blueprint.search_candidate'))
 
     if request.method == 'POST':
+        session['change-route'] = 'route_blueprint.update_role'
         session['new-role'] = {key: int(value[0]) for key, value in request.form.to_dict(flat=False).items()}
         return redirect(url_for('route_blueprint.email_address'))
 
@@ -75,6 +76,7 @@ def update_name():
         return redirect(url_for('route_blueprint.search_candidate'))
 
     if request.method == "POST":
+        session['change-route'] = 'route_blueprint.update_name'
         session['new-name'] = request.form.to_dict(flat=True)
         return redirect(url_for('route_blueprint.check_your_answers'))
 
