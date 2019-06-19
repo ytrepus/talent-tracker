@@ -13,10 +13,43 @@ class Report(ABC):
             'ethnicity': Ethnicity
         }
         self.filename = None
+        self.headers = []
+        self.filename = ''
 
     @abstractmethod
+    def write_row(self, row_data, data_object, csv_writer):
+        raise NotImplementedError
+
+    def write_headers(self, data_object, csv_writer):
+        csv_writer.writerow(self.headers)
+        return data_object.getvalue()
+
+    @staticmethod
+    def decimal_or_none(first_number, second_number):
+        try:
+            return first_number / second_number
+        except ZeroDivisionError:
+            return 0
+
+    @abstractmethod
+    def get_data(self):
+        raise NotImplementedError
+
     def generate_report_data(self):
-        print("Not implemented yet!")
+        output = self.get_data()
+        data = StringIO()
+        w = csv.writer(data)
+
+        # write header
+        yield self.write_headers(data, w)
+        data.seek(0)
+        data.truncate(0)
+
+        # write each item
+        for item in output:
+            yield self.write_row(item, data, w)
+            data.seek(0)
+            data.truncate(0)
 
     def return_data(self):
         headers = Headers()
@@ -29,70 +62,59 @@ class Report(ABC):
         )
 
 
-class PromotionReport(Report):
-    def __init__(self, characteristic: str, scheme: str, year: str):
+class PromotionReport(Report, ABC):
+    def __init__(self, scheme: str, year: str):
         super().__init__()
-        self.characteristic = characteristic
-        self.table = self.tables.get(self.characteristic)
         self.scheme = Scheme.query.filter_by(name=f'{scheme}').first()
         self.promoted_before_date = date(int(year) + 1, 3, 1)  # can't take credit for promotions within first 3 months
         self.headers = ['characteristic', 'number substantively promoted', 'percentage substantively promoted',
                         'number temporarily promoted', 'percentage temporarily promoted', 'total in group']
-        self.filename = f"{characteristic}-{scheme}-{year}"
 
-    def generate_report_data(self):
-        """
-        Search for promoted candidates and group them by characteristic. Provide an absolute number promoted
-        and the percentage of that group promoted
-        :return:
-        :rtype:
-        """
-        def decimal_or_none(first_number, second_number):
-            try:
-                return first_number / second_number
-            except ZeroDivisionError:
-                return 0
+    def write_row(self, row_data, data_object, csv_writer):
+        csv_writer.writerow((
+            row_data[0],
+            row_data[1],
+            "{0:.0%}".format(row_data[2]),  # format decimal as percentage
+            row_data[3],
+            "{0:.0%}".format(row_data[4]),  # format decimal as percentage
+            row_data[5]
+        )
+        )
+        return data_object.getvalue()
 
-        def promoted_candidates(characteristic, temporary):
-            candidates = len([candidate for candidate in characteristic.candidates
-                              if candidate.promoted(self.promoted_before_date, temporary=temporary)
-                              and candidate.current_scheme() == self.scheme])  # noqa
-            total_candidates = len(characteristic.candidates)
-            return [candidates, decimal_or_none(candidates, total_candidates)]
 
-        def line_writer(characteristic):
-            line = [f"{characteristic.value}"]
-            line.extend(promoted_candidates(characteristic, False))
-            line.extend(promoted_candidates(characteristic, True))
-            line.append(len(characteristic.candidates))
-            return line
+class EthnicityPromotionReport(PromotionReport):
+    def __init__(self, scheme: str, year: str):
+        super().__init__(scheme, year)
+        self.filename = f"promotions-by-ethnicity-{scheme}-{year}-generated-{date.today().strftime('5%d-%m-%Y')}"
 
+    def promoted_candidates(self, characteristic, temporary):
+        candidates = len([candidate for candidate in characteristic.candidates
+                          if candidate.promoted(self.promoted_before_date, temporary=temporary)
+                          and candidate.current_scheme() == self.scheme])  # noqa
+        total_candidates = len(characteristic.candidates)
+        return [candidates, self.decimal_or_none(candidates, total_candidates)]
+
+    def line_writer(self, characteristic):
+        line = [f"{characteristic.value}"]
+        line.extend(self.promoted_candidates(characteristic, False))
+        line.extend(self.promoted_candidates(characteristic, True))
+        line.append(len(characteristic.candidates))
+        return line
+
+    def get_data(self):
         output = []
-        characteristics = self.table.query.all()
+        characteristics = Ethnicity.query.all()
         for characteristic in characteristics:
-            output.append(line_writer(characteristic))
-        print(output)
+            output.append(self.line_writer(characteristic))
+        return output
 
-        data = StringIO()
-        w = csv.writer(data)
-
-        # write header
-        w.writerow(self.headers)
-        yield data.getvalue()
-        data.seek(0)
-        data.truncate(0)
-
-        # write each item
-        for item in output:
-            w.writerow((
-                item[0],
-                item[1],
-                "{0:.0%}".format(item[2]),  # format decimal as percentage
-                item[3],
-                "{0:.0%}".format(item[4]),  # format decimal as percentage
-                item[5]
-            )
-            )
-            yield data.getvalue()
-            data.seek(0)
-            data.truncate(0)
+class ChangeableProtectedCharacteristicReport(PromotionReport):
+    """
+    This class generates the reports for all characteristics in the ChangeableProtectedCharacteristics table. It
+    inherits from Promotion report, because this is measuring promotions and therefore has the same headers and row
+    generator. However, since they're changeable the methods for getting the data back out of the system are different
+    to Ethnicity, which we consider fixed at the moment.
+    """
+    def __init__(self, specific):
+        pass
