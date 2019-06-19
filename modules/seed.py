@@ -106,16 +106,20 @@ def promote_candidate(candidate: Candidate, temporary=random.choice([True, False
     return candidate
 
 
+def random_candidates(scheme: str, number: int):
+    return [apply_candidate_to_scheme(scheme, generate_random_candidate()) for i in range(number)]
+
+
 def commit_data():
     for key, value in generate_random_fixed_data().items():
         db.session.add_all(value)
     candidate = generate_known_candidate()
     db.session.add(candidate)
-    random_candidates = [generate_random_candidate() for i in range(100)]
-    random_fls_candidates = list(map(lambda x: apply_candidate_to_scheme('FLS', x), random_candidates))
     random_promoted_fls_candidates = [promote_candidate(candidate) if i % 2 == 0 else candidate
-                                      for i, candidate in enumerate(random_fls_candidates)]
-    db.session.add_all(list(random_promoted_fls_candidates))
+                                      for i, candidate in enumerate(random_candidates('FLS', 100))]
+    random_promoted_sls_candidates = [promote_candidate(candidate) if i % 2 == 0 else candidate
+                                      for i, candidate in enumerate(random_candidates('SLS', 100))]
+    db.session.add_all([random_promoted_fls_candidates, random_promoted_sls_candidates])
     db.session.commit()
 
 
