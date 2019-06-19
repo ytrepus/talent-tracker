@@ -119,7 +119,9 @@ def commit_data():
                                       for i, candidate in enumerate(random_candidates('FLS', 100))]
     random_promoted_sls_candidates = [promote_candidate(candidate) if i % 2 == 0 else candidate
                                       for i, candidate in enumerate(random_candidates('SLS', 100))]
-    db.session.add_all([random_promoted_fls_candidates, random_promoted_sls_candidates])
+    candidates = random_promoted_sls_candidates + random_promoted_fls_candidates
+    print(candidates)
+    db.session.add_all(candidates)
     db.session.commit()
 
 
