@@ -29,16 +29,11 @@ class TestNewEmail:
 
 
 class TestSingleUpdate:
-    @pytest.mark.parametrize("update_type, form_title", [
-        ("role", "Role update"),
-    ])
-    def test_get(self, update_type, form_title, test_client, test_candidate, logged_in_user, test_roles):
+    def test_get(self, test_client, test_candidate, logged_in_user, test_roles):
         with test_client.session_transaction() as sess:
             sess['candidate-id'] = 1
-        result = test_client.get(f'/update/single/{update_type}', follow_redirects=False)
-        print(session)
-        print(result.data)
-        assert f'<h1 class="govuk-heading-xl">{form_title}</h1>' in result.data.decode('UTF-8')
+        result = test_client.get(f'/update/role', follow_redirects=False)
+        assert f'<h1 class="govuk-heading-xl">Role update</h1>' in result.data.decode('UTF-8')
 
     def test_post(self, test_client, test_candidate, test_session, logged_in_user):
         higher_grade = Grade.query.filter(Grade.value == 'SCS3').first()
@@ -56,23 +51,26 @@ class TestSingleUpdate:
             'new-org': str(new_org.id), 'new-profession': str(new_profession.id),
             'new-location': str(new_location.id), 'temporary-promotion': '1'
         }
-        test_client.post('/update/single/role', data=data)
+        test_client.post('/update/role', data=data)
         assert data.keys() == session.get('new-role').keys()
 
 
 class TestSearchCandidate:
     def test_get(self, test_client, logged_in_user):
         result = test_client.get('/update/search-candidate')
-        assert b"Most recent candidate email address" in result.data
+        assert "Most recent candidate email address" in result.data.decode("UTF-8")
 
-    def test_post(self, test_client, test_candidate, logged_in_user, test_roles):
+    @pytest.mark.parametrize("update_type, expected_title", [("role", "Role update"), ("name", "Update name")])
+    def test_post(self, update_type, expected_title, test_client, test_candidate, logged_in_user, test_roles):
         with test_client.session_transaction() as sess:
             sess['bulk-single'] = "single"
-            sess['update-type'] = 'role'
+            sess['update-type'] = update_type
         data = {'candidate-email': 'test.candidate@numberten.gov.uk'}
         result = test_client.post('/update/search-candidate', data=data, follow_redirects=True,
                                   headers={'content-type': 'application/x-www-form-urlencoded'})
-        assert b'Details of the new role for test.candidate@numberten.gov.uk' in result.data
+        print(result.data.decode("UTF-8"))
+
+        assert expected_title in result.data.decode("UTF-8")
 
         assert 1 == session.get('candidate-id')
 
@@ -101,7 +99,7 @@ def test_check_details(logged_in_user, test_client, test_session, test_candidate
             'new-org': new_org.id, 'new-profession': new_profession.id,
             'new-location': new_location.id, 'temporary-promotion': 1
         }
-        sess['human-readable-new-role'] = dict()
+        sess['data-update'] = dict()
         sess['candidate-id'] = test_candidate.id
     test_client.post('/update/check-your-answers')
     latest_role = test_candidate.roles.order_by(Role.id.desc()).first()
