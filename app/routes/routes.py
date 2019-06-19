@@ -26,19 +26,19 @@ def results():
 
 @route_blueprint.route('/update', methods=["POST", "GET"])
 def choose_update():
-    next_steps = {
-        'role': 'route_blueprint.search_candidate',
-        'name': 'route_blueprint.update_name'
-    }
     if request.method == "POST":
         session['bulk-single'] = request.form.get("bulk-single")
         session['update-type'] = request.form.get("update-type")
-        return redirect(url_for(next_steps.get(request.form.get("update-type"))))
+        return redirect(url_for('route_blueprint.search_candidate'))
     return render_template('choose-update.html')
 
 
 @route_blueprint.route('/update/search-candidate', methods=["POST", "GET"])
 def search_candidate():
+    next_steps = {
+        'role': 'route_blueprint.update_role',
+        'name': 'route_blueprint.update_name'
+    }
     if request.method == "POST":
         candidate = Candidate.query.filter_by(email_address=request.form.get('candidate-email')).one_or_none()
         if candidate:
@@ -46,13 +46,12 @@ def search_candidate():
         else:
             session['error'] = "That email does not exist"
             return redirect(url_for('route_blueprint.search_candidate'))
-        return redirect(url_for('route_blueprint.update', bulk_or_single=session.get('bulk-single'),
-                                update_type=session.get('update-type')))
+        return redirect(url_for(next_steps.get(session.get('update-type'))))
     return render_template('search-candidate.html', error=session.pop('error', None))
 
 
-@route_blueprint.route('/update/<string:bulk_or_single>/<string:update_type>', methods=["POST", "GET"])
-def update(bulk_or_single, update_type):
+@route_blueprint.route('/update/role', methods=["POST", "GET"])
+def update_role():
     candidate_id = session.get('candidate-id')
     if not candidate_id:
         return redirect(url_for('route_blueprint.search_candidate'))
@@ -61,17 +60,12 @@ def update(bulk_or_single, update_type):
         session['new-role'] = {key: int(value[0]) for key, value in request.form.to_dict(flat=False).items()}
         return redirect(url_for('route_blueprint.email_address'))
 
-    update_types = {
-        "role": {'title': "Role update",
-                 "promotable_grades": Grade.new_grades(Candidate.query.get(candidate_id).current_grade()),
-                 "organisations": Organisation.query.all(), "locations": Location.query.all(),
-                 "professions": Profession.query.all()
-                 },
-        "fls-survey": "FLS Survey update", "sls-survey": "SLS Survey update"
+    data = {
+        "promotable_grades": Grade.new_grades(Candidate.query.get(candidate_id).current_grade()),
+        "organisations": Organisation.query.all(), "locations": Location.query.all(),
+        "professions": Profession.query.all()
     }
-    template = f"updates/{bulk_or_single}-{update_type}.html"
-    return render_template(template, page_header=update_types.get(update_type).get('title'),
-                           data=update_types.get(update_type), candidate=Candidate.query.get(candidate_id))
+    return render_template('updates/role.html', page_header="Role update", data=data, candidate=Candidate.query.get(candidate_id))
 
 
 @route_blueprint.route('/update/name', methods=["POST", "GET"])
