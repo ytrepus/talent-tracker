@@ -6,7 +6,7 @@
         {{ value }}
     </dd>
     <dd class="govuk-summary-list__actions">
-        <a class="govuk-link" href="{{ url_for('route_blueprint.update', bulk_or_single='single', update_type='role') }}">
+        <a class="govuk-link" href="{{ url_for(session.get('change-route')) }}">
             Change<span class="govuk-visually-hidden"> {{ key }}</span>
         </a>
     </dd>

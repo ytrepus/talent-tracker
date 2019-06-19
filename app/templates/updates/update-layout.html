@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h2 class="govuk-heading-l">
+        Updating details for {{ candidate.first_name }} {{ candidate.last_name }}
+    </h2>
+    <form class="form" action="" method="post">
+        {% block form_content %}
+
+        {% endblock %}
+        <div class="input submit">
+            <input type="submit" value="Continue" class="govuk-button">
+        </div>
+    </form>
+{% endblock %}

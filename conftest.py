@@ -67,6 +67,8 @@ def test_session(db):
 def test_candidate(test_session):
     candidate = Candidate.query.get(1)
     candidate.email_address = 'test.candidate@numberten.gov.uk'
+    candidate.first_name = "Testy"
+    candidate.last_name = "Candidate"
     candidate.completed_fast_stream = True
     candidate.joining_date = date(2010, 5, 1)
     candidate.joining_grade = 1
@@ -172,10 +174,8 @@ def logged_in_user(test_client):
 
 @pytest.fixture
 def seed_data(test_client):
-    print("Seeding!")
     with test_client:
         clear_old_data()
         commit_data()
         yield
-        print("Clearing!")
         clear_old_data()
