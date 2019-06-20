@@ -54,7 +54,7 @@ class Candidate(db.Model):
 
     joining_grade = db.Column(db.ForeignKey('grade.id'))
     ethnicity_id = db.Column(db.ForeignKey('ethnicity.id'))
-    changeable_protected_characteristics = db.Column(db.ForeignKey('changeable_protected_characteristics.id'))
+    changeable_protected_characteristics_id = db.Column(db.ForeignKey('changeable_protected_characteristics.id'))
 
     roles = db.relationship('Role', backref='candidate', lazy='dynamic')
     applications = db.relationship('Application', backref='candidate', lazy='dynamic')
