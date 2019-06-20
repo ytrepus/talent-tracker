@@ -54,6 +54,7 @@ class Candidate(db.Model):
 
     joining_grade = db.Column(db.ForeignKey('grade.id'))
     ethnicity_id = db.Column(db.ForeignKey('ethnicity.id'))
+    changeable_protected_characteristics = db.Column(db.ForeignKey('changeable_protected_characteristics.id'))
 
     roles = db.relationship('Role', backref='candidate', lazy='dynamic')
     applications = db.relationship('Application', backref='candidate', lazy='dynamic')
@@ -183,7 +184,6 @@ class Application(db.Model):
     aspirational_grade = db.Column(db.ForeignKey('grade.id'))
     scheme_id = db.Column(db.ForeignKey('scheme.id'))
     candidate_id = db.Column(db.ForeignKey('candidate.id'), nullable=False)
-    changeable_protected_characteristics = db.Column(db.ForeignKey('changeable_protected_characteristics.id'))
 
     application_date = db.Column(db.Date())
     scheme_start_date = db.Column(db.Date(), index=True)
