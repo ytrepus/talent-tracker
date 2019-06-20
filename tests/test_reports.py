@@ -58,4 +58,3 @@ class TestBooleanCharacteristicPromotionReport:
             ["No answer provided", 6, 0.6, 0, 0.0, 10]
         ]
         assert output == expected_output
-
