@@ -160,7 +160,7 @@ def gender_ten_of_each(test_session):
 @pytest.fixture
 def disability_with_without_no_answer(test_session):
     output = []
-    for i in range(30):
+    for i in range(29):
         if i % 3 == 0:
             output.append(Candidate(long_term_health_condition=True))
         elif i % 3 == 1:

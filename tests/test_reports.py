@@ -34,20 +34,28 @@ class TestReports:
 
 
 class TestBooleanCharacteristicPromotionReport:
-    def test_get_data(self, disability_with_without_no_answer, candidates_promoter):
-        with_disability = Candidate.query.filter(Candidate.long_term_health_condition.is_(True)).all()
-        without_disability = Candidate.query.filter(Candidate.long_term_health_condition.is_(False)).all()
-        no_response = Candidate.query.filter(Candidate.long_term_health_condition.is_(None)).all()
+    def test_get_data(self, disability_with_without_no_answer, candidates_promoter, scheme_appender, test_session):
 
-        candidates_promoter(with_disability, .3, temporary=False)
-        candidates_promoter(without_disability, .4, temporary=False)
-        candidates_promoter(no_response, .6, temporary=False)
+        candidate_groups = {
+            'with_disability': Candidate.query.filter(Candidate.long_term_health_condition.is_(True)).all(),
+            'without_disability': Candidate.query.filter(Candidate.long_term_health_condition.is_(False)).all(),
+            'no_response': Candidate.query.filter(Candidate.long_term_health_condition.is_(None)).all(),
+        }
+
+        candidates_promoter(candidate_groups.get('with_disability'), .3, temporary=False)
+        candidates_promoter(candidate_groups.get('without_disability'), .4, temporary=False)
+        candidates_promoter(candidate_groups.get('no_response'), .6, temporary=False)
+
+        for group in candidate_groups.values():
+            scheme_appender(group, scheme_id_to_add=1)
+
+        test_session.commit()
 
         output = BooleanCharacteristicPromotionReport('FLS', '2018', 'long_term_health_condition').get_data()
         expected_output = [
-            ["People with a disability", 3, 0.3, 0, 0],
-            ["People without a disability", 4, 0.4, 0, 0],
-            ["No answer provided", 6, 0.6, 0, 0]
+            ["People with a disability", 3, 0.3, 0, 0.0, 10],
+            ["People without a disability", 4, 0.4, 0, 0.0, 10],
+            ["No answer provided", 6, 0.6, 0, 0.0, 10]
         ]
-        assert expected_output == output
+        assert output == expected_output
 

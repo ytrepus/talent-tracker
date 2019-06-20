@@ -1,5 +1,5 @@
 from datetime import date
-from app.models import Ethnicity, Scheme, Gender
+from app.models import Ethnicity, Scheme, Gender, Candidate
 from abc import ABC, abstractmethod
 from io import StringIO
 from werkzeug.datastructures import Headers
@@ -90,7 +90,7 @@ class CharacteristicPromotionReport(PromotionReport):
         self.table = self.tables.get(table_name)
         self.filename = f"promotions-by-{table_name}-{scheme}-{year}-generated-{date.today().strftime('5%d-%m-%Y')}"
 
-    def promoted_candidates(self, characteristic, temporary):
+    def promoted_candidates_with_this_characteristic(self, characteristic, temporary):
         """
         Takes a row from one of the ProtectedCharacteristic tables (Ethnicity, WorkingPattern, etc) and returns the
         number of candidates with that characteristic who have also been promoted in the timeframe allowed by the class
@@ -109,8 +109,8 @@ class CharacteristicPromotionReport(PromotionReport):
 
     def line_writer(self, characteristic):
         line = [f"{characteristic.value}"]
-        line.extend(self.promoted_candidates(characteristic, False))
-        line.extend(self.promoted_candidates(characteristic, True))
+        line.extend(self.promoted_candidates_with_this_characteristic(characteristic, False))
+        line.extend(self.promoted_candidates_with_this_characteristic(characteristic, True))
         line.append(len(characteristic.candidates))
         return line
 
@@ -123,8 +123,31 @@ class CharacteristicPromotionReport(PromotionReport):
 
 
 class BooleanCharacteristicPromotionReport(CharacteristicPromotionReport):
-    def get_data(self):
-        return []
+    def __init__(self, scheme: str, year: str, attribute: str):
+        super().__init__(scheme, year, 'candidate')
+        self.attribute = attribute
 
-    def line_writer(self, characteristic):
-        return []
+    def get_data(self):
+        characteristics = [True, False, None]
+        return [self.line_writer(characteristic) for characteristic in characteristics]
+
+    def line_writer(self, characteristic: bool):
+        characteristics = {
+            True: "People with a disability", False: "People without a disability", None: "No answer provided"
+        }
+        line = [f"{characteristics.get(characteristic)}"]
+        line.extend(self.promoted_candidates_with_this_characteristic(characteristic, temporary=False))
+        line.extend(self.promoted_candidates_with_this_characteristic(characteristic, temporary=True))
+        line.append(len(Candidate.query.filter(getattr(Candidate, self.attribute).is_(characteristic)).all()))
+        return line
+
+    def promoted_candidates_with_this_characteristic(self, characteristic: bool, temporary: bool):
+        all_candidates = Candidate.query.filter(getattr(Candidate, self.attribute).is_(characteristic)).all()
+
+        number_of_promoted_candidates = len(
+            [candidate for candidate in all_candidates
+             if candidate.promoted(self.promoted_before_date, temporary=temporary)
+             and candidate.current_scheme() == self.scheme]  # noqa
+        )
+        total_candidates = len(all_candidates)
+        return [number_of_promoted_candidates, self.decimal_or_none(number_of_promoted_candidates, total_candidates)]
