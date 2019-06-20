@@ -1,5 +1,5 @@
 from datetime import date
-from app.models import Ethnicity, Scheme
+from app.models import Ethnicity, Scheme, Gender
 from abc import ABC, abstractmethod
 from io import StringIO
 from werkzeug.datastructures import Headers
@@ -86,7 +86,7 @@ class PromotionReport(Report, ABC):
 class CharacteristicPromotionReport(PromotionReport):
     def __init__(self, scheme: str, year: str, table_name: str):
         super().__init__(scheme, year)
-        self.tables = {'ethnicity': Ethnicity}
+        self.tables = {'ethnicity': Ethnicity, 'gender': Gender}
         self.table = self.tables.get(table_name)
         self.filename = f"promotions-by-{table_name}-{scheme}-{year}-generated-{date.today().strftime('5%d-%m-%Y')}"
 

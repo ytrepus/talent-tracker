@@ -8,6 +8,7 @@ def reports():
     report_classes = {
         'promotions': {
             'ethnicity': CharacteristicPromotionReport,
+            'gender': CharacteristicPromotionReport,
         }
     }
     if request.method == "POST":
