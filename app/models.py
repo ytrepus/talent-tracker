@@ -56,7 +56,7 @@ class Candidate(db.Model):
     caring_responsibility = db.Column(db.Boolean())  # TRUE: yes, FALSE: no, NULL: Prefer not to say
     long_term_health_condition = db.Column(db.Boolean())
 
-    age_range_id = db.Column(db.ForeignKey('age_range.id'), nullable=False)
+    age_range_id = db.Column(db.ForeignKey('age_range.id'), nullable=False, default=1)
     working_pattern_id = db.Column(db.ForeignKey('working_pattern.id'))
     belief_id = db.Column(db.ForeignKey('belief.id'))
     sexuality_id = db.Column(db.ForeignKey('sexuality.id'))

@@ -69,7 +69,8 @@ def generate_random_fixed_data():
     locations = [Location(value=string) for string in locations]
 
     return {'organisations': organisations, 'grades': grades, 'professions': professions, 'locations': locations,
-            'ethnicities': ethnic_groups, 'schemes': [Scheme(name='FLS'), Scheme(name='SLS')]}
+            'ethnicities': ethnic_groups, 'schemes': [Scheme(name='FLS'), Scheme(name='SLS')],
+            'ages': [AgeRange(id=1, value='25-34'), AgeRange(id=2, value='35-44')]}
 
 
 def generate_known_candidate():
@@ -77,6 +78,7 @@ def generate_known_candidate():
         email_address="staging.candidate@gov.uk", joining_date=date(2015, 9, 1),
         completed_fast_stream=True,
         joining_grade=Grade.query.filter(Grade.value.like("%Faststream%")).first().id,
+        age_range_id=2,
         roles=[Role(date_started=date(2015, 9, 2), temporary_promotion=False,
                     organisation_id=Organisation.query.filter(Organisation.name == 'Cabinet Office').first().id,
                     grade=Grade.query.filter(Grade.value.like("%Faststream%")).first())
@@ -89,7 +91,8 @@ def generate_random_candidate():
                      joining_date=date(random.randrange(1960, 2018), random.randrange(1, 12), random.randrange(1, 28)),
                      completed_fast_stream=random.choice([True, False]),
                      joining_grade=(Grade.query.filter_by(rank=6).first()).id,
-                     ethnicity_id=random.choice(Ethnicity.query.all()).id
+                     ethnicity_id=random.choice(Ethnicity.query.all()).id,
+                     age_range_id=random.choice(AgeRange.query.all()).id,
                      )
 
 
@@ -120,7 +123,6 @@ def commit_data():
     random_promoted_sls_candidates = [promote_candidate(candidate) if i % 2 == 0 else candidate
                                       for i, candidate in enumerate(random_candidates('SLS', 100))]
     candidates = random_promoted_sls_candidates + random_promoted_fls_candidates
-    print(candidates)
     db.session.add_all(candidates)
     db.session.commit()
 
