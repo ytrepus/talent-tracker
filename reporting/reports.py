@@ -83,10 +83,12 @@ class PromotionReport(Report, ABC):
         return data_object.getvalue()
 
 
-class EthnicityPromotionReport(PromotionReport):
-    def __init__(self, scheme: str, year: str):
+class CharacteristicPromotionReport(PromotionReport):
+    def __init__(self, scheme: str, year: str, table_name: str):
         super().__init__(scheme, year)
-        self.filename = f"promotions-by-ethnicity-{scheme}-{year}-generated-{date.today().strftime('5%d-%m-%Y')}"
+        self.tables = {'ethnicity': Ethnicity}
+        self.table = self.tables.get(table_name)
+        self.filename = f"promotions-by-{table_name}-{scheme}-{year}-generated-{date.today().strftime('5%d-%m-%Y')}"
 
     def promoted_candidates(self, characteristic, temporary):
         candidates = len([candidate for candidate in characteristic.candidates
@@ -104,17 +106,7 @@ class EthnicityPromotionReport(PromotionReport):
 
     def get_data(self):
         output = []
-        characteristics = Ethnicity.query.all()
+        characteristics = self.table.query.all()
         for characteristic in characteristics:
             output.append(self.line_writer(characteristic))
         return output
-
-class ChangeableProtectedCharacteristicReport(PromotionReport):
-    """
-    This class generates the reports for all characteristics in the ChangeableProtectedCharacteristics table. It
-    inherits from Promotion report, because this is measuring promotions and therefore has the same headers and row
-    generator. However, since they're changeable the methods for getting the data back out of the system are different
-    to Ethnicity, which we consider fixed at the moment.
-    """
-    def __init__(self, specific):
-        pass
