@@ -5,11 +5,18 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from datetime import datetime
 from sqlalchemy import and_
+from sqlalchemy.ext.declarative import declared_attr
 
 
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
+
+
+class CandidateGetterMixin:
+    @declared_attr
+    def candidates(cls):
+        return db.relationship("Candidate")
 
 
 class User(UserMixin, db.Model):
@@ -32,7 +39,7 @@ def load_user(id):
     return User.query.get(int(id))
 
 
-class Ethnicity(db.Model):
+class Ethnicity(CandidateGetterMixin, db.Model):
     """
     The ethnicity table has a boolean flag for bame, allowing us to query candidates (and therefore data connected to
     candidates) according to ethnicity at a broad, BAME level
@@ -40,8 +47,6 @@ class Ethnicity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(512))
     bame = db.Column(db.Boolean)
-
-    candidates = db.relationship('Candidate')
 
 
 class Candidate(db.Model):
@@ -284,40 +289,26 @@ class SocioEconomic(db.Model):
     free_school_meals_id = db.Column(db.ForeignKey('free_school_meals.id'))
 
 
-class AgeRange(db.Model):
+class AgeRange(CandidateGetterMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(10))
 
 
-class WorkingPattern(db.Model):
+class WorkingPattern(CandidateGetterMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(128))
 
 
-class Belief(db.Model):
+class Belief(CandidateGetterMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(128))
 
 
-class Gender(db.Model):
+class Gender(CandidateGetterMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(128))
 
 
-class Sexuality(db.Model):
+class Sexuality(CandidateGetterMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(128))
-
-
-class ChangeableProtectedCharacteristics(db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
-    caring_responsibility = db.Column(db.Boolean())  # TRUE: yes, FALSE: no, NULL: Prefer not to say
-    long_term_health_condition = db.Column(db.Boolean())
-
-    age_range_id = db.Column(db.ForeignKey('age_range.id'), nullable=False)
-    application_id = db.Column(db.ForeignKey('application.id'))
-    working_pattern_id = db.Column(db.ForeignKey('working_pattern.id'))
-    belief_id = db.Column(db.ForeignKey('belief.id'))
-    sexuality_id = db.Column(db.ForeignKey('sexuality.id'))
-    gender_id = db.Column(db.ForeignKey('gender.id'))
-    ethnicity_id = db.Column(db.ForeignKey('ethnicity.id'))
