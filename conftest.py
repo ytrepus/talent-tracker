@@ -53,6 +53,7 @@ def test_session(db):
         Grade(id=2, value='Grade 7', rank=6), Grade(id=3, value='Grade 6', rank=5),
         Grade(id=4, value='Deputy Director (SCS1)', rank=4), Grade(id=1, value='Admin Assistant (AA)', rank=7)
     ])
+    db.session.add_all([Gender(id=1, value="Fork"), Gender(id=2, value="Knife"), Gender(id=3, value="Chopsticks")])
     db.session.add(Candidate(id=1))
     db.session.commit()
 
@@ -141,6 +142,18 @@ def test_ethnicities(test_session):
 def test_multiple_candidates_multiple_ethnicities(test_session, test_ethnicities):
     test_session.add_all([Candidate(ethnicity_id=Ethnicity.query.filter_by(value="Black British").first().id) for i in range(10)])
     test_session.add_all([Candidate(ethnicity_id=Ethnicity.query.filter_by(value="White British").first().id) for i in range(10)])
+    test_session.commit()
+    yield
+
+
+@pytest.fixture
+@pytest.fixture
+def gender_ten_of_each(test_session):
+    candidates = []
+    for gender in Gender.query.all():
+        for i in range(10):
+            candidates.append(Candidate(ethnicity_id=gender.id))
+    test_session.add_all(candidates)
     test_session.commit()
     yield
 
