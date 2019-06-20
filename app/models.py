@@ -53,11 +53,16 @@ class Candidate(db.Model):
     email_address = db.Column(db.String(120), unique=True)
 
     joining_grade = db.Column(db.ForeignKey('grade.id'))
-    ethnicity_id = db.Column(db.ForeignKey('ethnicity.id'))
-    changeable_protected_characteristics_id = db.Column(db.ForeignKey('changeable_protected_characteristics.id'))
 
     roles = db.relationship('Role', backref='candidate', lazy='dynamic')
     applications = db.relationship('Application', backref='candidate', lazy='dynamic')
+
+    type = db.Column(db.String(50))
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'candidate',
+        'polymorphic_on': type
+    }
 
     def __repr__(self):
         return f'<Candidate email {self.email_address}>'
@@ -300,8 +305,8 @@ class Sexuality(db.Model):
     value = db.Column(db.String(128))
 
 
-class ChangeableProtectedCharacteristics(db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
+class ProtectedCharacteristics(Candidate):
+    id = db.Column(db.Integer(), db.ForeignKey('candidate.id'), primary_key=True)
     caring_responsibility = db.Column(db.Boolean())  # TRUE: yes, FALSE: no, NULL: Prefer not to say
     long_term_health_condition = db.Column(db.Boolean())
 
@@ -311,3 +316,8 @@ class ChangeableProtectedCharacteristics(db.Model):
     belief_id = db.Column(db.ForeignKey('belief.id'))
     sexuality_id = db.Column(db.ForeignKey('sexuality.id'))
     gender_id = db.Column(db.ForeignKey('gender.id'))
+    ethnicity_id = db.Column(db.ForeignKey('ethnicity.id'))
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'changeable_protected_characteristics',
+    }
