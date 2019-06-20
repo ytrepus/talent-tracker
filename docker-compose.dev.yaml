@@ -12,12 +12,12 @@ services:
     links:
       - db
     environment:
-      - POSTGRES_USER=user
+      - POSTGRES_USER=talent_user
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=talent-tracker
       - POSTGRES_HOST=postgres
       - FLASK_DEBUG=1
-      - DATABASE_URL=postgresql://user:password@db:5432/talent-tracker
+      - DATABASE_URL=postgresql://talent_user:password@db:5432/talent-tracker
       - FLASK_APP=run.py
       - SECRET_KEY=secret-dev-key
     ports:
@@ -36,13 +36,13 @@ services:
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_USER=user
+      - POSTGRES_USER=talent_user
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=talent-tracker
 
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - talent-data:/var/lib/postgresql/data
 
 volumes:
-  postgres-data:
+  talent-data:
 
