@@ -91,6 +91,16 @@ class CharacteristicPromotionReport(PromotionReport):
         self.filename = f"promotions-by-{table_name}-{scheme}-{year}-generated-{date.today().strftime('5%d-%m-%Y')}"
 
     def promoted_candidates(self, characteristic, temporary):
+        """
+        Takes a row from one of the ProtectedCharacteristic tables (Ethnicity, WorkingPattern, etc) and returns the
+        number of candidates with that characteristic who have also been promoted in the timeframe allowed by the class
+        :param characteristic:
+        :type characteristic:
+        :param temporary:
+        :type temporary:
+        :return:
+        :rtype:
+        """
         candidates = len([candidate for candidate in characteristic.candidates
                           if candidate.promoted(self.promoted_before_date, temporary=temporary)
                           and candidate.current_scheme() == self.scheme])  # noqa
@@ -110,3 +120,11 @@ class CharacteristicPromotionReport(PromotionReport):
         for characteristic in characteristics:
             output.append(self.line_writer(characteristic))
         return output
+
+
+class BooleanCharacteristicPromotionReport(CharacteristicPromotionReport):
+    def get_data(self):
+        return []
+
+    def line_writer(self, characteristic):
+        return []

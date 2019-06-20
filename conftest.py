@@ -147,7 +147,6 @@ def test_multiple_candidates_multiple_ethnicities(test_session, test_ethnicities
 
 
 @pytest.fixture
-@pytest.fixture
 def gender_ten_of_each(test_session):
     candidates = []
     for gender in Gender.query.all():
@@ -159,11 +158,26 @@ def gender_ten_of_each(test_session):
 
 
 @pytest.fixture
+def disability_with_without_no_answer(test_session):
+    output = []
+    for i in range(30):
+        if i % 3 == 0:
+            output.append(Candidate(long_term_health_condition=True))
+        elif i % 3 == 1:
+            output.append(Candidate(long_term_health_condition=False))
+        else:
+            output.append(Candidate(long_term_health_condition=None))
+    test_session.add_all(output)
+    test_session.commit()
+    yield
+
+
+@pytest.fixture
 def candidates_promoter():
-    def _promoter(candidates_to_promote, decimal_ratio):
+    def _promoter(candidates_to_promote, decimal_ratio, temporary=False):
         for candidate in candidates_to_promote[0:int(len(candidates_to_promote) * decimal_ratio)]:
             candidate.roles.extend([Role(date_started=date(2019, 1, 1)), Role(date_started=date(2020, 3, 1),
-                                                                              temporary_promotion=False)])
+                                                                              temporary_promotion=temporary)])
         return candidates_to_promote
 
     return _promoter

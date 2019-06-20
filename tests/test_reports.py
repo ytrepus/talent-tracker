@@ -1,6 +1,6 @@
 import pytest
 from typing import List
-from reporting.reports import CharacteristicPromotionReport
+from reporting.reports import CharacteristicPromotionReport, BooleanCharacteristicPromotionReport
 from app.models import Ethnicity, Candidate
 
 
@@ -31,3 +31,23 @@ class TestReports:
         scheme_appender(wb_candidates, scheme_id)
         output = CharacteristicPromotionReport(*parameters).return_data()
         assert output.data.decode("UTF-8").split('\n') == expected_output
+
+
+class TestBooleanCharacteristicPromotionReport:
+    def test_get_data(self, disability_with_without_no_answer, candidates_promoter):
+        with_disability = Candidate.query.filter(Candidate.long_term_health_condition.is_(True)).all()
+        without_disability = Candidate.query.filter(Candidate.long_term_health_condition.is_(False)).all()
+        no_response = Candidate.query.filter(Candidate.long_term_health_condition.is_(None)).all()
+
+        candidates_promoter(with_disability, .3, temporary=False)
+        candidates_promoter(without_disability, .4, temporary=False)
+        candidates_promoter(no_response, .6, temporary=False)
+
+        output = BooleanCharacteristicPromotionReport('FLS', '2018', 'long_term_health_condition').get_data()
+        expected_output = [
+            ["People with a disability", 3, 0.3, 0, 0],
+            ["People without a disability", 4, 0.4, 0, 0],
+            ["No answer provided", 6, 0.6, 0, 0]
+        ]
+        assert expected_output == output
+
