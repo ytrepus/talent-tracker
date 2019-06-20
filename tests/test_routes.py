@@ -131,7 +131,7 @@ class TestReports:
             'report-type': 'promotions',
             'scheme': 'FLS',
             'year': 2018,
-            'characteristic': 'ethnicity'
+            'table-name': 'ethnicity'
         }
         result = test_client.post('/reports/', data=data)
         assert 200 == result.status_code
