@@ -15,10 +15,15 @@ def generate_random_fixed_data():
     }
 
     organisations = [f"{random.choice(choices['orgs'])} {random_string(16)}" for i in range(44)]
+
     professions = [f"{random_string(12)}".capitalize() for i in range(15)]
+
     locations = ["East Midlands", "East of England", "London", "North East England", "North West England",
                  "Northern Ireland", "Overseas", "Prefer not to say", "Scotland", "South East England",
                  "South West England", "Wales", "West Midlands", "Yorkshire & the Humber"]
+
+    genders = [Gender(id=i, value=value) for i, value
+               in enumerate(["Male", "Female", "I identify in another way", "Prefer not to say"])]
 
     organisations = [Organisation(name=string) for string in organisations]
     organisations.append(Organisation(name='Cabinet Office'))
@@ -70,7 +75,7 @@ def generate_random_fixed_data():
 
     return {'organisations': organisations, 'grades': grades, 'professions': professions, 'locations': locations,
             'ethnicities': ethnic_groups, 'schemes': [Scheme(name='FLS'), Scheme(name='SLS')],
-            'ages': [AgeRange(id=1, value='25-34'), AgeRange(id=2, value='35-44')]}
+            'ages': [AgeRange(id=1, value='25-34'), AgeRange(id=2, value='35-44')], 'genders': genders}
 
 
 def generate_known_candidate():
@@ -92,7 +97,8 @@ def generate_random_candidate():
                      completed_fast_stream=random.choice([True, False]),
                      joining_grade=(Grade.query.filter_by(rank=6).first()).id,
                      ethnicity_id=random.choice(Ethnicity.query.all()).id,
-                     age_range_id=random.choice(AgeRange.query.all()).id,
+                     age_range_id=random.choice([1, 2]),
+                     gender_id=random.choice(Gender.query.all()).id
                      )
 
 
@@ -103,7 +109,9 @@ def apply_candidate_to_scheme(scheme_name: str, candidate: Candidate):
     return candidate
 
 
-def promote_candidate(candidate: Candidate, temporary=random.choice([True, False])):
+def promote_candidate(candidate: Candidate, temporary=None):
+    if temporary is None:
+        temporary = random.choice([True, False])
     candidate.roles.extend([Role(date_started=date(2018, 1, 1), temporary_promotion=False),
                             Role(date_started=date(2019, 6, 1), temporary_promotion=temporary)])
     return candidate
@@ -128,7 +136,8 @@ def commit_data():
 
 
 def clear_old_data():
-    tables = [Application, Role, Candidate, Organisation, Profession, Grade, Location, Ethnicity, Scheme, AgeRange]
+    tables = [Application, Role, Candidate, Organisation, Profession, Grade, Location, Ethnicity, Scheme, AgeRange,
+              Gender]
     for table in tables:
         table.query.delete()
         db.session.commit()
