@@ -16,7 +16,7 @@ login_manager = LoginManager()
 class CandidateGetterMixin:
     @declared_attr
     def candidates(cls):
-        return db.relationship("Candidate")
+        return db.relationship("Candidate", backref=cls.__name__.lower())
 
 
 class User(UserMixin, db.Model):
@@ -208,6 +208,10 @@ class Application(db.Model):
     delta = db.Column(db.Boolean, default=False)
     cohort = db.Column(db.Integer, unique=False)
     withdrawn = db.Column(db.Boolean(), default=False)
+
+    def defer(self, date_to_defer_to: datetime.date):
+        self.scheme_start_date = date_to_defer_to
+        return None
 
 
 class Leadership(db.Model):
