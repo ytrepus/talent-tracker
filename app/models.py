@@ -207,6 +207,7 @@ class Application(db.Model):
     meta = db.Column(db.Boolean, default=False)
     delta = db.Column(db.Boolean, default=False)
     cohort = db.Column(db.Integer, unique=False)
+    withdrawn = db.Column(db.Boolean(), default=False)
 
 
 class Leadership(db.Model):
