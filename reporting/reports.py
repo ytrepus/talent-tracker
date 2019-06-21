@@ -126,16 +126,23 @@ class BooleanCharacteristicPromotionReport(CharacteristicPromotionReport):
     def __init__(self, scheme: str, year: str, attribute: str):
         super().__init__(scheme, year, 'candidate')
         self.attribute = attribute
+        self.human_readable_characteristics = {
+            'long_term_health_condition': {
+                True: "People with a disability", False: "People without a disability", None: "No answer provided"
+            },
+            'caring_responsibilities': {
+                True: "I have caring responsibilities", False: "I do not have caring responsibilities",
+                None: "No answer provided"
+            }
+        }
+        self.human_readable_row_titles = self.human_readable_characteristics.get(self.attribute)
 
     def get_data(self):
         characteristics = [True, False, None]
         return [self.line_writer(characteristic) for characteristic in characteristics]
 
     def line_writer(self, characteristic: bool):
-        characteristics = {
-            True: "People with a disability", False: "People without a disability", None: "No answer provided"
-        }
-        line = [f"{characteristics.get(characteristic)}"]
+        line = [f"{self.human_readable_row_titles.get(characteristic)}"]
         line.extend(self.promoted_candidates_with_this_characteristic(characteristic, temporary=False))
         line.extend(self.promoted_candidates_with_this_characteristic(characteristic, temporary=True))
         line.append(len(Candidate.query.filter(getattr(Candidate, self.attribute).is_(characteristic)).all()))
