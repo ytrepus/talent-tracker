@@ -16,7 +16,7 @@ login_manager = LoginManager()
 class CandidateGetterMixin:
     @declared_attr
     def candidates(cls):
-        return db.relationship("Candidate")
+        return db.relationship("Candidate", backref=cls.__name__.lower())
 
 
 class User(UserMixin, db.Model):
