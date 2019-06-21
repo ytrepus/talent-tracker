@@ -1,5 +1,8 @@
 from datetime import date
-from app.models import Ethnicity, Scheme, Gender, Candidate
+from typing import List
+from sqlalchemy import and_
+
+from app.models import Ethnicity, Scheme, Gender, Candidate, Application
 from abc import ABC, abstractmethod
 from io import StringIO
 from werkzeug.datastructures import Headers
@@ -65,10 +68,29 @@ class Report(ABC):
 class PromotionReport(Report, ABC):
     def __init__(self, scheme: str, year: str):
         super().__init__()
+        self.intake_date = date(int(year), 3, 1)  # assuming it starts in March every year
         self.scheme = Scheme.query.filter_by(name=f'{scheme}').first()
         self.promoted_before_date = date(int(year) + 1, 3, 1)  # can't take credit for promotions within first 3 months
         self.headers = ['characteristic', 'number substantively promoted', 'percentage substantively promoted',
                         'number temporarily promoted', 'percentage temporarily promoted', 'total in group']
+
+    def get_data(self):
+        pass
+
+    def eligible_candidates(self) -> List[Candidate]:
+        """
+        Candidates eligible to be reported on have an application whose scheme start date is aligned with ```year``` and
+        whose Application -> Scheme -> name is the same as ```scheme```. For example, the 2019 FLS intake all have a
+        scheme_start_date on their applications of 2019/03/01 and a scheme_id that references the 'FLS' scheme.
+        :return:
+        :rtype:
+        """
+        print(Application.query.filter(Application.scheme_start_date == self.intake_date,).all())
+        eligible_applications = Application.query.filter(and_(
+            Application.scheme_start_date == self.intake_date,
+            Application.scheme_id == self.scheme.id
+        )).all()
+        return [application.candidate for application in eligible_applications]
 
     def write_row(self, row_data, data_object, csv_writer):
         csv_writer.writerow((
@@ -86,6 +108,7 @@ class PromotionReport(Report, ABC):
 class CharacteristicPromotionReport(PromotionReport):
     def __init__(self, scheme: str, year: str, table_name: str):
         super().__init__(scheme, year)
+        self.table_name = table_name
         self.tables = {'ethnicity': Ethnicity, 'gender': Gender}
         self.table = self.tables.get(table_name)
         self.filename = f"promotions-by-{table_name}-{scheme}-{year}-generated-{date.today().strftime('5%d-%m-%Y')}"
@@ -101,17 +124,20 @@ class CharacteristicPromotionReport(PromotionReport):
         :return:
         :rtype:
         """
-        candidates = len([candidate for candidate in characteristic.candidates
-                          if candidate.promoted(self.promoted_before_date, temporary=temporary)
-                          and candidate.current_scheme() == self.scheme])  # noqa
-        total_candidates = len(characteristic.candidates)
-        return [candidates, self.decimal_or_none(candidates, total_candidates)]
+
+        eligible_candidates = [candidate for candidate in self.eligible_candidates()
+                               if getattr(candidate, self.table_name) == characteristic]
+        promoted_candidates = [candidate for candidate in eligible_candidates
+                               if candidate.promoted(self.promoted_before_date, temporary=temporary)]
+        total_candidates = len(eligible_candidates)
+        return [len(promoted_candidates), self.decimal_or_none(len(promoted_candidates), total_candidates)]
 
     def line_writer(self, characteristic):
         line = [f"{characteristic.value}"]
         line.extend(self.promoted_candidates_with_this_characteristic(characteristic, False))
         line.extend(self.promoted_candidates_with_this_characteristic(characteristic, True))
-        line.append(len(characteristic.candidates))
+        line.append(len([candidate for candidate in self.eligible_candidates()
+                         if getattr(candidate, self.table_name) == characteristic]))
         return line
 
     def get_data(self):
@@ -149,12 +175,9 @@ class BooleanCharacteristicPromotionReport(CharacteristicPromotionReport):
         return line
 
     def promoted_candidates_with_this_characteristic(self, characteristic: bool, temporary: bool):
-        all_candidates = Candidate.query.filter(getattr(Candidate, self.attribute).is_(characteristic)).all()
-
-        number_of_promoted_candidates = len(
-            [candidate for candidate in all_candidates
-             if candidate.promoted(self.promoted_before_date, temporary=temporary)
-             and candidate.current_scheme() == self.scheme]  # noqa
-        )
-        total_candidates = len(all_candidates)
-        return [number_of_promoted_candidates, self.decimal_or_none(number_of_promoted_candidates, total_candidates)]
+        eligible_candidates = [candidate for candidate in self.eligible_candidates()
+                               if getattr(candidate, self.attribute) == characteristic]
+        promoted_candidates = [candidate for candidate in eligible_candidates
+                               if candidate.promoted(self.promoted_before_date, temporary=temporary)]
+        total_candidates = len(eligible_candidates)
+        return [len(promoted_candidates), self.decimal_or_none(len(promoted_candidates), total_candidates)]

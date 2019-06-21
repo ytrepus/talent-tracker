@@ -209,6 +209,10 @@ class Application(db.Model):
     cohort = db.Column(db.Integer, unique=False)
     withdrawn = db.Column(db.Boolean(), default=False)
 
+    def defer(self, date_to_defer_to: datetime.date):
+        self.scheme_start_date = date_to_defer_to
+        return None
+
 
 class Leadership(db.Model):
     id = db.Column(db.Integer, primary_key=True)
