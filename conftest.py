@@ -187,7 +187,8 @@ def candidates_promoter():
 def scheme_appender(test_session):
     def _add_scheme(candidates_to_add, scheme_id_to_add):
         for candidate in candidates_to_add:
-            candidate.applications.append(Application(application_date=date(2019, 6, 1), scheme_id=scheme_id_to_add))
+            candidate.applications.append(Application(
+                application_date=date(2018, 8, 1), scheme_id=scheme_id_to_add, scheme_start_date=date(2019, 3, 1)))
     return _add_scheme
 
 
