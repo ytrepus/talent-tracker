@@ -81,6 +81,7 @@ def generate_random_fixed_data():
 def generate_known_candidate():
     return Candidate(
         email_address="staging.candidate@gov.uk", joining_date=date(2015, 9, 1),
+        first_name="Test", last_name="Candidate",
         completed_fast_stream=True,
         joining_grade=Grade.query.filter(Grade.value.like("%Faststream%")).first().id,
         age_range_id=2,
@@ -94,14 +95,18 @@ def generate_known_candidate():
 
 def generate_random_candidate():
     return Candidate(email_address=f"{random_string(16)}@gov.uk",
-                     first_name="Test", last_name="Candidate",
+                     first_name=f"{random_string(8)}", last_name=f"{random_string(12)}",
                      joining_date=date(random.randrange(1960, 2018), random.randrange(1, 12), random.randrange(1, 28)),
                      completed_fast_stream=random.choice([True, False]),
                      joining_grade=(Grade.query.filter_by(rank=6).first()).id,
                      ethnicity_id=random.choice(Ethnicity.query.all()).id,
                      age_range_id=random.choice([1, 2]),
-                     gender_id=random.choice(Gender.query.all()).id
-                     )
+                     gender_id=random.choice(Gender.query.all()).id,
+                     roles=[Role(date_started=date(2015, 9, 2), temporary_promotion=False,
+                                 organisation_id=random.choice(Organisation.query.all()).id,
+                                 grade=Grade.query.filter(Grade.value.like("%Faststream%")).first())
+                            ],
+                     applications=[Application(scheme_id=1, scheme_start_date=date(2018, 3, 1))])
 
 
 def apply_candidate_to_scheme(scheme_name: str, candidate: Candidate):
