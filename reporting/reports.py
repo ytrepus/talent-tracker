@@ -66,13 +66,15 @@ class Report(ABC):
 
 
 class PromotionReport(Report, ABC):
-    def __init__(self, scheme: str, year: str):
+    def __init__(self, scheme: str, year: str, attribute: str = None):
         super().__init__()
+        self.attribute = attribute
         self.intake_date = date(int(year), 3, 1)  # assuming it starts in March every year
         self.scheme = Scheme.query.filter_by(name=f'{scheme}').first()
         self.promoted_before_date = date(int(year) + 1, 3, 1)  # can't take credit for promotions within first 3 months
         self.headers = ['characteristic', 'number substantively promoted', 'percentage substantively promoted',
                         'number temporarily promoted', 'percentage temporarily promoted', 'total in group']
+        self.filename = f"promotions-by-{attribute}-{scheme}-{year}-generated-{date.today().strftime('5%d-%m-%Y')}"
 
     def get_data(self):
         pass
@@ -126,7 +128,7 @@ class CharacteristicPromotionReport(PromotionReport):
         """
 
         eligible_candidates = [candidate for candidate in self.eligible_candidates()
-                               if getattr(candidate, self.table_name) == characteristic]
+                               if getattr(candidate, self.attribute) == characteristic]
         promoted_candidates = [candidate for candidate in eligible_candidates
                                if candidate.promoted(self.promoted_before_date, temporary=temporary)]
         total_candidates = len(eligible_candidates)
@@ -137,7 +139,7 @@ class CharacteristicPromotionReport(PromotionReport):
         line.extend(self.promoted_candidates_with_this_characteristic(characteristic, False))
         line.extend(self.promoted_candidates_with_this_characteristic(characteristic, True))
         line.append(len([candidate for candidate in self.eligible_candidates()
-                         if getattr(candidate, self.table_name) == characteristic]))
+                         if getattr(candidate, self.attribute) == characteristic]))
         return line
 
     def get_data(self):
@@ -150,8 +152,7 @@ class CharacteristicPromotionReport(PromotionReport):
 
 class BooleanCharacteristicPromotionReport(CharacteristicPromotionReport):
     def __init__(self, scheme: str, year: str, attribute: str):
-        super().__init__(scheme, year, 'candidate')
-        self.attribute = attribute
+        super().__init__(scheme, year, attribute)
         self.human_readable_characteristics = {
             'long_term_health_condition': {
                 True: "People with a disability", False: "People without a disability", None: "No answer provided"
