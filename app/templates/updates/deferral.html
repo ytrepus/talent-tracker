@@ -1,0 +1,16 @@
+{% extends 'updates/update-layout.html' %}
+
+{% block form_content %}
+    <div class="govuk-form-group">
+        <div class="govuk-form-group">
+            <label class="govuk-label" for="new-intake-year">
+                New intake year
+            </label>
+            <span id="first-name-hint" class="govuk-hint">
+                Intake year should be the year the scheme will start - for example, if applicants apply to the Future
+                Leaders Scheme in August 2018 but will start in March 2019, the intake year is 2019
+            </span>
+            <input class="govuk-input govuk-input--width-4" id="new-intake-year-name" name="new-intake-year" type="number">
+        </div>
+    </div>
+{% endblock %}

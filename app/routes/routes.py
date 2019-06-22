@@ -37,7 +37,8 @@ def choose_update():
 def search_candidate():
     next_steps = {
         'role': 'route_blueprint.update_role',
-        'name': 'route_blueprint.update_name'
+        'name': 'route_blueprint.update_name',
+        'deferral': 'route_blueprint.defer_intake',
     }
     if request.method == "POST":
         candidate = Candidate.query.filter_by(email_address=request.form.get('candidate-email')).one_or_none()
@@ -84,6 +85,21 @@ def update_name():
                            candidate=Candidate.query.get(candidate_id))
 
 
+@route_blueprint.route('/update/deferral', methods=["POST", "GET"])
+def defer_intake():
+    candidate_id = session.get('candidate-id')
+    if not candidate_id:
+        return redirect(url_for('route_blueprint.search_candidate'))
+
+    if request.method == "POST":
+        session['change-route'] = 'route_blueprint.defer_intake'
+        session['new-intake-year'] = request.form.get('new-intake-year')
+        return redirect(url_for('route_blueprint.check_your_answers'))
+
+    return render_template('updates/deferral.html', page_header='Defer intake year',
+                           candidate=Candidate.query.get(candidate_id))
+
+
 @route_blueprint.route('/update/email-address', methods=["POST", "GET"])
 def email_address():
     if request.method == "POST":
@@ -99,9 +115,9 @@ def email_address():
 def check_your_answers():
     candidate = Candidate.query.get(session.get('candidate-id'))
     if request.method == "POST":
+        session.pop('data-update')
         if session.get('new-role'):
             role_data = session.pop('new-role', None)
-            session.pop('data-update')
             candidate.roles.append(Role(
                 date_started=date(role_data['start-date-year'], role_data['start-date-month'],
                                   role_data['start-date-day']),
@@ -116,6 +132,9 @@ def check_your_answers():
             name_data = session.pop('new-name')
             candidate.first_name = name_data.get('first-name')
             candidate.last_name = name_data.get('last-name')
+        elif session.get('new-intake-year'):
+            new_scheme_start_date = date(int(session.pop('new-intake-year')), 3, 1)
+            candidate.applications[0].defer(new_scheme_start_date)
 
         db.session.add(candidate)
         db.session.commit()
@@ -146,6 +165,8 @@ def check_your_answers():
         session['data-update'] = human_readable_role(session['new-role'])
     elif session.get('new-name'):
         session['data-update'] = {prettify_string(key): value for key, value in session.get('new-name').items()}
+    elif session.get('new-intake-year'):
+        session['data-update'] = {'New intake year': session.get('new-intake-year')}
     return render_template('updates/check-your-answers.html',
                            candidate=candidate, data=session.get('data-update'), new_email=session.get('new-email'))
 

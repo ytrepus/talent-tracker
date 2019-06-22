@@ -94,6 +94,7 @@ def generate_known_candidate():
 
 def generate_random_candidate():
     return Candidate(email_address=f"{random_string(16)}@gov.uk",
+                     first_name="Test", last_name="Candidate",
                      joining_date=date(random.randrange(1960, 2018), random.randrange(1, 12), random.randrange(1, 28)),
                      completed_fast_stream=random.choice([True, False]),
                      joining_grade=(Grade.query.filter_by(rank=6).first()).id,

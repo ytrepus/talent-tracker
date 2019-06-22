@@ -28,6 +28,13 @@ class TestNewEmail:
         assert "new-test-email@gov.uk" == session.get("new-email")
 
 
+class TestUpdateType:
+    @pytest.mark.parametrize("option", ["Role", "Name", "Deferral"])
+    def test_get(self, option, test_client, logged_in_user):
+        result = test_client.get(url_for('route_blueprint.choose_update'))
+        assert option in result.data.decode("UTF-8")
+
+
 class TestSingleUpdate:
     def test_get(self, test_client, test_candidate, logged_in_user, test_roles):
         with test_client.session_transaction() as sess:
@@ -60,7 +67,9 @@ class TestSearchCandidate:
         result = test_client.get('/update/search-candidate')
         assert "Most recent candidate email address" in result.data.decode("UTF-8")
 
-    @pytest.mark.parametrize("update_type, expected_title", [("role", "Role update"), ("name", "Update name")])
+    @pytest.mark.parametrize("update_type, expected_title",
+                             [("role", "Role update"), ("name", "Update name"), ("deferral", "Defer intake year")]
+                             )
     def test_post(self, update_type, expected_title, test_client, test_candidate, logged_in_user, test_roles):
         with test_client.session_transaction() as sess:
             sess['bulk-single'] = "single"
@@ -68,7 +77,6 @@ class TestSearchCandidate:
         data = {'candidate-email': 'test.candidate@numberten.gov.uk'}
         result = test_client.post('/update/search-candidate', data=data, follow_redirects=True,
                                   headers={'content-type': 'application/x-www-form-urlencoded'})
-        print(result.data.decode("UTF-8"))
 
         assert expected_title in result.data.decode("UTF-8")
 
