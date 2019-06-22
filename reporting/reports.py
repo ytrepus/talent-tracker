@@ -2,7 +2,7 @@ from datetime import date
 from typing import List
 from sqlalchemy import and_
 
-from app.models import Ethnicity, Scheme, Gender, Candidate, Application
+from app.models import Ethnicity, Scheme, Gender, Candidate, Application, Sexuality, WorkingPattern, Belief, AgeRange
 from abc import ABC, abstractmethod
 from io import StringIO
 from werkzeug.datastructures import Headers
@@ -108,12 +108,11 @@ class PromotionReport(Report, ABC):
 
 
 class CharacteristicPromotionReport(PromotionReport):
-    def __init__(self, scheme: str, year: str, table_name: str):
-        super().__init__(scheme, year)
-        self.table_name = table_name
-        self.tables = {'ethnicity': Ethnicity, 'gender': Gender}
-        self.table = self.tables.get(table_name)
-        self.filename = f"promotions-by-{table_name}-{scheme}-{year}-generated-{date.today().strftime('5%d-%m-%Y')}"
+    def __init__(self, scheme: str, year: str, attribute: str):
+        super().__init__(scheme, year, attribute)
+        self.tables = {'ethnicity': Ethnicity, 'gender': Gender, 'sexuality': Sexuality, 'belief': Belief,
+                       'working-pattern': WorkingPattern, 'age-range': AgeRange}
+        self.table = self.tables.get(self.attribute)
 
     def promoted_candidates_with_this_characteristic(self, characteristic, temporary):
         """
@@ -150,14 +149,14 @@ class CharacteristicPromotionReport(PromotionReport):
         return output
 
 
-class BooleanCharacteristicPromotionReport(CharacteristicPromotionReport):
+class BooleanCharacteristicPromotionReport(PromotionReport):
     def __init__(self, scheme: str, year: str, attribute: str):
         super().__init__(scheme, year, attribute)
         self.human_readable_characteristics = {
             'long_term_health_condition': {
                 True: "People with a disability", False: "People without a disability", None: "No answer provided"
             },
-            'caring_responsibilities': {
+            'caring_responsibility': {
                 True: "I have caring responsibilities", False: "I do not have caring responsibilities",
                 None: "No answer provided"
             }
