@@ -74,7 +74,7 @@ def generate_random_fixed_data():
     locations = [Location(value=string) for string in locations]
 
     return {'organisations': organisations, 'grades': grades, 'professions': professions, 'locations': locations,
-            'ethnicities': ethnic_groups, 'schemes': [Scheme(name='FLS'), Scheme(name='SLS')],
+            'ethnicities': ethnic_groups, 'schemes': [Scheme(id=1, name='FLS'), Scheme(id=2, name='SLS')],
             'ages': [AgeRange(id=1, value='25-34'), AgeRange(id=2, value='35-44')], 'genders': genders}
 
 
@@ -87,7 +87,8 @@ def generate_known_candidate():
         roles=[Role(date_started=date(2015, 9, 2), temporary_promotion=False,
                     organisation_id=Organisation.query.filter(Organisation.name == 'Cabinet Office').first().id,
                     grade=Grade.query.filter(Grade.value.like("%Faststream%")).first())
-               ]
+               ],
+        applications=[Application(scheme_id=1, scheme_start_date=date(2018, 3, 1))]
     )
 
 
