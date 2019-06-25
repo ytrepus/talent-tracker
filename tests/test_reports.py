@@ -1,6 +1,7 @@
 import pytest
 from typing import List
-from reporting.reports import CharacteristicPromotionReport, BooleanCharacteristicPromotionReport, PromotionReport
+from reporting.reports import CharacteristicPromotionReport, BooleanCharacteristicPromotionReport, PromotionReport, \
+    DeltaOfferPromotionReport
 from app.models import Ethnicity, Candidate, Application
 from datetime import date
 
@@ -104,3 +105,25 @@ class TestBooleanCharacteristicPromotionReport:
             ["No answer provided", 6, 0.6, 0, 0.0, 10]
         ]
         assert output == expected_output
+
+
+class TestDeltaOfferPromotionReport:
+    def test_get_data(self, disability_with_without_no_answer, candidates_promoter, scheme_appender, test_session):
+        candidates_with_disability = Candidate.query.filter(Candidate.long_term_health_condition.is_(True)).all()
+        delta_candidates = candidates_with_disability[0:5]
+        non_delta_candidates = candidates_with_disability[5:10]
+
+        candidates_promoter(delta_candidates, .8, temporary=False)
+        scheme_appender(delta_candidates, delta=True)
+
+        candidates_promoter(non_delta_candidates, .4, temporary=False)
+        scheme_appender(non_delta_candidates)
+
+        test_session.commit()
+
+        output = DeltaOfferPromotionReport('FLS', '2019', 'delta').get_data()
+        expected_output = [
+            ["Candidates eligible for DELTA", 6, 0.6, 0, 0.0, 10],
+            ["Candidates on DELTA", 4, 0.8, 0, 0.0, 5],
+        ]
+        assert expected_output == output
