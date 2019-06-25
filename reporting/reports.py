@@ -111,7 +111,7 @@ class CharacteristicPromotionReport(PromotionReport):
     def __init__(self, scheme: str, year: str, attribute: str):
         super().__init__(scheme, year, attribute)
         self.tables = {'ethnicity': Ethnicity, 'gender': Gender, 'sexuality': Sexuality, 'belief': Belief,
-                       'working-pattern': WorkingPattern, 'age-range': AgeRange}
+                       'working_pattern': WorkingPattern, 'age_range': AgeRange}
         self.table = self.tables.get(self.attribute)
 
     def promoted_candidates_with_this_characteristic(self, characteristic, temporary):
