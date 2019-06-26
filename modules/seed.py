@@ -38,7 +38,7 @@ def generate_random_fixed_data():
     genders = [Gender(id=i, value=value) for i, value
                in enumerate(["Male", "Female", "I identify in another way", "Prefer not to say"])]
 
-    organisations.append(Organisation(name='Cabinet Office'))
+    organisations.append(Organisation(id=len(organisations) + 1, name='Cabinet Office'))
     grades = [
         'Prefer not to say',
         'AA – Administrative Assistant',
