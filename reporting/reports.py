@@ -188,7 +188,7 @@ class MetaOfferPromotionReport(OfferPromotionReport):
         super().__init__(scheme, year, attribute)
 
     def eligible_candidates(self):
-        return [candidate for candidate in super().eligible_candidates() if candidate.ethicity.bame]
+        return [candidate for candidate in super().eligible_candidates() if candidate.ethnicity.bame]
 
 
 class DeltaOfferPromotionReport(OfferPromotionReport):
