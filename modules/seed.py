@@ -10,12 +10,25 @@ def random_string(length: int) -> str:
 
 def generate_random_fixed_data():
 
-    choices = {
-        'orgs': ["Ministry of", "Department of", "Their Majesty's"]
-    }
+    organisation_names = ["Attorney General's Office", "The Charity Commission", "Competition Markets Authority",
+                          "Crown Prosecution Service", "Department for Business, Energy & Industrial Strategy",
+                          "Department for Digital, Culture, Media and Sport", "Department for Education",
+                          "Department for Environment Food and Rural Affairs (DEFRA)",
+                          "Department for Exiting the European Union", "Department for International Development",
+                          "Department for International Trade", "Department for Transport",
+                          "Department of Health and Social Care", "Food Standards Agency",
+                          "Foreign & Commonwealth Office", "Forestry Commission", "Government Actuary's Department",
+                          "Government Legal Department", "HM Land Registry", "HM Revenue & Customs", "HM Treasury",
+                          "Home Office", "Ministry of Defence", "Ministry of Housing, Communities and Local Govt",
+                          "Ministry of Justice", "The National Archives", "National Crime Agency",
+                          "Northern Ireland Office", "National Savings and Investments (NS&I)",
+                          "Office for Standards in Education (Ofsted)", "Office of Gas and Electricity Markets (Ofgem)",
+                          "Office of Qualifications and Examinations Regulation (Ofqual)", "Office of Rail and Road",
+                          "Other", "The Water Services Regulation Authority (Ofwat)", "Scottish Government",
+                          "Serious Fraud Office", "Supreme Court of the United Kingdom", "UK Export Finance",
+                          "UK Statistics Authority", "Welsh Government"]
 
-    organisations = [f"{random.choice(choices['orgs'])} {random_string(16)}" for i in range(44)]
-
+    organisations = [Organisation(id=i, name=value, department=True) for i, value in enumerate(organisation_names)]
     professions = [f"{random_string(12)}".capitalize() for i in range(15)]
 
     locations = ["East Midlands", "East of England", "London", "North East England", "North West England",
@@ -25,7 +38,6 @@ def generate_random_fixed_data():
     genders = [Gender(id=i, value=value) for i, value
                in enumerate(["Male", "Female", "I identify in another way", "Prefer not to say"])]
 
-    organisations = [Organisation(name=string) for string in organisations]
     organisations.append(Organisation(name='Cabinet Office'))
     grades = [
         'Prefer not to say',
@@ -67,15 +79,25 @@ def generate_random_fixed_data():
         "White - Irish",
         "White English/Welsh/Scottish/Northern Irish/British",
     ]
+    sexual_orientation = [Sexuality(id=i, value=value) for i, value in enumerate([
+        "Bisexual", "Gay or lesbian", "I identify in another way", "Prefer not to say", "Straight/heterosexual"]
+    )]
     ethnic_groups = [Ethnicity(value=item, bame=True) for item in bame_ethnic_groups]
     ethnic_groups.extend([Ethnicity(value=item, bame=False) for item in non_bame_ethnic_groups])
-    grades = [Grade(value=grade, rank=i) for i, grade in enumerate(grades)]
-    professions = [Profession(value=string) for string in professions]
-    locations = [Location(value=string) for string in locations]
+    grades = [Grade(id=i, value=grade, rank=i) for i, grade in enumerate(grades)]
+    professions = [Profession(id=i, value=string) for i, string in enumerate(professions)]
+    locations = [Location(id=i, value=string) for i, string in enumerate(locations)]
+    beliefs = [Belief(id=i, value=string) for i, string in enumerate(
+        ['Agnostic', 'Buddhist', 'Christian', 'Hindu', 'Jewish', 'Muslim', 'No Religion', 'Other Religion',
+         'Prefer Not To Say', 'Sikh']
+    )]
+    ages = [AgeRange(id=i, value=string) for i, string in enumerate(
+        ['16-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59', '60-64']
+    )]
 
     return {'organisations': organisations, 'grades': grades, 'professions': professions, 'locations': locations,
             'ethnicities': ethnic_groups, 'schemes': [Scheme(id=1, name='FLS'), Scheme(id=2, name='SLS')],
-            'ages': [AgeRange(id=1, value='25-34'), AgeRange(id=2, value='35-44')], 'genders': genders}
+            'ages': ages, 'genders': genders, 'sexuality': sexual_orientation, 'beliefs': beliefs}
 
 
 def generate_known_candidate():
@@ -107,15 +129,15 @@ def generate_random_candidate():
                      roles=[Role(date_started=date(2015, 9, 2), temporary_promotion=False,
                                  organisation_id=random.choice(Organisation.query.all()).id,
                                  grade=Grade.query.filter(Grade.value.like("%Faststream%")).first())
-                            ],
-                     applications=[Application(scheme_id=1, scheme_start_date=date(2018, 3, 1))])
+                            ]
+                     )
 
 
 def apply_candidate_to_scheme(scheme_name: str, candidate: Candidate, meta=False, delta=False,
                               scheme_start_date=date(2018, 3, 1)):
     candidate.applications.append(
         Application(scheme_id=Scheme.query.filter_by(name=scheme_name).first().id, successful=True, meta=meta,
-                    delta=delta,scheme_start_date=scheme_start_date)
+                    delta=delta, scheme_start_date=scheme_start_date)
     )
     return candidate
 
@@ -157,7 +179,7 @@ def commit_data():
 
 def clear_old_data():
     tables = [Application, Role, Candidate, Organisation, Profession, Grade, Location, Ethnicity, Scheme, AgeRange,
-              Gender]
+              Gender, Sexuality, AgeRange, Belief]
     for table in tables:
         table.query.delete()
         db.session.commit()
