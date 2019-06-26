@@ -12,7 +12,12 @@ The diagram below shows the current database structure.
 
 ## Application structure
 This is a monolithic app. This use case is not complex enough to need microservices. Future feature requests might 
-necessitate it but for now monolith all the way.
+necessitate it but for now monolith all the way. It's designed as a prototype tool to see if data analysis can be more 
+effectively carried out via a database rather than a spreadsheet.
+
+Implementing a web-based interface significantly limits the reports that can be run. Each one has to be coded by hand, 
+adding significant extra friction. However, for this prototype, teaching the team using this tool SQL would be poor #
+value for money. 
 
 It uses
 - sqlalchemy for the Models
