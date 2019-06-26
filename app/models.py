@@ -16,7 +16,11 @@ login_manager = LoginManager()
 class CandidateGetterMixin:
     @declared_attr
     def candidates(cls):
-        return db.relationship("Candidate", backref=cls.__name__.lower())
+        try:
+            backref = cls.__table_name__
+        except AttributeError:
+            backref = cls.__name__.lower()
+        return db.relationship("Candidate", backref=backref)
 
 
 class User(UserMixin, db.Model):
@@ -296,11 +300,13 @@ class SocioEconomic(db.Model):
 
 
 class AgeRange(CandidateGetterMixin, db.Model):
+    __table_name__ = 'age_range'
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(10))
 
 
 class WorkingPattern(CandidateGetterMixin, db.Model):
+    __table_name__ = 'working_pattern'
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(128))
 
