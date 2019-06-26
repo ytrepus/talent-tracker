@@ -174,7 +174,9 @@ class OfferPromotionReport(PromotionReport):
     def get_row_metadata(self):
         return [
             (f"Candidates eligible for {self.upper_attribute}", self.eligible_candidates()),
-            (f"Candidates on {self.upper_attribute}", self.candidates_on_offer(self.attribute))
+            (f"Candidates on {self.upper_attribute}", self.candidates_on_offer(self.attribute)),
+            (f"Candidates not on {self.upper_attribute}",
+             list(set(self.eligible_candidates()) - set(self.candidates_on_offer(self.attribute))))
         ]
 
     def candidates_on_offer(self, offer):
