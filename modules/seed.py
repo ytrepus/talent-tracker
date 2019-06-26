@@ -102,6 +102,8 @@ def generate_random_candidate():
                      ethnicity_id=random.choice(Ethnicity.query.all()).id,
                      age_range_id=random.choice([1, 2]),
                      gender_id=random.choice(Gender.query.all()).id,
+                     long_term_health_condition=random.choice([True, False, False]),
+                     caring_responsibility=random.choice([True, False, False]),
                      roles=[Role(date_started=date(2015, 9, 2), temporary_promotion=False,
                                  organisation_id=random.choice(Organisation.query.all()).id,
                                  grade=Grade.query.filter(Grade.value.like("%Faststream%")).first())
@@ -109,9 +111,11 @@ def generate_random_candidate():
                      applications=[Application(scheme_id=1, scheme_start_date=date(2018, 3, 1))])
 
 
-def apply_candidate_to_scheme(scheme_name: str, candidate: Candidate):
+def apply_candidate_to_scheme(scheme_name: str, candidate: Candidate, meta=False, delta=False,
+                              scheme_start_date=date(2018, 3, 1)):
     candidate.applications.append(
-        Application(scheme_id=Scheme.query.filter_by(name=scheme_name).first().id, successful=True)
+        Application(scheme_id=Scheme.query.filter_by(name=scheme_name).first().id, successful=True, meta=meta,
+                    delta=delta,scheme_start_date=scheme_start_date)
     )
     return candidate
 
@@ -138,6 +142,15 @@ def commit_data():
     random_promoted_sls_candidates = [promote_candidate(candidate) if i % 2 == 0 else candidate
                                       for i, candidate in enumerate(random_candidates('SLS', 100))]
     candidates = random_promoted_sls_candidates + random_promoted_fls_candidates
+    ethnic_minority_background = Ethnicity.query.filter(Ethnicity.bame.is_(True)).all()
+
+    for candidate in candidates:
+        coin_flip = random.choice([True, False])
+        if candidate.ethnicity in ethnic_minority_background:
+            candidate.applications[0].meta = coin_flip
+        if candidate.long_term_health_condition:
+            candidate.applications[0].delta = coin_flip
+
     db.session.add_all(candidates)
     db.session.commit()
 
