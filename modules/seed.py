@@ -96,10 +96,14 @@ def generate_random_fixed_data():
     ages = [AgeRange(id=i, value=string) for i, string in enumerate(
         ['16-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59', '60-64']
     )]
+    working_patterns = [WorkingPattern(id=i, value=string) for i, string in enumerate(
+        ['Full time', 'Job share', 'Part time', 'Prefer not to say', 'Flexible working', 'Term time']
+    )]
 
     return {'organisations': organisations, 'grades': grades, 'professions': professions, 'locations': locations,
             'ethnicities': ethnic_groups, 'schemes': [Scheme(id=1, name='FLS'), Scheme(id=2, name='SLS')],
-            'ages': ages, 'genders': genders, 'sexuality': sexual_orientation, 'beliefs': beliefs}
+            'ages': ages, 'genders': genders, 'sexuality': sexual_orientation, 'beliefs': beliefs,
+            'working_patterns': working_patterns}
 
 
 def generate_known_candidate():
@@ -108,7 +112,7 @@ def generate_known_candidate():
         first_name="Test", last_name="Candidate",
         completed_fast_stream=True,
         joining_grade=Grade.query.filter(Grade.value.like("%Faststream%")).first().id,
-        age_range_id=2, ethnicity_id=1,
+        age_range_id=2, ethnicity_id=1, working_pattern_id=1, belief_id=1, gender_id=1, sexuality_id=1,
         roles=[Role(date_started=date(2015, 9, 2), temporary_promotion=False,
                     organisation_id=Organisation.query.filter(Organisation.name == 'Cabinet Office').first().id,
                     grade=Grade.query.filter(Grade.value.like("%Faststream%")).first())
@@ -123,11 +127,13 @@ def generate_random_candidate():
                      joining_date=date(random.randrange(1960, 2018), random.randrange(1, 12), random.randrange(1, 28)),
                      completed_fast_stream=random.choice([True, False]),
                      joining_grade=(Grade.query.filter_by(rank=6).first()).id,
-                     ethnicity_id=random.choice(Ethnicity.query.all()).id,
-                     age_range_id=random.choice([1, 2]),
+                     ethnicity=random.choice(Ethnicity.query.all()),
+                     age_range=random.choice(AgeRange.query.all()),
                      gender_id=random.choice(Gender.query.all()).id,
                      long_term_health_condition=random.choice([True, False, False]),
                      caring_responsibility=random.choice([True, False, False]),
+                     belief=random.choice(Belief.query.all()), sexuality=random.choice(Sexuality.query.all()),
+                     working_pattern=random.choice(WorkingPattern.query.all()),
                      roles=[Role(date_started=date(2015, 9, 2), temporary_promotion=False,
                                  organisation_id=random.choice(Organisation.query.all()).id,
                                  grade=Grade.query.filter(Grade.value.like("%Faststream%")).first())
@@ -181,7 +187,7 @@ def commit_data():
 
 def clear_old_data():
     tables = [Application, Role, Candidate, Organisation, Profession, Grade, Location, Ethnicity, Scheme, AgeRange,
-              Gender, Sexuality, AgeRange, Belief]
+              Gender, Sexuality, AgeRange, Belief, WorkingPattern]
     for table in tables:
         table.query.delete()
         db.session.commit()
