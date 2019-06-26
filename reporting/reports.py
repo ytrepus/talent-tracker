@@ -77,7 +77,24 @@ class PromotionReport(Report, ABC):
         self.filename = f"promotions-by-{attribute}-{scheme}-{year}-generated-{date.today().strftime('5%d-%m-%Y')}"
 
     def get_data(self):
-        pass
+        output = []
+        for tupl in self.get_row_metadata():
+            output.append(self.row_writer(tupl[0], tupl[1]))
+        return output
+
+    def get_row_metadata(self):
+        return NotImplementedError
+
+    def row_writer(self, row_header, candidate_list):
+        output = [row_header]
+        output.extend(self.chunk_writer(False, candidate_list))
+        output.extend(self.chunk_writer(True, candidate_list))
+        output.append(len(candidate_list))
+        return output
+
+    def chunk_writer(self, temporary, candidates):
+        promoted_number = len(self.promoted_candidates(temporary, candidates))
+        return [promoted_number, self.decimal_or_none(promoted_number, len(candidates))]
 
     def eligible_candidates(self) -> List[Candidate]:
         """
@@ -87,12 +104,14 @@ class PromotionReport(Report, ABC):
         :return:
         :rtype:
         """
-        print(Application.query.filter(Application.scheme_start_date == self.intake_date,).all())
         eligible_applications = Application.query.filter(and_(
             Application.scheme_start_date == self.intake_date,
             Application.scheme_id == self.scheme.id
         )).all()
         return [application.candidate for application in eligible_applications]
+
+    def promoted_candidates(self, temporary, candidates: List[Candidate]):
+        return [candidate for candidate in candidates if candidate.promoted(self.promoted_before_date, temporary)]
 
     def write_row(self, row_data, data_object, csv_writer):
         csv_writer.writerow((
@@ -114,39 +133,12 @@ class CharacteristicPromotionReport(PromotionReport):
                        'working_pattern': WorkingPattern, 'age_range': AgeRange}
         self.table = self.tables.get(self.attribute)
 
-    def promoted_candidates_with_this_characteristic(self, characteristic, temporary):
-        """
-        Takes a row from one of the ProtectedCharacteristic tables (Ethnicity, WorkingPattern, etc) and returns the
-        number of candidates with that characteristic who have also been promoted in the timeframe allowed by the class
-        :param characteristic:
-        :type characteristic:
-        :param temporary:
-        :type temporary:
-        :return:
-        :rtype:
-        """
+    def get_row_metadata(self):
+        return [(row.value, self.candidates_with_characteristic(row)) for row in self.table.query.all()]
 
-        eligible_candidates = [candidate for candidate in self.eligible_candidates()
-                               if getattr(candidate, self.attribute) == characteristic]
-        promoted_candidates = [candidate for candidate in eligible_candidates
-                               if candidate.promoted(self.promoted_before_date, temporary=temporary)]
-        total_candidates = len(eligible_candidates)
-        return [len(promoted_candidates), self.decimal_or_none(len(promoted_candidates), total_candidates)]
-
-    def line_writer(self, characteristic):
-        line = [f"{characteristic.value}"]
-        line.extend(self.promoted_candidates_with_this_characteristic(characteristic, False))
-        line.extend(self.promoted_candidates_with_this_characteristic(characteristic, True))
-        line.append(len([candidate for candidate in self.eligible_candidates()
-                         if getattr(candidate, self.attribute) == characteristic]))
-        return line
-
-    def get_data(self):
-        output = []
-        characteristics = self.table.query.all()
-        for characteristic in characteristics:
-            output.append(self.line_writer(characteristic))
-        return output
+    def candidates_with_characteristic(self, characteristic):
+        return [candidate for candidate in self.eligible_candidates()
+                if getattr(candidate, self.attribute) == characteristic]
 
 
 class BooleanCharacteristicPromotionReport(PromotionReport):
@@ -163,21 +155,43 @@ class BooleanCharacteristicPromotionReport(PromotionReport):
         }
         self.human_readable_row_titles = self.human_readable_characteristics.get(self.attribute)
 
-    def get_data(self):
-        characteristics = [True, False, None]
-        return [self.line_writer(characteristic) for characteristic in characteristics]
+    def get_row_metadata(self):
+        return [
+            (value, Candidate.query.filter(getattr(Candidate, self.attribute).is_(key)).all())
+            for key, value in self.human_readable_row_titles.items()
+        ]
 
-    def line_writer(self, characteristic: bool):
-        line = [f"{self.human_readable_row_titles.get(characteristic)}"]
-        line.extend(self.promoted_candidates_with_this_characteristic(characteristic, temporary=False))
-        line.extend(self.promoted_candidates_with_this_characteristic(characteristic, temporary=True))
-        line.append(len(Candidate.query.filter(getattr(Candidate, self.attribute).is_(characteristic)).all()))
-        return line
 
-    def promoted_candidates_with_this_characteristic(self, characteristic: bool, temporary: bool):
-        eligible_candidates = [candidate for candidate in self.eligible_candidates()
-                               if getattr(candidate, self.attribute) == characteristic]
-        promoted_candidates = [candidate for candidate in eligible_candidates
-                               if candidate.promoted(self.promoted_before_date, temporary=temporary)]
-        total_candidates = len(eligible_candidates)
-        return [len(promoted_candidates), self.decimal_or_none(len(promoted_candidates), total_candidates)]
+class OfferPromotionReport(PromotionReport):
+    def __init__(self, scheme, year, attribute):
+        super().__init__(scheme, year, attribute)
+        self.upper_attribute = attribute.upper()
+        self.human_readable_row_titles = {
+            True: f"Candidates eligible for {self.upper_attribute}",
+            False: f"Candidates on {self.upper_attribute}"
+        }
+
+    def get_row_metadata(self):
+        return [
+            (f"Candidates eligible for {self.upper_attribute}", self.eligible_candidates()),
+            (f"Candidates on {self.upper_attribute}", self.candidates_on_offer(self.attribute))
+        ]
+
+    def candidates_on_offer(self, offer):
+        return [candidate for candidate in super().eligible_candidates() if getattr(candidate.applications[0], offer)]
+
+
+class MetaOfferPromotionReport(OfferPromotionReport):
+    def __init__(self, scheme, year, attribute):
+        super().__init__(scheme, year, attribute)
+
+    def eligible_candidates(self):
+        return [candidate for candidate in super().eligible_candidates() if candidate.ethicity.bame]
+
+
+class DeltaOfferPromotionReport(OfferPromotionReport):
+    def __init__(self, scheme, year, attribute):
+        super().__init__(scheme, year, attribute)
+
+    def eligible_candidates(self):
+        return [candidate for candidate in super().eligible_candidates() if candidate.long_term_health_condition]

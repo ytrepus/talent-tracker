@@ -71,7 +71,8 @@ class Candidate(db.Model):
     joining_grade = db.Column(db.ForeignKey('grade.id'))
 
     roles = db.relationship('Role', backref='candidate', lazy='dynamic')
-    applications = db.relationship('Application', backref='candidate', lazy='dynamic')
+    applications = db.relationship('Application', backref='candidate', lazy='dynamic',
+                                   order_by="Application.scheme_start_date.desc()")
 
     def __repr__(self):
         return f'<Candidate email {self.email_address}>'
