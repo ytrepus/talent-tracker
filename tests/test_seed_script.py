@@ -4,8 +4,8 @@ import pytest
 
 
 def test_commit_data(seed_data):
-    for item in [(Candidate, 201), (Organisation, 45), (Grade, 13), (Profession, 15)]:
-        assert item[1] == len(item[0].query.all())
+    for item in [(Candidate, 201), (Organisation, 42), (Grade, 13), (Profession, 15)]:
+        assert len(item[0].query.all()) == item[1]
 
 
 @pytest.mark.parametrize("model", [Candidate, Organisation, Grade, Profession])
