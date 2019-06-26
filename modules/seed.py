@@ -84,6 +84,8 @@ def generate_random_fixed_data():
     )]
     ethnic_groups = [Ethnicity(value=item, bame=True) for item in bame_ethnic_groups]
     ethnic_groups.extend([Ethnicity(value=item, bame=False) for item in non_bame_ethnic_groups])
+    for i, e in enumerate(ethnic_groups):
+        e.id = i
     grades = [Grade(id=i, value=grade, rank=i) for i, grade in enumerate(grades)]
     professions = [Profession(id=i, value=string) for i, string in enumerate(professions)]
     locations = [Location(id=i, value=string) for i, string in enumerate(locations)]
@@ -106,7 +108,7 @@ def generate_known_candidate():
         first_name="Test", last_name="Candidate",
         completed_fast_stream=True,
         joining_grade=Grade.query.filter(Grade.value.like("%Faststream%")).first().id,
-        age_range_id=2,
+        age_range_id=2, ethnicity_id=1,
         roles=[Role(date_started=date(2015, 9, 2), temporary_promotion=False,
                     organisation_id=Organisation.query.filter(Organisation.name == 'Cabinet Office').first().id,
                     grade=Grade.query.filter(Grade.value.like("%Faststream%")).first())
