@@ -125,5 +125,6 @@ class TestDeltaOfferPromotionReport:
         expected_output = [
             ["Candidates eligible for DELTA", 6, 0.6, 0, 0.0, 10],
             ["Candidates on DELTA", 4, 0.8, 0, 0.0, 5],
+            ["Candidates not on DELTA", 2, 0.4, 0, 0.0, 5]
         ]
         assert expected_output == output
