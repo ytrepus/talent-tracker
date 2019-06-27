@@ -191,6 +191,7 @@ class Role(db.Model):
 
     grade = db.relationship('Grade', lazy='select')
     location = db.relationship('Location', lazy='select')
+    profession = db.relationship('Profession', lazy='select')
 
     def __repr__(self):
         return f'<Role held by {self.candidate} at {self.organisation_id}>'
