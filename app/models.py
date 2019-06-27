@@ -196,8 +196,8 @@ class Role(db.Model):
         return f'<Role held by {self.candidate} at {self.organisation_id}>'
 
     def is_promotion(self):
-        role_before_this = self.candidate.roles.order_by(Role.date_started.desc()).first()
-        return self.grade.rank > role_before_this.grade.rank and not self.temporary_promotion
+        role_before_this = self.candidate.roles.order_by(Role.date_started.desc()).limit(2).all()[1]
+        return self.grade.rank < role_before_this.grade.rank
 
 
 class Scheme(db.Model):
