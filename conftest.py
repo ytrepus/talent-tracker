@@ -55,6 +55,7 @@ def test_session(db):
     ])
     db.session.add_all([Gender(id=1, value="Fork"), Gender(id=2, value="Knife"), Gender(id=3, value="Chopsticks")])
     db.session.add(Candidate(id=1))
+    db.session.add(Location(id=1, value='Stargate-1'))
     db.session.commit()
 
     yield session_
@@ -73,7 +74,8 @@ def test_candidate(test_session):
     candidate.completed_fast_stream = True
     candidate.joining_date = date(2010, 5, 1)
     candidate.joining_grade = 1
-    candidate.roles.append(Role(date_started=date(2010, 5, 1), temporary_promotion=False, grade_id=2))
+    candidate.roles.append(
+        Role(date_started=date(2010, 5, 1), temporary_promotion=False, grade_id=2, location_id=1))
     test_data = {
         'grades': [Grade(value='Band A', rank=2), Grade(value='SCS3', rank=1)],
         'test_candidates': [candidate],
