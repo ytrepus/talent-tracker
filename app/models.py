@@ -104,6 +104,10 @@ class Candidate(db.Model):
     def current_scheme(self) -> 'Scheme':
         return Scheme.query.get(self.applications.order_by(Application.application_date.desc()).first().scheme_id)
 
+    def most_recent_application(self) -> 'Application':
+        return Application.query.filter(Application.candidate_id == self.id).\
+            order_by(Application.application_date.desc()).first()
+
 
 class Organisation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
