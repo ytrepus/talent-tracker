@@ -58,6 +58,9 @@ def test_session(db):
     db.session.add_all([Gender(id=1, value="Fork"), Gender(id=2, value="Knife"), Gender(id=3, value="Chopsticks")])
     db.session.add(Candidate(id=1))
     db.session.add(Location(id=1, value='Stargate-1'))
+    db.session.add(WorkingPattern(id=1, value="24/7"))
+    db.session.add(Belief(id=1, value="Don't forget to be awesome"))
+    db.session.add(Sexuality(id=1, value="Pan"))
     db.session.commit()
 
     yield session_
@@ -75,7 +78,9 @@ def test_candidate(test_session):
     candidate.last_name = "Candidate"
     candidate.completed_fast_stream = True
     candidate.joining_date = date(2010, 5, 1)
-    candidate.joining_grade_id = 1
+    candidate.joining_grade = 1
+    candidate.gender = Gender.query.get(1)
+
     candidate.roles.append(
         Role(date_started=date(2010, 5, 1), grade_id=2, location_id=1, role_change_id=2))
     test_data = {
@@ -90,7 +95,8 @@ def test_candidate(test_session):
 
 @pytest.fixture
 def test_candidate_applied_to_fls(test_candidate, test_session):
-    test_candidate.applications.append(Application(application_date=date(2019, 6, 1), scheme_id=1))
+    test_candidate.applications.append(Application(application_date=date(2019, 6, 1), scheme_id=1,
+                                                   scheme_start_date=date(2020, 3, 1)))
     test_session.add(test_candidate)
     test_session.commit()
     yield Candidate.query.first()
