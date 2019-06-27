@@ -161,7 +161,7 @@ def gender_ten_of_each(test_session):
     candidates = []
     for gender in Gender.query.all():
         for i in range(10):
-            candidates.append(Candidate(ethnicity_id=gender.id))
+            candidates.append(Candidate(gender=gender))
     test_session.add_all(candidates)
     test_session.commit()
     yield
