@@ -131,3 +131,23 @@ class TestDeltaOfferPromotionReport:
             ["Candidates not on DELTA", 2, 0.4, 0, 0.0, 5]
         ]
         assert expected_output == output
+
+
+class TestDetailedPromotionReport:
+    @pytest.mark.parametrize("promoted, expected_data", [
+        (
+            True,
+            # column headings: name, email, programme, offer, working pattern, belief, gender, sexuality, disability,
+            # caring, age range, ethnicity, profile url
+            {"Testy Candidate", "testcandidate@numberten.gov.uk", "FLS", "META", "24/7", "Don't forget to be awesome",
+             "Fork", "Pan", False, True, "Immortal", "Terran", "localhost:5000/candidates/candidate/2478"}
+         ),
+        (
+            False,
+            set()
+        )
+    ])
+    def test_get_data(self, promoted, expected_data, test_candidate_applied_and_promoted):
+        report = DetailedPromotionReport(promoted, date(2019, 9, 1), date(2020, 9, 1))
+        output = set(report.get_data()[1])
+        assert output.intersection(expected_data) == expected_data
