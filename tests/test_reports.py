@@ -64,7 +64,7 @@ class TestReports:
 
 class TestPromotionReport:
     def test_eligible_candidates(self, test_session, candidates_promoter):
-        test_session.add(Ethnicity(id=1, value="Prefer not to say"))
+        test_session.add(Ethnicity(id=4, value="Prefer not to say"))
         test_session.commit()
 
         candidates = [Candidate(ethnicity_id=1) for i in range(2)]
@@ -136,7 +136,7 @@ class TestDetailedPromotionReport:
             # column headings: name, email, programme, offer, working pattern, belief, gender, sexuality, disability,
             # caring, age range, ethnicity, profile url
             {"Testy Candidate", "testcandidate@numberten.gov.uk", "FLS", "META", "24/7", "Don't forget to be awesome",
-             "Fork", "Pan", False, True, "Immortal", "Terran", "localhost:5000/candidates/candidate/2478"}
+             "Fork", "Pan", False, True, "Immortal", "Terran", "localhost:5000/candidates/candidate/1"}
          ),
         (
             False,
