@@ -180,6 +180,9 @@ def commit_data():
             candidate.applications[0].meta = coin_flip
         if candidate.long_term_health_condition:
             candidate.applications[0].delta = coin_flip
+    u = User(email="developer@talent-tracker.gov.uk")
+    u.set_password("talent-tracker")
+    db.session.add(u)
 
     db.session.add_all(candidates)
     db.session.commit()
