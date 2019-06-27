@@ -2,14 +2,22 @@
     <div class="govuk-accordion__section-header">
         <h2 class="govuk-accordion__section-heading">
             <span class="govuk-accordion__section-button" id="accordion-default-heading-2">
-              {{ role.grade.value }} - {{ role.organisation.name }}
+              Database Analyst - Home Office
             </span>
         </h2>
     </div>
     <div id="accordion-default-content-2" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-2">
         <ul class="govuk-list govuk-list--bullet">
-            <li>This role {% if role.temporary_promotion %} was {% else %} was not {% endif %}a temporary promotion</li>
+            <li>This was a {{ role.grade.value }} role</li>
+            {% if role.temporary_promotion %}
+                <li>This was a temporary promotion</li>
+            {% elif role.temporary_promotion == false %}
+                <li>This was a substantive promotion</li>
+            {% else %}
+                <li>This was a level transfer</li>
+            {% endif %}
             <li>The candidate held this role from {{ role.date_started }}</li>
+            <li>This role was anchored around {{ role.profession.value }}</li>
         </ul>
 
     </div>
