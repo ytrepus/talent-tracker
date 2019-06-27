@@ -109,14 +109,14 @@ def generate_random_fixed_data():
 
 def generate_known_candidate():
     return Candidate(
-        email_address="staging.candidate@gov.uk", joining_date=date(2015, 9, 1),
-        first_name="Test", last_name="Candidate",
-        completed_fast_stream=True,
+        id=1, email_address="staging.candidate@gov.uk", joining_date=date(2015, 9, 1),
+        first_name="Test", last_name="Candidate", completed_fast_stream=True,
         joining_grade=Grade.query.filter(Grade.value.like("%Faststream%")).first().id,
         age_range_id=2, ethnicity_id=1, working_pattern_id=1, belief_id=1, gender_id=1, sexuality_id=1,
         roles=[Role(date_started=date(2015, 9, 2), temporary_promotion=False,
                     organisation_id=Organisation.query.filter(Organisation.name == 'Cabinet Office').first().id,
-                    grade=Grade.query.filter(Grade.value.like("%Faststream%")).first())
+                    grade=Grade.query.filter(Grade.value.like("%Faststream%")).first(),
+                    location=Location.query.filter_by(value="London").first())
                ],
         applications=[Application(scheme_id=1, scheme_start_date=date(2018, 3, 1))]
     )
@@ -137,7 +137,8 @@ def generate_random_candidate():
                      working_pattern=random.choice(WorkingPattern.query.all()),
                      roles=[Role(date_started=date(2015, 9, 2), temporary_promotion=False,
                                  organisation_id=random.choice(Organisation.query.all()).id,
-                                 grade=Grade.query.filter(Grade.value.like("%Faststream%")).first())
+                                 grade=Grade.query.filter(Grade.value.like("%Faststream%")).first(),
+                                 location=random.choice(Location.query.all()))
                             ]
                      )
 
