@@ -2,6 +2,7 @@ import random
 from string import ascii_lowercase
 from app.models import *
 from datetime import date
+import os
 
 
 def random_string(length: int) -> str:
@@ -180,9 +181,10 @@ def commit_data():
             candidate.applications[0].meta = coin_flip
         if candidate.long_term_health_condition:
             candidate.applications[0].delta = coin_flip
-    u = User(email="developer@talent-tracker.gov.uk")
-    u.set_password("talent-tracker")
-    db.session.add(u)
+    if os.environ.get('ENV') == 'dev':
+        u = User(email="developer@talent-tracker.gov.uk")
+        u.set_password("talent-tracker")
+        db.session.add(u)
 
     db.session.add_all(candidates)
     db.session.commit()
@@ -190,7 +192,10 @@ def commit_data():
 
 def clear_old_data():
     tables = [Application, Role, Candidate, Organisation, Profession, Grade, Location, Ethnicity, Scheme, AgeRange,
-              Gender, Sexuality, AgeRange, Belief, WorkingPattern, User]
+              Gender, Sexuality, AgeRange, Belief, WorkingPattern]
     for table in tables:
         table.query.delete()
+        db.session.commit()
+    if os.environ.get('ENV') == 'dev':
+        User.query.delete()
         db.session.commit()

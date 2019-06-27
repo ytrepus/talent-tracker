@@ -20,6 +20,7 @@ services:
       - DATABASE_URL=postgresql://talent_user:password@db:5432/talent-tracker
       - FLASK_APP=run.py
       - SECRET_KEY=secret-dev-key
+      - ENV=dev
     ports:
       - "5000:5000"
 
