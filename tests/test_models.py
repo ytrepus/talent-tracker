@@ -1,4 +1,4 @@
-from app.models import FLSLeadership, Leadership, Candidate, Role, Grade
+from app.models import FLSLeadership, Leadership, Candidate, Role, Grade, Application
 from datetime import date
 import pytest
 
@@ -85,6 +85,15 @@ class TestCandidate:
 
     def test_current_scheme_returns_current_scheme(self, test_candidate_applied_to_fls):
         assert test_candidate_applied_to_fls.current_scheme().name == 'FLS'
+
+    @pytest.mark.parametrize("prior_application, expected_output", [
+        (Application(application_date=date(2018, 6, 1)), date(2019, 6, 1)),
+        (Application(application_date=date(2020, 6, 1)), date(2020, 6, 1))
+    ])
+    def test_current_application_returns_correct_application(self, prior_application, expected_output,
+                                                             test_candidate_applied_to_fls):
+        test_candidate_applied_to_fls.applications.append(prior_application)
+        assert expected_output == test_candidate_applied_to_fls.most_recent_application().application_date
 
 
 class TestGrade:
