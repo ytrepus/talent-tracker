@@ -39,7 +39,7 @@ of tests already written
 Don't forget to pull this repo frequently - it's a live project and things are changing all the time. As a result, 
 short-lived branches are appreciated :-)
 
-##Getting started
+## Getting started
 To run this system you should have installed Docker:
 - `git clone`
 - `cd talent-tracker`
