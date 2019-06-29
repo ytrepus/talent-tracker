@@ -11,13 +11,13 @@ import csv
 
 
 class Report(ABC):
+    """
+    This is the base report. All reports should be subclassed from it. They should implement the abstract methods but
+    should not override any of the others.
+    """
     def __init__(self):
-        self.tables = {
-            'ethnicity': Ethnicity
-        }
         self.filename = None
         self.headers = []
-        self.filename = ''
 
     @abstractmethod
     def write_row(self, row_data, data_object, csv_writer):
@@ -66,6 +66,11 @@ class Report(ABC):
 
 
 class PromotionReport(Report, ABC):
+    """
+    This class deals with reports that produce data about promotions. All promotions reports deal with an attribute -
+    that might be a protected characteristic or a grouping like META or DELTA. All promotion reports have the same
+    column headers and deal with a single intake year.
+    """
     def __init__(self, scheme: str, year: str, attribute: str = None):
         super().__init__()
         self.attribute = attribute
@@ -114,6 +119,9 @@ class PromotionReport(Report, ABC):
         return [candidate for candidate in candidates if candidate.promoted(self.promoted_before_date, temporary)]
 
     def write_row(self, row_data, data_object, csv_writer):
+        """
+        Format the row data in a human-readable form and write it out
+        """
         csv_writer.writerow((
             row_data[0],
             row_data[1],
@@ -127,6 +135,10 @@ class PromotionReport(Report, ABC):
 
 
 class CharacteristicPromotionReport(PromotionReport):
+    """
+    This class is for reports that iterate over a separate table. The tables are listed in self.tables. This report
+    iterates over each value in the table and groups together candidates with that value
+    """
     def __init__(self, scheme: str, year: str, attribute: str):
         super().__init__(scheme, year, attribute)
         self.tables = {'ethnicity': Ethnicity, 'gender': Gender, 'sexuality': Sexuality, 'belief': Belief,
@@ -142,6 +154,9 @@ class CharacteristicPromotionReport(PromotionReport):
 
 
 class BooleanCharacteristicPromotionReport(PromotionReport):
+    """
+    These reports are those where the corresponding database field is a boolean, rather than a distinct table.
+    """
     def __init__(self, scheme: str, year: str, attribute: str):
         super().__init__(scheme, year, attribute)
         self.human_readable_characteristics = {
