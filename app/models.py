@@ -1,4 +1,4 @@
-
+from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
 from flask_migrate import Migrate
@@ -107,7 +107,7 @@ class Candidate(db.Model):
     def most_recent_application(self) -> 'Application':
         return Application.query.filter(Application.candidate_id == self.id).\
             order_by(Application.application_date.desc()).first()
-            
+
     def current_location(self):
         return self.roles.order_by(Role.id.desc()).first().location.value
 
