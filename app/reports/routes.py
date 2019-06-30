@@ -1,6 +1,6 @@
 from flask import request, render_template
 from app.reports import reports_bp
-from reporting.reports import ReportFactory
+from reporting import ReportFactory
 
 
 @reports_bp.route('/', methods=["POST", "GET"])
