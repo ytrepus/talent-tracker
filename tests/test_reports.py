@@ -1,7 +1,8 @@
 import pytest
 from typing import List
-from reporting.reports import CharacteristicPromotionReport, BooleanCharacteristicPromotionReport, PromotionReport, \
+from reporting.promotion_reports import CharacteristicPromotionReport, BooleanCharacteristicPromotionReport, \
     DeltaOfferPromotionReport
+from reporting.base_promotion_report import PromotionReport
 from app.models import Ethnicity, Candidate, Application
 from datetime import date
 
