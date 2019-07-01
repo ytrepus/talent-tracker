@@ -204,7 +204,7 @@ class Scheme(db.Model):
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
-    aspirational_grade = db.Column(db.ForeignKey('grade.id'))
+    aspirational_grade_id = db.Column(db.ForeignKey('grade.id'))
     scheme_id = db.Column(db.ForeignKey('scheme.id'))
     candidate_id = db.Column(db.ForeignKey('candidate.id'), nullable=False)
 
@@ -217,6 +217,8 @@ class Application(db.Model):
     delta = db.Column(db.Boolean, default=False)
     cohort = db.Column(db.Integer, unique=False)
     withdrawn = db.Column(db.Boolean(), default=False)
+
+    aspirational_grade = db.relationship('Grade', lazy='select')
 
     def defer(self, date_to_defer_to: datetime.date):
         self.scheme_start_date = date_to_defer_to
