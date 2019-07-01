@@ -14,7 +14,8 @@
           <ul class="govuk-list govuk-list--bullet">
               <li>{{ candidate.first_name }} is on the FLS scheme. They are eligible for META and have taken up the
                   offer</li>
-            <li>They're in cohort 42</li>
+            <li>They're in cohort {{ candidate.most_recent_application().cohort }} on the
+                {{ candidate.most_recent_application().scheme_start_date.year }} intake</li>
               <li>This candidate is currently based in {{ candidate.current_location() }}</li>
               {% if candidate.completed_fast_stream %}
                   <li>They completed the Fast Stream</li>
