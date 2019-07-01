@@ -146,6 +146,6 @@ class TestReports:
 
 
 class TestProfile:
-    def test_get(self, test_client, logged_in_user, test_candidate):
+    def test_get(self, test_client, logged_in_user, test_candidate_applied_to_fls):
         result = test_client.get('/candidates/candidate/1')
         assert "Career profile for Testy Candidate" in result.data.decode("utf-8")
