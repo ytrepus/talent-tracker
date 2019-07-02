@@ -12,3 +12,8 @@ def reports():
         return report.return_data()
 
     return render_template("reports/select-report.html")
+
+
+@reports_bp.route('/detailed-report', methods=["POST", "GET"])
+def detailed_report():
+    return render_template('reports/detailed-report.html')
