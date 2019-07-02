@@ -1,18 +1,24 @@
 {% extends 'updates/update-layout.html' %}
 
 {% block form_content %}
-        <div class="govuk-form-group">
-            <label class="govuk-label" for="new-grade">
-                New grade
-            </label>
-          <select class="govuk-select" id="new-grade" name="new-grade">
-              {% for grade in data.promotable_grades %}
+    <div class="govuk-form-group">
+        <label class="govuk-label" for="new-title">
+            New role title
+        </label>
+        <input class="govuk-input govuk-input--width-30" id="new-title" name="new-title" type="text">
+    </div>
+    <div class="govuk-form-group">
+        <label class="govuk-label" for="new-grade">
+            New grade
+        </label>
+        <select class="govuk-select" id="new-grade" name="new-grade">
+            {% for grade in data.promotable_grades %}
                 <option value={{ grade.id }}>{{ grade.value }}</option>
-              {% endfor %}
-          </select>
-        </div>
-        <div class="govuk-form-group">
-          <fieldset class="govuk-fieldset" aria-describedby="temporary-promotion-hint">
+            {% endfor %}
+        </select>
+    </div>
+    <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset" aria-describedby="temporary-promotion-hint">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
                 Is this a temporary promotion?
             </legend>
@@ -20,90 +26,90 @@
               Temporary promotion is also known as TP, or getting 'TDA' - temporary duties allowance
             </span>
             <div class="govuk-radios govuk-radios--inline">
-              <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="temporary-promotion-1" name="temporary-promotion" type="radio" value="1">
-                <label class="govuk-label govuk-radios__label" for="temporary-promotion-1">
-                  Yes
-                </label> </div>
-              <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="temporary-promotion-2" name="temporary-promotion" type="radio" value="0" checked>
-                <label class="govuk-label govuk-radios__label" for="temporary-promotion-2">
-                  No
-                </label>
-              </div>
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="temporary-promotion-1" name="temporary-promotion" type="radio" value="1">
+                    <label class="govuk-label govuk-radios__label" for="temporary-promotion-1">
+                        Yes
+                    </label> </div>
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="temporary-promotion-2" name="temporary-promotion" type="radio" value="0" checked>
+                    <label class="govuk-label govuk-radios__label" for="temporary-promotion-2">
+                        No
+                    </label>
+                </div>
             </div>
-          </fieldset>
-        </div>
-            <div class="govuk-form-group">
-              <fieldset class="govuk-fieldset" aria-describedby="start-date-hint" role="group">
-                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-                  <h1 class="govuk-fieldset__heading">
-                      When did the candidate start their new role?
-                  </h1>
-                </legend>
-                <span id="start-date-hint" class="govuk-hint">
+        </fieldset>
+    </div>
+    <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset" aria-describedby="start-date-hint" role="group">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                <h1 class="govuk-fieldset__heading">
+                    When did the candidate start their new role?
+                </h1>
+            </legend>
+            <span id="start-date-hint" class="govuk-hint">
                   If they don't know the exact date, use the 1st of the month
                 </span>
-                <div class="govuk-date-input" id="start-date">
-                  <div class="govuk-date-input__item">
+            <div class="govuk-date-input" id="start-date">
+                <div class="govuk-date-input__item">
                     <div class="govuk-form-group">
-                      <label class="govuk-label govuk-date-input__label" for="start-date-day">
-                        Day
-                      </label>
-                      <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="start-date-day" name="start-date-day" type="number" pattern="[0-9]*">
+                        <label class="govuk-label govuk-date-input__label" for="start-date-day">
+                            Day
+                        </label>
+                        <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="start-date-day" name="start-date-day" type="number" pattern="[0-9]*">
                     </div>
-                  </div>
-                  <div class="govuk-date-input__item">
-                    <div class="govuk-form-group">
-                      <label class="govuk-label govuk-date-input__label" for="start-date-month">
-                        Month
-                      </label>
-                      <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="start-date-month" name="start-date-month" type="number" pattern="[0-9]*">
-                    </div>
-                  </div>
-                  <div class="govuk-date-input__item">
-                    <div class="govuk-form-group">
-                      <label class="govuk-label govuk-date-input__label" for="start-date-year">
-                        Year
-                      </label>
-                      <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="start-date-year" name="start-date-year" type="number" pattern="[0-9]*">
-                    </div>
-                  </div>
                 </div>
-              </fieldset>
+                <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                        <label class="govuk-label govuk-date-input__label" for="start-date-month">
+                            Month
+                        </label>
+                        <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="start-date-month" name="start-date-month" type="number" pattern="[0-9]*">
+                    </div>
+                </div>
+                <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                        <label class="govuk-label govuk-date-input__label" for="start-date-year">
+                            Year
+                        </label>
+                        <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="start-date-year" name="start-date-year" type="number" pattern="[0-9]*">
+                    </div>
+                </div>
             </div>
+        </fieldset>
+    </div>
 
-            <div class="govuk-form-group">
-                <label class="govuk-label" for="new-org">
-                    New organisation
-                </label>
-                <select class="govuk-select" id="new-org" name="new-org">
-                  {% for organisation in data.organisations %}
-                    <option value={{ organisation.id }}>{{ organisation.name }}</option>
-                  {% endfor %}
-              </select>
-            </div>
+    <div class="govuk-form-group">
+        <label class="govuk-label" for="new-org">
+            New organisation
+        </label>
+        <select class="govuk-select" id="new-org" name="new-org">
+            {% for organisation in data.organisations %}
+                <option value={{ organisation.id }}>{{ organisation.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
 
-            <div class="govuk-form-group">
-                <label class="govuk-label" for="new-profession">
-                    New profession
-                </label>
-                <select class="govuk-select" id="new-profession" name="new-profession">
-                  {% for profession in data.professions %}
-                    <option value={{ profession.id }}>{{ profession.value }}</option>
-                  {% endfor %}
-              </select>
-            </div>
+    <div class="govuk-form-group">
+        <label class="govuk-label" for="new-profession">
+            New profession
+        </label>
+        <select class="govuk-select" id="new-profession" name="new-profession">
+            {% for profession in data.professions %}
+                <option value={{ profession.id }}>{{ profession.value }}</option>
+            {% endfor %}
+        </select>
+    </div>
 
-            <div class="govuk-form-group">
-                <label class="govuk-label" for="new-location">
-                    New location
-                </label>
-                <select class="govuk-select" id="new-location" name="new-location">
-                  {% for location in data.locations %}
-                    <option value={{ location.id }}>{{ location.value }}</option>
-                  {% endfor %}
-              </select>
-            </div>
+    <div class="govuk-form-group">
+        <label class="govuk-label" for="new-location">
+            New location
+        </label>
+        <select class="govuk-select" id="new-location" name="new-location">
+            {% for location in data.locations %}
+                <option value={{ location.id }}>{{ location.value }}</option>
+            {% endfor %}
+        </select>
+    </div>
 
 {% endblock %}
