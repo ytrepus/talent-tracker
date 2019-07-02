@@ -56,7 +56,7 @@ class TestSingleUpdate:
         data = {
             'new-grade': higher_grade.id, 'start-date-day': '1', 'start-date-month': '1', 'start-date-year': '2019',
             'new-org': str(new_org.id), 'new-profession': str(new_profession.id),
-            'new-location': str(new_location.id), 'temporary-promotion': '1'
+            'new-location': str(new_location.id), 'temporary-promotion': '1', 'new-title': 'Senior dev',
         }
         test_client.post('/update/role', data=data)
         assert data.keys() == session.get('new-role').keys()
@@ -105,13 +105,14 @@ def test_check_details(logged_in_user, test_client, test_session, test_candidate
         sess['new-role'] = {
             'new-grade': higher_grade.id, 'start-date-day': 1, 'start-date-month': 1, 'start-date-year': 2019,
             'new-org': new_org.id, 'new-profession': new_profession.id,
-            'new-location': new_location.id, 'temporary-promotion': 1
+            'new-location': new_location.id, 'temporary-promotion': 1, 'new-title': 'Senior dev'
         }
         sess['data-update'] = dict()
         sess['candidate-id'] = test_candidate.id
     test_client.post('/update/check-your-answers')
-    latest_role = test_candidate.roles.order_by(Role.id.desc()).first()
+    latest_role: Role = test_candidate.roles.order_by(Role.id.desc()).first()
     assert "Organisation 1" == Organisation.query.get(latest_role.organisation_id).name
+    assert "Senior dev" == latest_role.role_name
 
 
 class TestAuthentication:

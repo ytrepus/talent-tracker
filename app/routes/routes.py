@@ -59,7 +59,11 @@ def update_role():
 
     if request.method == 'POST':
         session['change-route'] = 'route_blueprint.update_role'
-        session['new-role'] = {key: int(value[0]) for key, value in request.form.to_dict(flat=False).items()}
+        form_as_dict: dict = request.form.to_dict(flat=False)
+        new_role_title = {'new-title': form_as_dict.pop('new-title')[0]}
+        new_role_numbers = {key: int(value[0]) for key, value in form_as_dict.items()}
+        new_role = {**new_role_numbers, **new_role_title}
+        session['new-role'] = new_role
         return redirect(url_for('route_blueprint.email_address'))
 
     data = {
@@ -123,7 +127,7 @@ def check_your_answers():
                                   role_data['start-date-day']),
                 temporary_promotion=bool(role_data['temporary-promotion']), organisation_id=role_data['new-org'],
                 profession_id=role_data['new-profession'], location_id=role_data['new-location'],
-                grade_id=role_data['new-grade']
+                grade_id=role_data['new-grade'], role_name=role_data['new-title']
             ))
             new_email = session.get('new-email')
             if new_email:
