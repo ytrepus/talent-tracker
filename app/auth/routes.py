@@ -17,7 +17,7 @@ def login():
 
         next = request.args.get('next')
 
-        return redirect(next or url_for('route_blueprint.choose_update'))
+        return redirect(next or url_for('route_blueprint.hello_world'))
     return render_template('login.html')
 
 
