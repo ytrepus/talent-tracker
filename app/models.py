@@ -300,3 +300,9 @@ class Gender(CandidateGetterMixin, db.Model):
 class Sexuality(CandidateGetterMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(128))
+
+
+class AuditEvent(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.ForeignKey('user.id'), nullable=False)
+    action_taken = db.Column(db.Text)
