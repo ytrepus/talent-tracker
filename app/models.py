@@ -71,6 +71,7 @@ class Candidate(db.Model):
     sexuality_id = db.Column(db.ForeignKey('sexuality.id'))
     gender_id = db.Column(db.ForeignKey('gender.id'))
     ethnicity_id = db.Column(db.ForeignKey('ethnicity.id'))
+    main_job_type_id = db.Column(db.ForeignKey('main_job_type.id'))
 
     joining_grade = db.Column(db.ForeignKey('grade.id'))
 
@@ -268,47 +269,10 @@ class SLSLeadership(Leadership):
     }
 
 
-class QualificationLevel(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(128))
-
-
 class MainJobType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(512))
-
-
-class SchoolType(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(256))
-
-
-class IncomeEarnerEmployeeStatus(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(512))
-
-
-class SupervisedOthers(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(512))
-
-
-class FreeSchoolMeals(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(512))
-
-
-class SocioEconomic(db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
-    self_identify_lower_socio_economic_background = db.Column(db.String(256))
-
-    candidate_id = db.Column(db.ForeignKey('candidate.id'))
-    school_id = db.Column(db.ForeignKey('school_type.id'))
-    qualification_level_id = db.Column(db.ForeignKey('qualification_level.id'))
-    main_job_type_id = db.Column(db.ForeignKey('main_job_type.id'))
-    income_earner_employee_status_id = db.Column(db.ForeignKey('income_earner_employee_status.id'))
-    supervised_others_id = db.Column(db.ForeignKey('supervised_others.id'))
-    free_school_meals_id = db.Column(db.ForeignKey('free_school_meals.id'))
+    lower_socio_economic_background = db.Column(db.Boolean, default=False)
 
 
 class AgeRange(CandidateGetterMixin, db.Model):
