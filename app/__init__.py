@@ -21,4 +21,7 @@ def create_app(configuration=Config):
     from app.reports import reports_bp
     app.register_blueprint(reports_bp, url_prefix='/reports/')
 
+    from app.candidates import candidates_bp
+    app.register_blueprint(candidates_bp, url_prefix='/candidates/')
+
     return app

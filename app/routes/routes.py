@@ -178,3 +178,9 @@ def check_your_answers():
 @route_blueprint.route('/update/complete', methods=["GET"])
 def complete():
     return render_template('updates/complete.html')
+
+
+@route_blueprint.route('/candidate')
+def candidate():
+    return render_template('candidates/profile.html', roles=Role.query.order_by(Role.date_started.desc()).all(),
+                           candidate=Candidate.query.get(2))

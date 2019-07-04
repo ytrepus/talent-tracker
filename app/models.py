@@ -108,6 +108,9 @@ class Candidate(db.Model):
         return Application.query.filter(Application.candidate_id == self.id).\
             order_by(Application.application_date.desc()).first()
 
+    def current_location(self):
+        return self.roles.order_by(Role.id.desc()).first().location.value
+
 
 class Organisation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -188,13 +191,15 @@ class Role(db.Model):
     grade_id = db.Column(db.ForeignKey('grade.id'))
 
     grade = db.relationship('Grade', lazy='select')
+    location = db.relationship('Location', lazy='select')
+    profession = db.relationship('Profession', lazy='select')
 
     def __repr__(self):
         return f'<Role held by {self.candidate} at {self.organisation_id}>'
 
     def is_promotion(self):
-        role_before_this = self.candidate.roles.order_by(Role.date_started.desc()).first()
-        return self.grade.rank > role_before_this.grade.rank and not self.temporary_promotion
+        role_before_this = self.candidate.roles.order_by(Role.date_started.desc()).limit(2).all()[1]
+        return self.grade.rank < role_before_this.grade.rank
 
 
 class Scheme(db.Model):

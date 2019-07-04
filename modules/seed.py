@@ -30,7 +30,14 @@ def generate_random_fixed_data():
                           "UK Statistics Authority", "Welsh Government"]
 
     organisations = [Organisation(id=i, name=value, department=True) for i, value in enumerate(organisation_names)]
-    professions = [f"{random_string(12)}".capitalize() for i in range(15)]
+    professions = ['Communication', 'Digital, data & technology', 'Government Commercial Function',
+                   'Government Corporate Finance', 'Government Economics Service', 'Government Finance',
+                   'Government Legal Service', 'Government Operational Research', 'Government Property Profession',
+                   'Government Social Research', 'Government Statistical Service', 'Government Veterinary Profession',
+                   'Human Resources', 'Intelligance Analysis', 'Internal Audit', 'Knowledge and Information Management',
+                   'Medical profession', 'Operational delivery', 'Other', 'Planning professions', 'Policy',
+                   'Prefer not to say', 'Project delivery', 'Psychology profession', 'Science & engineering',
+                   'Security profession', 'Tax']
 
     locations = ["East Midlands", "East of England", "London", "North East England", "North West England",
                  "Northern Ireland", "Overseas", "Prefer not to say", "Scotland", "South East England",
@@ -109,14 +116,14 @@ def generate_random_fixed_data():
 
 def generate_known_candidate():
     return Candidate(
-        email_address="staging.candidate@gov.uk", joining_date=date(2015, 9, 1),
-        first_name="Test", last_name="Candidate",
-        completed_fast_stream=True,
+        id=1, email_address="staging.candidate@gov.uk", joining_date=date(2015, 9, 1),
+        first_name="Test", last_name="Candidate", completed_fast_stream=True,
         joining_grade=Grade.query.filter(Grade.value.like("%Faststream%")).first().id,
         age_range_id=2, ethnicity_id=1, working_pattern_id=1, belief_id=1, gender_id=1, sexuality_id=1,
-        roles=[Role(date_started=date(2015, 9, 2), temporary_promotion=False,
+        roles=[Role(date_started=date(2015, 9, 2), temporary_promotion=False, profession_id=1,
                     organisation_id=Organisation.query.filter(Organisation.name == 'Cabinet Office').first().id,
-                    grade=Grade.query.filter(Grade.value.like("%Faststream%")).first())
+                    grade=Grade.query.filter(Grade.value.like("%Faststream%")).first(),
+                    location=Location.query.filter_by(value="London").first())
                ],
         applications=[Application(scheme_id=1, scheme_start_date=date(2018, 3, 1))]
     )
@@ -137,7 +144,8 @@ def generate_random_candidate():
                      working_pattern=random.choice(WorkingPattern.query.all()),
                      roles=[Role(date_started=date(2015, 9, 2), temporary_promotion=False,
                                  organisation_id=random.choice(Organisation.query.all()).id,
-                                 grade=Grade.query.filter(Grade.value.like("%Faststream%")).first())
+                                 grade=Grade.query.filter(Grade.value.like("%Faststream%")).first(),
+                                 location=random.choice(Location.query.all()))
                             ]
                      )
 
@@ -192,7 +200,7 @@ def commit_data():
 
 def clear_old_data():
     tables = [Application, Role, Candidate, Organisation, Profession, Grade, Location, Ethnicity, Scheme, AgeRange,
-              Gender, Sexuality, AgeRange, Belief, WorkingPattern]
+              Gender, Sexuality, AgeRange, Belief, WorkingPattern, User]
     for table in tables:
         table.query.delete()
         db.session.commit()
