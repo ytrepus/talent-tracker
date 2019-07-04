@@ -276,6 +276,7 @@ class QualificationLevel(db.Model):
 class MainJobType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(512))
+    lower_socio_economic_background = db.Column(db.Boolean, default=False)
 
 
 class SchoolType(db.Model):
