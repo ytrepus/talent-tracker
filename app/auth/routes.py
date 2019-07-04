@@ -10,14 +10,14 @@ def login():
     if request.method == "POST":
         user = User.query.filter_by(email=request.form.get('email-address')).first()
         if user is None or not user.check_password(request.form.get('password')):
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth_bp.login'))
         login_user(user)
 
         flash('Logged in successfully.')
 
         next = request.args.get('next')
 
-        return redirect(next or url_for('route_blueprint.choose_update'))
+        return redirect(next or url_for('route_blueprint.hello_world'))
     return render_template('login.html')
 
 

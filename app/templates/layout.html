@@ -41,6 +41,34 @@
 
   <header class="govuk-header " role="banner" data-module="header">
     <div class="govuk-header__container govuk-width-container">
+        <div class="govuk-header__content">
+
+        <a href="#" class="govuk-header__link govuk-header__link--service-name">
+          CS Talent Candidate Tracker
+        </a>
+
+        <button type="button" role="button" class="govuk-header__menu-button js-header-toggle" aria-controls="navigation" aria-label="Show or hide Top Level Navigation">Menu</button>
+        <nav>
+          <ul id="navigation" class="govuk-header__navigation " aria-label="Top Level Navigation">
+            <li class="govuk-header__navigation-item">
+              <a class="govuk-header__link" href="{{ url_for('route_blueprint.choose_update') }}">
+                Updates
+              </a>
+            </li>
+            <li class="govuk-header__navigation-item">
+              <a class="govuk-header__link" href="{{ url_for('reports_bp.reports') }}">
+                Reports
+              </a>
+            </li>
+            <li class="govuk-header__navigation-item">
+              <a class="govuk-header__link" href="{{ url_for('auth_bp.logout') }}">
+                Logout
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
 
 {#      <div class="govuk-header__logo">#}
 {#        <a href="/" class="govuk-header__link govuk-header__link--homepage">#}
@@ -64,9 +92,8 @@
 
   <div class="govuk-width-container">
     <div class="govuk-phase-banner">
-      <p class="govuk-phase-banner__content"><strong class="govuk-tag govuk-phase-banner__content__tag ">
-  internal
-</strong>
+      <p class="govuk-phase-banner__content">
+          <strong class="govuk-tag govuk-phase-banner__content__tag ">internal</strong>
         <span class="govuk-phase-banner__text">
           This service is for internal use only
         </span>

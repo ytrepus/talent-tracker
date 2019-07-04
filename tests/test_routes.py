@@ -127,7 +127,7 @@ class TestAuthentication:
         with test_client:
             response = test_client.get(url, follow_redirects=False)
         assert response.status_code == 302  # 302 is the redirect code
-        assert response.location == url_for('auth.login', _external=True)
+        assert response.location == url_for('auth_bp.login', _external=True)
 
 
 class TestReports:
