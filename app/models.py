@@ -309,14 +309,3 @@ class AuditEvent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.ForeignKey('user.id'), nullable=False)
     action_taken = db.Column(db.Text)
-
-
-class Intake(db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
-    scheme_start_date = db.Column(db.Date(), index=True)
-
-    scheme_id = db.Column(db.ForeignKey('scheme.id'))
-
-    def defer(self, date_to_defer_to: datetime.date):
-        self.scheme_start_date = date_to_defer_to
-        return None
