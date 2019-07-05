@@ -19,7 +19,8 @@ class PromotionReport(Report, ABC):
         self.attribute = attribute
         self.intake_date = date(int(year), 3, 1)  # assuming it starts in March every year
         self.scheme = Scheme.query.filter_by(name=f'{scheme}').first()
-        self.promoted_before_date = date(int(year) + 1, 3, 1)  # can't take credit for promotions within first 3 months
+        # we only take credit for promotions that happen after candidates find out they're successful
+        self.promotions_count_from = date(int(year) - 1, 12, 1)
         self.headers = ['characteristic', 'number substantively promoted', 'percentage substantively promoted',
                         'number temporarily promoted', 'percentage temporarily promoted', 'total in group']
         self.filename = f"promotions-by-{attribute}-{scheme}-{year}-generated-{date.today().strftime('5%d-%m-%Y')}"
@@ -59,7 +60,8 @@ class PromotionReport(Report, ABC):
         return [application.candidate for application in eligible_applications]
 
     def promoted_candidates(self, temporary, candidates: List[Candidate]):
-        return [candidate for candidate in candidates if candidate.promoted(self.promoted_before_date, temporary)]
+        return [candidate for candidate in candidates if candidate.promoted(self.promotions_count_from,
+                                                                            temporary=temporary)]
 
     def write_row(self, row_data, data_object, csv_writer):
         """

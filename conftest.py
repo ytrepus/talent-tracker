@@ -178,7 +178,7 @@ def disability_with_without_no_answer(test_session):
 def candidates_promoter():
     def _promoter(candidates_to_promote, decimal_ratio, temporary=False):
         for candidate in candidates_to_promote[0:int(len(candidates_to_promote) * decimal_ratio)]:
-            candidate.roles.extend([Role(date_started=date(2019, 1, 1)), Role(date_started=date(2020, 3, 1),
+            candidate.roles.extend([Role(date_started=date(2018, 1, 1)), Role(date_started=date(2019, 3, 1),
                                                                               temporary_promotion=temporary)])
         return candidates_to_promote
 

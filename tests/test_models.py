@@ -33,7 +33,7 @@ class TestCandidate:
             (  # substantive promotion after the date
                 [
                     {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
-                    {'date-started': date(2020, 6, 1), 'grade-value': "Grade 6", 'temporary': False}
+                    {'date-started': date(2019, 12, 1), 'grade-value': "Grade 6", 'temporary': False}
                 ],
                 True
 
@@ -41,7 +41,7 @@ class TestCandidate:
             (  # temporary promotion after the date
                 [
                     {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
-                    {'date-started': date(2020, 6, 1), 'grade-value': "Grade 6", 'temporary': True}
+                    {'date-started': date(2019, 12, 1), 'grade-value': "Grade 6", 'temporary': True}
                 ],
                 False
 
@@ -49,23 +49,23 @@ class TestCandidate:
             (  # level transfer after the date
                 [
                     {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
-                    {'date-started': date(2020, 6, 1), 'grade-value': "Grade 7"}
+                    {'date-started': date(2019, 12, 1), 'grade-value': "Grade 7"}
                 ],
                 False
 
             ),
-            (  # definitely a promotion, but one that we can't take credit for
+            (  # a promotion that hasn't happened yet
                 [
                     {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
-                    {'date-started': date(2019, 8, 1), 'grade-value': "Grade 6", 'temporary': False}
+                    {'date-started': date(2020, 3, 1), 'grade-value': "Grade 6", 'temporary': False}
                 ],
                 False
 
             ),
-            (  # level transfer that we can't take credit for
+            (  # level transfer that hasn't happened yet
                 [
                     {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
-                    {'date-started': date(2019, 8, 1), 'grade-value': "Grade 7"}
+                    {'date-started': date(2020, 3, 1), 'grade-value': "Grade 7"}
                 ],
                 False
 
@@ -73,6 +73,7 @@ class TestCandidate:
         ]
     )
     def test_promoted_when_started(self, list_of_role_data, expected_outcome, test_candidate, test_session):
+        test_candidate: Candidate
         test_candidate.roles.extend([
             Role(date_started=list_of_role_data[0].get('date-started'),
                  grade=Grade.query.filter_by(value=list_of_role_data[0].get('grade-value')).first(),
@@ -81,7 +82,7 @@ class TestCandidate:
                  grade=Grade.query.filter_by(value=list_of_role_data[1].get('grade-value')).first(),
                  temporary_promotion=list_of_role_data[1].get('temporary'))
         ])
-        assert test_candidate.promoted('2019-09-01') is expected_outcome
+        assert test_candidate.promoted('2019-09-01', date(2020, 1, 1)) is expected_outcome
 
     def test_current_scheme_returns_current_scheme(self, test_candidate_applied_to_fls):
         assert test_candidate_applied_to_fls.current_scheme().name == 'FLS'

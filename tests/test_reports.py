@@ -5,6 +5,7 @@ from reporting.promotion_reports import CharacteristicPromotionReport, BooleanCh
 from reporting.base_promotion_report import PromotionReport
 from app.models import Ethnicity, Candidate, Application
 from datetime import date
+from freezegun import freeze_time
 
 
 class TestReports:
@@ -21,6 +22,7 @@ class TestReports:
               'White British,4,40%,0,0%,10\r', 'Black British,6,60%,0,0%,10\r', '']),
         ]
     )
+    @freeze_time(date(2020, 1, 1))  # we're running this report on 1 Jan 2020
     def test_reports(self, parameters: List[str], white_british_promoted, black_british_promoted,
                      scheme_id, expected_output: str, test_ethnicities, scheme_appender,
                      test_multiple_candidates_multiple_ethnicities, candidates_promoter):
