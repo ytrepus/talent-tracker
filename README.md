@@ -55,6 +55,7 @@ Creating talent-tracker_python-tests_1 ... done
 ```
 - and you'll be able to type `localhost:5000` into your browser.
 - at this point you'll want to create your database and seed it with lovely data
+- first, you need to get into the container running our Flask app by running the command `docker exec -it talent-tracker_web_1 /bin/bash`
 - execute the following command: `flask seed --new-install True`
 - you should now be able to log into the user interface on `localhost:5000` with the email 
 `developer@talent-tracker.gov.uk` and the password `talent-tracker` 
