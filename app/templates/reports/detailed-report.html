@@ -6,82 +6,126 @@
         <fieldset class="govuk-fieldset">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
                 <h1 class="govuk-fieldset__heading">
-                    Select criteria for detailed report on FLS - intake year 2019
+                    Select criteria for your detailed report
                 </h1>
             </legend>
-        </fieldset>
 
-        <div class="govuk-form-group">
-            <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
-                <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-                    <h1 class="govuk-fieldset__heading">
-                        Which cohorts are you interested in?
-                    </h1>
-                </legend>
-                <span id="waste-hint" class="govuk-hint">
+            <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset" aria-describedby="scheme-hint">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                        <h1 class="govuk-fieldset__heading">
+                            Which schemes are you interested in?
+                        </h1>
+                    </legend>
+                    <span id="scheme-hint" class="govuk-hint">
                     Select all that apply.
                 </span>
-                <div class="govuk-checkboxes">
-                    <div class="govuk-checkboxes__item">
-                        <input class="govuk-checkboxes__input" id="waste-1" name="waste" type="checkbox" value="carcasses">
-                        <label class="govuk-label govuk-checkboxes__label" for="waste-1">
-                            42
-                        </label>
+                    <div class="govuk-checkboxes">
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="scheme-1" name="scheme" type="checkbox" value="FLS">
+                            <label class="govuk-label govuk-checkboxes__label" for="scheme-1">
+                                Future Leaders Scheme
+                            </label>
+                        </div>
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="scheme-2" name="scheme" type="checkbox" value="SLS">
+                            <label class="govuk-label govuk-checkboxes__label" for="scheme-2">
+                                Senior Leaders Scheme
+                            </label>
+                        </div>
                     </div>
-                    <div class="govuk-checkboxes__item">
-                        <input class="govuk-checkboxes__input" id="waste-2" name="waste" type="checkbox" value="mines">
-                        <label class="govuk-label govuk-checkboxes__label" for="waste-2">
-                            43
-                        </label>
-                    </div>
-                    <div class="govuk-checkboxes__item">
-                        <input class="govuk-checkboxes__input" id="waste-3" name="waste" type="checkbox" value="farm">
-                        <label class="govuk-label govuk-checkboxes__label" for="waste-3">
-                            44
-                        </label>
-                    </div>
-                </div>
-            </fieldset>
-        </div>
-
-        <div class="govuk-form-group">
-            <fieldset class="govuk-fieldset" aria-describedby="date-promoted-after">
-                <legend class="govuk-fieldset__legend--m govuk-fieldset__legend">
-                    <h2 class="govuk-fieldset__heading">
-                        I'm only interested in candidates promoted after...
-                    </h2>
-                </legend>
-{#                <span id="start-date-hint" class="govuk-hint">#}
-{#                  If they don't know the exact date, use the 1st of the month#}
-{#                </span>#}
-                <div class="govuk-date-input" id="start-date">
-                <div class="govuk-date-input__item">
-                    <div class="govuk-form-group">
-                        <label class="govuk-label govuk-date-input__label" for="start-date-day">
-                            Day
-                        </label>
-                        <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="start-date-day" name="start-date-day" type="number" pattern="[0-9]*">
-                    </div>
-                </div>
-                <div class="govuk-date-input__item">
-                    <div class="govuk-form-group">
-                        <label class="govuk-label govuk-date-input__label" for="start-date-month">
-                            Month
-                        </label>
-                        <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="start-date-month" name="start-date-month" type="number" pattern="[0-9]*">
-                    </div>
-                </div>
-                <div class="govuk-date-input__item">
-                    <div class="govuk-form-group">
-                        <label class="govuk-label govuk-date-input__label" for="start-date-year">
-                            Year
-                        </label>
-                        <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="start-date-year" name="start-date-year" type="number" pattern="[0-9]*">
-                    </div>
-                </div>
+                </fieldset>
             </div>
 
-            </fieldset>
+            <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset" aria-describedby="intake-hint">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                        <h1 class="govuk-fieldset__heading">
+                            Which intakes are you interested in?
+                        </h1>
+                    </legend>
+                    <span id="intake-hint" class="govuk-hint">
+                    Select all that apply.
+                </span>
+                    <div class="govuk-checkboxes">
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="intake-1" name="intake" type="checkbox" value=2018>
+                            <label class="govuk-label govuk-checkboxes__label" for="intake-1">
+                                2018
+                            </label>
+                        </div>
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="intake-2" name="intake" type="checkbox" value=2019>
+                            <label class="govuk-label govuk-checkboxes__label" for="intake-2">
+                                2019
+                            </label>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset" aria-describedby="promoted-before-conditional-hint">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                        <h1 class="govuk-fieldset__heading">
+                            I'm only interested in candidates promoted before...
+                        </h1>
+                    </legend>
+                    <span id="promoted-before-conditional-hint" class="govuk-hint">
+                        Select one option.
+                    </span>
+                    <div class="govuk-radios govuk-radios--conditional" data-module="radios">
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="promoted-before-conditional-1" name="promoted-before" type="radio" value="today" data-aria-controls="conditional-promoted-before-conditional-1">
+                            <label class="govuk-label govuk-radios__label" for="promoted-before-conditional-1">
+                                today
+                            </label>
+                        </div>
+
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="promoted-before-conditional-2" name="promoted-before" type="radio" value="date" data-aria-controls="conditional-promoted-before-conditional-2">
+                            <label class="govuk-label govuk-radios__label" for="promoted-before-conditional-2">
+                                a specific date
+                            </label> </div>
+                        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-promoted-before-conditional-2">
+                            <fieldset class="govuk-fieldset" aria-describedby="promoted-before-date-hint" role="group">
+                                <div class="govuk-date-input" id="promoted-before-date">
+                                    <div class="govuk-date-input__item">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label govuk-date-input__label" for="promoted-before-date-day">
+                                                Day
+                                            </label>
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="promoted-before-date-day" name="promoted-before-date-day" type="number" pattern="[0-9]*">
+                                        </div>
+                                    </div>
+                                    <div class="govuk-date-input__item">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label govuk-date-input__label" for="promoted-before-date-month">
+                                                Month
+                                            </label>
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="promoted-before-date-month" name="promoted-before-date-month" type="number" pattern="[0-9]*">
+                                        </div>
+                                    </div>
+                                    <div class="govuk-date-input__item">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label govuk-date-input__label" for="promoted-before-date-year">
+                                                Year
+                                            </label>
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="promoted-before-date-year" name="promoted-before-date-year" type="number" pattern="[0-9]*">
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+
+        </fieldset>
+    <div class="input submit">
+            <input type="submit" value="Continue" class="govuk-button">
         </div>
+
     </form>
 {% endblock %}
