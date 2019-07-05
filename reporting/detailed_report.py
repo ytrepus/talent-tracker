@@ -6,7 +6,7 @@ from datetime import datetime
 
 
 class DetailedReport(Report):
-    def __init__(self, cohorts: List[str], promoted, scheme):
+    def __init__(self, intake_years: List[int], schemes: List[str], temporary: bool):
         super().__init__(scheme)
         self.cohorts = cohorts
         self.promoted = promoted
