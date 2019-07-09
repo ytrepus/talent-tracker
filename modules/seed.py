@@ -108,10 +108,13 @@ def generate_random_fixed_data():
         ['Full time', 'Job share', 'Part time', 'Prefer not to say', 'Flexible working', 'Term time']
     )]
 
+    promotions = [Promotion(id=1, value="temporary"), Promotion(id=2, value="substantive"),
+                  Promotion(id=3, value="level transfer"), Promotion(id=4, value="demotion")]
+
     return {'organisations': organisations, 'grades': grades, 'professions': professions, 'locations': locations,
             'ethnicities': ethnic_groups, 'schemes': [Scheme(id=1, name='FLS'), Scheme(id=2, name='SLS')],
             'ages': ages, 'genders': genders, 'sexuality': sexual_orientation, 'beliefs': beliefs,
-            'working_patterns': working_patterns}
+            'working_patterns': working_patterns, 'promotions': promotions}
 
 
 def generate_known_candidate():
@@ -159,11 +162,15 @@ def apply_candidate_to_scheme(scheme_name: str, candidate: Candidate, meta=False
     return candidate
 
 
-def promote_candidate(candidate: Candidate, temporary=None):
-    if temporary is None:
-        temporary = random.choice([True, False])
-    candidate.roles.extend([Role(date_started=date(2018, 1, 1), temporary_promotion=False),
-                            Role(date_started=date(2019, 6, 1), temporary_promotion=temporary)])
+def promote_candidate(candidate: Candidate, role_change_type=None):
+    if role_change_type is None:
+        role_change_type = random.choice(["substantive", "temporary", "level transfer"])
+    candidate.roles.extend([
+        Role(date_started=date(2018, 1, 1), temporary_promotion=False,
+             role_change=Promotion.query.filter(Promotion.value == "substantive").first()),
+        Role(date_started=date(2019, 6, 1), temporary_promotion=None,
+             role_change=Promotion.query.filter(Promotion.value == f"{role_change_type}").first())
+    ])
     return candidate
 
 
@@ -200,7 +207,7 @@ def commit_data():
 
 def clear_old_data():
     tables = [Application, Role, Candidate, Organisation, Profession, Grade, Location, Ethnicity, Scheme, AgeRange,
-              Gender, Sexuality, AgeRange, Belief, WorkingPattern, User]
+              Gender, Sexuality, AgeRange, Belief, WorkingPattern, Promotion, User]
     for table in tables:
         table.query.delete()
         db.session.commit()

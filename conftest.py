@@ -49,6 +49,8 @@ def test_session(db):
     db.session.add(test_user)
 
     db.session.add_all([Scheme(id=1, name='FLS'), Scheme(id=2, name='SLS')])
+    db.session.add_all([Promotion(id=1, value="temporary"), Promotion(id=2, value="substantive"),
+                        Promotion(id=3, value="level transfer"), Promotion(id=4, value="demotion")])
     db.session.add_all([
         Grade(id=2, value='Grade 7', rank=6), Grade(id=3, value='Grade 6', rank=5),
         Grade(id=4, value='Deputy Director (SCS1)', rank=4), Grade(id=1, value='Admin Assistant (AA)', rank=7)
