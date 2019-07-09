@@ -193,10 +193,12 @@ class Role(db.Model):
     profession_id = db.Column(db.ForeignKey('profession.id'))
     location_id = db.Column(db.ForeignKey('location.id'))
     grade_id = db.Column(db.ForeignKey('grade.id'))
+    role_change_id = db.Column(db.ForeignKey('promotion.id'))
 
     grade = db.relationship('Grade', lazy='select')
     location = db.relationship('Location', lazy='select')
     profession = db.relationship('Profession', lazy='select')
+    role_change = db.relationship('Promotion', lazy='select')
 
     def __repr__(self):
         return f'<Role held by {self.candidate} at {self.organisation_id}>'
