@@ -96,12 +96,16 @@ class Candidate(db.Model):
         :return:
         :rtype:
         """
+        if temporary:
+            role_change = Promotion.query.filter_by(value="temporary").first()
+        else:
+            role_change = Promotion.query.filter_by(value="substantive").first()
         if not promoted_before_date:
             promoted_before_date = datetime.today()
         roles_after_date = self.roles.filter(and_(
             Role.date_started >= promoted_after_date,
             Role.date_started <= promoted_before_date,
-            Role.temporary_promotion.is_(temporary),
+            Role.role_change == role_change,
         )).all()
         return len(roles_after_date) > 0
 

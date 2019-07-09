@@ -1,4 +1,4 @@
-from app.models import FLSLeadership, Leadership, Candidate, Role, Grade, Application
+from app.models import FLSLeadership, Leadership, Candidate, Role, Grade, Application, Promotion
 from datetime import date
 import pytest
 
@@ -33,7 +33,7 @@ class TestCandidate:
             (  # substantive promotion after the date
                 [
                     {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
-                    {'date-started': date(2019, 12, 1), 'grade-value': "Grade 6", 'temporary': False}
+                    {'date-started': date(2019, 12, 1), 'grade-value': "Grade 6", 'role-change': 'substantive'}
                 ],
                 True
 
@@ -41,7 +41,7 @@ class TestCandidate:
             (  # temporary promotion after the date
                 [
                     {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
-                    {'date-started': date(2019, 12, 1), 'grade-value': "Grade 6", 'temporary': True}
+                    {'date-started': date(2019, 12, 1), 'grade-value': "Grade 6", 'role-change': 'temporary'}
                 ],
                 False
 
@@ -49,7 +49,7 @@ class TestCandidate:
             (  # level transfer after the date
                 [
                     {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
-                    {'date-started': date(2019, 12, 1), 'grade-value': "Grade 7"}
+                    {'date-started': date(2019, 12, 1), 'grade-value': "Grade 7", 'role-change': 'level transfer'}
                 ],
                 False
 
@@ -57,7 +57,7 @@ class TestCandidate:
             (  # a promotion that hasn't happened yet
                 [
                     {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
-                    {'date-started': date(2020, 3, 1), 'grade-value': "Grade 6", 'temporary': False}
+                    {'date-started': date(2020, 3, 1), 'grade-value': "Grade 6", 'role-change': 'substantive'}
                 ],
                 False
 
@@ -65,7 +65,7 @@ class TestCandidate:
             (  # level transfer that hasn't happened yet
                 [
                     {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
-                    {'date-started': date(2020, 3, 1), 'grade-value': "Grade 7"}
+                    {'date-started': date(2020, 3, 1), 'grade-value': "Grade 7", 'role-change': 'level transfer'}
                 ],
                 False
 
@@ -73,14 +73,14 @@ class TestCandidate:
         ]
     )
     def test_promoted_when_started(self, list_of_role_data, expected_outcome, test_candidate, test_session):
+        role_change = Promotion.query.filter_by(value=list_of_role_data[1].get('role-change')).first()
         test_candidate: Candidate
         test_candidate.roles.extend([
             Role(date_started=list_of_role_data[0].get('date-started'),
-                 grade=Grade.query.filter_by(value=list_of_role_data[0].get('grade-value')).first(),
-                 temporary_promotion=False),
+                 grade=Grade.query.filter_by(value=list_of_role_data[0].get('grade-value')).first()),
             Role(date_started=list_of_role_data[1].get('date-started'),
                  grade=Grade.query.filter_by(value=list_of_role_data[1].get('grade-value')).first(),
-                 temporary_promotion=list_of_role_data[1].get('temporary'))
+                 role_change=role_change)
         ])
         assert test_candidate.promoted('2019-09-01', date(2020, 1, 1)) is expected_outcome
 
@@ -116,18 +116,18 @@ class TestGrade:
 
 class TestRole:
 
-    @pytest.mark.parametrize("starting_grade, new_grade, temporary, expected_outcome", [
-        ("Grade 7", "Grade 6", False, True),  # substantive promotion
-        ("Grade 7", "Grade 7", None, False),  # level transfer
-        ("Grade 6", "Grade 7", None, False),  # demotion
-        ("Grade 7", "Grade 6", True, True),  # temporary promotion
+    @pytest.mark.parametrize("starting_grade, new_grade, role_change_id, expected_outcome", [
+        ("Grade 7", "Grade 6", 2, True),  # substantive promotion
+        ("Grade 7", "Grade 7", 3, False),  # level transfer
+        ("Grade 6", "Grade 7", 4, False),  # demotion
+        ("Grade 7", "Grade 6", 1, True),  # temporary promotion
     ])
-    def test_is_promotion_returns_correct_values(self, starting_grade, new_grade, temporary, expected_outcome,
+    def test_is_promotion_returns_correct_values(self, starting_grade, new_grade, role_change_id, expected_outcome,
                                                  test_session, test_candidate):
         test_candidate.roles.extend([
             Role(date_started=date(2019, 1, 1), grade=Grade.query.filter_by(value=starting_grade).first(),
-                 temporary_promotion=False),
+                 role_change_id=2),
             Role(date_started=date(2020, 6, 1), grade=Grade.query.filter_by(value=new_grade).first(),
-                 temporary_promotion=temporary)
+                 role_change_id=role_change_id)
         ])
         assert test_candidate.roles[2].is_promotion() is expected_outcome

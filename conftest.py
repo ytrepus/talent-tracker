@@ -49,6 +49,8 @@ def test_session(db):
     db.session.add(test_user)
 
     db.session.add_all([Scheme(id=1, name='FLS'), Scheme(id=2, name='SLS')])
+    db.session.add_all([Promotion(id=1, value="temporary"), Promotion(id=2, value="substantive"),
+                        Promotion(id=3, value="level transfer"), Promotion(id=4, value="demotion")])
     db.session.add_all([
         Grade(id=2, value='Grade 7', rank=6), Grade(id=3, value='Grade 6', rank=5),
         Grade(id=4, value='Deputy Director (SCS1)', rank=4), Grade(id=1, value='Admin Assistant (AA)', rank=7)
@@ -75,7 +77,7 @@ def test_candidate(test_session):
     candidate.joining_date = date(2010, 5, 1)
     candidate.joining_grade = 1
     candidate.roles.append(
-        Role(date_started=date(2010, 5, 1), temporary_promotion=False, grade_id=2, location_id=1))
+        Role(date_started=date(2010, 5, 1), grade_id=2, location_id=1, role_change_id=2))
     test_data = {
         'grades': [Grade(value='Band A', rank=2), Grade(value='SCS3', rank=1)],
         'test_candidates': [candidate],
@@ -96,7 +98,7 @@ def test_candidate_applied_to_fls(test_candidate, test_session):
 
 @pytest.fixture
 def test_candidate_applied_and_promoted(test_candidate_applied_to_fls, test_session):
-    test_candidate_applied_to_fls.roles.append(Role(date_started=date(2020, 1, 1), temporary_promotion=False))
+    test_candidate_applied_to_fls.roles.append(Role(date_started=date(2020, 1, 1), role_change_id=2))
     test_session.add(test_candidate_applied_to_fls)
     test_session.commit()
     yield
@@ -177,9 +179,13 @@ def disability_with_without_no_answer(test_session):
 @pytest.fixture
 def candidates_promoter():
     def _promoter(candidates_to_promote, decimal_ratio, temporary=False):
+        if temporary:
+            change_type = Promotion.query.filter(Promotion.value == "temporary").first()
+        else:
+            change_type = Promotion.query.filter(Promotion.value == "substantive").first()
         for candidate in candidates_to_promote[0:int(len(candidates_to_promote) * decimal_ratio)]:
             candidate.roles.extend([Role(date_started=date(2018, 1, 1)), Role(date_started=date(2019, 3, 1),
-                                                                              temporary_promotion=temporary)])
+                                                                              role_change=change_type)])
         return candidates_to_promote
 
     return _promoter

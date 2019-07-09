@@ -124,8 +124,7 @@ def check_your_answers():
             role_data = session.pop('new-role', None)
             candidate.roles.append(Role(
                 date_started=date(role_data['start-date-year'], role_data['start-date-month'],
-                                  role_data['start-date-day']),
-                temporary_promotion=bool(role_data['temporary-promotion']), organisation_id=role_data['new-org'],
+                                  role_data['start-date-day']), organisation_id=role_data['new-org'],
                 profession_id=role_data['new-profession'], location_id=role_data['new-location'],
                 grade_id=role_data['new-grade'], role_name=role_data['new-title']
             ))

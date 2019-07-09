@@ -105,7 +105,7 @@ def test_check_details(logged_in_user, test_client, test_session, test_candidate
         sess['new-role'] = {
             'new-grade': higher_grade.id, 'start-date-day': 1, 'start-date-month': 1, 'start-date-year': 2019,
             'new-org': new_org.id, 'new-profession': new_profession.id,
-            'new-location': new_location.id, 'temporary-promotion': 1, 'new-title': 'Senior dev'
+            'new-location': new_location.id, 'new-title': 'Senior dev'
         }
         sess['data-update'] = dict()
         sess['candidate-id'] = test_candidate.id
