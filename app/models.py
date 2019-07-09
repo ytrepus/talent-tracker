@@ -105,7 +105,6 @@ class Candidate(db.Model):
         roles_after_date = self.roles.filter(and_(
             Role.date_started >= promoted_after_date,
             Role.date_started <= promoted_before_date,
-            Role.temporary_promotion.is_(temporary),
             Role.role_change == role_change,
         )).all()
         return len(roles_after_date) > 0

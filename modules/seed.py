@@ -123,7 +123,7 @@ def generate_known_candidate():
         first_name="Test", last_name="Candidate", completed_fast_stream=True,
         joining_grade=Grade.query.filter(Grade.value.like("%Faststream%")).first().id,
         age_range_id=2, ethnicity_id=1, working_pattern_id=1, belief_id=1, gender_id=1, sexuality_id=1,
-        roles=[Role(date_started=date(2015, 9, 2), temporary_promotion=False, profession_id=1,
+        roles=[Role(date_started=date(2015, 9, 2), profession_id=1, role_change_id=2,
                     organisation_id=Organisation.query.filter(Organisation.name == 'Cabinet Office').first().id,
                     grade=Grade.query.filter(Grade.value.like("%Faststream%")).first(),
                     location=Location.query.filter_by(value="London").first())
@@ -145,10 +145,10 @@ def generate_random_candidate():
                      caring_responsibility=random.choice([True, False, False]),
                      belief=random.choice(Belief.query.all()), sexuality=random.choice(Sexuality.query.all()),
                      working_pattern=random.choice(WorkingPattern.query.all()),
-                     roles=[Role(date_started=date(2015, 9, 2), temporary_promotion=False,
+                     roles=[Role(date_started=date(2015, 9, 2),
                                  organisation_id=random.choice(Organisation.query.all()).id,
                                  grade=Grade.query.filter(Grade.value.like("%Faststream%")).first(),
-                                 location=random.choice(Location.query.all()))
+                                 location=random.choice(Location.query.all()), role_change_id=2),
                             ]
                      )
 
@@ -166,9 +166,9 @@ def promote_candidate(candidate: Candidate, role_change_type=None):
     if role_change_type is None:
         role_change_type = random.choice(["substantive", "temporary", "level transfer"])
     candidate.roles.extend([
-        Role(date_started=date(2018, 1, 1), temporary_promotion=False,
+        Role(date_started=date(2018, 1, 1),
              role_change=Promotion.query.filter(Promotion.value == "substantive").first()),
-        Role(date_started=date(2019, 6, 1), temporary_promotion=None,
+        Role(date_started=date(2019, 6, 1),
              role_change=Promotion.query.filter(Promotion.value == f"{role_change_type}").first())
     ])
     return candidate

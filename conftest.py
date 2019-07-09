@@ -77,7 +77,7 @@ def test_candidate(test_session):
     candidate.joining_date = date(2010, 5, 1)
     candidate.joining_grade = 1
     candidate.roles.append(
-        Role(date_started=date(2010, 5, 1), temporary_promotion=False, grade_id=2, location_id=1))
+        Role(date_started=date(2010, 5, 1), grade_id=2, location_id=1, role_change_id=2))
     test_data = {
         'grades': [Grade(value='Band A', rank=2), Grade(value='SCS3', rank=1)],
         'test_candidates': [candidate],
@@ -98,7 +98,7 @@ def test_candidate_applied_to_fls(test_candidate, test_session):
 
 @pytest.fixture
 def test_candidate_applied_and_promoted(test_candidate_applied_to_fls, test_session):
-    test_candidate_applied_to_fls.roles.append(Role(date_started=date(2020, 1, 1), temporary_promotion=False))
+    test_candidate_applied_to_fls.roles.append(Role(date_started=date(2020, 1, 1), role_change_id=2))
     test_session.add(test_candidate_applied_to_fls)
     test_session.commit()
     yield
@@ -185,7 +185,6 @@ def candidates_promoter():
             change_type = Promotion.query.filter(Promotion.value == "substantive").first()
         for candidate in candidates_to_promote[0:int(len(candidates_to_promote) * decimal_ratio)]:
             candidate.roles.extend([Role(date_started=date(2018, 1, 1)), Role(date_started=date(2019, 3, 1),
-                                                                              temporary_promotion=temporary,
                                                                               role_change=change_type)])
         return candidates_to_promote
 
