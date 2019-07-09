@@ -1,4 +1,4 @@
-from app.models import FLSLeadership, Leadership, Candidate, Role, Grade, Application
+from app.models import FLSLeadership, Leadership, Candidate, Role, Grade, Application, Promotion
 from datetime import date
 import pytest
 
@@ -73,6 +73,10 @@ class TestCandidate:
         ]
     )
     def test_promoted_when_started(self, list_of_role_data, expected_outcome, test_candidate, test_session):
+        if list_of_role_data[1].get('temporary'):
+            role_change = Promotion.query.filter_by(value="temporary").first()
+        else:
+            role_change = Promotion.query.filter_by(value="substantive").first()
         test_candidate: Candidate
         test_candidate.roles.extend([
             Role(date_started=list_of_role_data[0].get('date-started'),
@@ -80,7 +84,7 @@ class TestCandidate:
                  temporary_promotion=False),
             Role(date_started=list_of_role_data[1].get('date-started'),
                  grade=Grade.query.filter_by(value=list_of_role_data[1].get('grade-value')).first(),
-                 temporary_promotion=list_of_role_data[1].get('temporary'))
+                 temporary_promotion=list_of_role_data[1].get('temporary'), role_change=role_change)
         ])
         assert test_candidate.promoted('2019-09-01', date(2020, 1, 1)) is expected_outcome
 

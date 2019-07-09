@@ -179,9 +179,14 @@ def disability_with_without_no_answer(test_session):
 @pytest.fixture
 def candidates_promoter():
     def _promoter(candidates_to_promote, decimal_ratio, temporary=False):
+        if temporary:
+            change_type = Promotion.query.filter(Promotion.value == "temporary").first()
+        else:
+            change_type = Promotion.query.filter(Promotion.value == "substantive").first()
         for candidate in candidates_to_promote[0:int(len(candidates_to_promote) * decimal_ratio)]:
             candidate.roles.extend([Role(date_started=date(2018, 1, 1)), Role(date_started=date(2019, 3, 1),
-                                                                              temporary_promotion=temporary)])
+                                                                              temporary_promotion=temporary,
+                                                                              role_change=change_type)])
         return candidates_to_promote
 
     return _promoter
