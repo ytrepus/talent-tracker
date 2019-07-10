@@ -183,6 +183,7 @@ def commit_data():
         db.session.add_all(value)
     candidate = generate_known_candidate()
     db.session.add(candidate)
+    db.session.commit()
     random_promoted_fls_candidates = [promote_candidate(candidate) if i % 2 == 0 else candidate
                                       for i, candidate in enumerate(random_candidates('FLS', 100))]
     random_promoted_sls_candidates = [promote_candidate(candidate) if i % 2 == 0 else candidate
