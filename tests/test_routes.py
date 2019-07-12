@@ -1,7 +1,7 @@
 import pytest
 from flask import url_for, session
 
-from app.models import Grade, Organisation, Profession, Location, Role
+from app.models import Grade, Organisation, Profession, Location, Role, AuditEvent
 from flask_login import current_user
 
 
@@ -150,3 +150,15 @@ class TestProfile:
     def test_get(self, test_client, logged_in_user, test_candidate_applied_to_fls):
         result = test_client.get('/candidates/candidate/1')
         assert "Career profile for Testy Candidate" in result.data.decode("utf-8")
+
+
+def test_audit_events(test_client, logged_in_user):
+    data = {
+        'report-type': 'promotions',
+        'scheme': 'FLS',
+        'year': 2018,
+        'attribute': 'ethnicity'
+    }
+    test_client.post('/reports/', data=data)
+    events: AuditEvent = AuditEvent.query.first()
+    assert "Generated a promotions report on ethnicity for FLS 2018 intake" == events.action_taken
