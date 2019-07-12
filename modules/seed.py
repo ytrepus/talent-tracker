@@ -119,7 +119,7 @@ def generate_random_fixed_data():
 
 def generate_known_candidate():
     return Candidate(
-        id=1, email_address="staging.candidate@gov.uk", joining_date=date(2015, 9, 1),
+        email_address="staging.candidate@gov.uk", joining_date=date(2015, 9, 1),
         first_name="Test", last_name="Candidate", completed_fast_stream=True,
         joining_grade=Grade.query.filter(Grade.value.like("%Faststream%")).first().id,
         age_range_id=2, ethnicity_id=1, working_pattern_id=1, belief_id=1, gender_id=1, sexuality_id=1,
@@ -181,9 +181,8 @@ def random_candidates(scheme: str, number: int):
 def commit_data():
     for key, value in generate_random_fixed_data().items():
         db.session.add_all(value)
-    candidate = generate_known_candidate()
-    db.session.add(candidate)
-    db.session.commit()
+    known_candidate = generate_known_candidate()
+    db.session.add(known_candidate)
     random_promoted_fls_candidates = [promote_candidate(candidate) if i % 2 == 0 else candidate
                                       for i, candidate in enumerate(random_candidates('FLS', 100))]
     random_promoted_sls_candidates = [promote_candidate(candidate) if i % 2 == 0 else candidate
