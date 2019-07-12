@@ -10,5 +10,4 @@ def reports():
         form_data = request.form.to_dict()
         report = ReportFactory.create_report(report_type=form_data.pop('report-type'), **form_data)
         return report.return_data()
-
     return render_template("reports/select-report.html")
