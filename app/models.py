@@ -4,7 +4,7 @@ from flask_login import UserMixin
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from datetime import datetime
-from sqlalchemy import and_
+from sqlalchemy import and_, func
 from sqlalchemy.ext.declarative import declared_attr
 
 
@@ -314,6 +314,7 @@ class AuditEvent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.ForeignKey('user.id'), nullable=False)
     action_taken = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, server_default=func.now())
 
 
 class Promotion(db.Model):
