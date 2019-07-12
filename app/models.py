@@ -316,8 +316,6 @@ class AuditEvent(db.Model):
     action_taken = db.Column(db.Text)
 
 
-
-
 class Promotion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(28), index=True)

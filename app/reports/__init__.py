@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, url_for
+from flask import Blueprint, redirect, url_for, request
 from flask_login import current_user
 from app.models import db, AuditEvent
 
@@ -13,7 +13,11 @@ def restrict_to_logged_in_users():
 
 @reports_bp.before_request
 def log_event():
-    db.session.add(AuditEvent(user_id=current_user.id, action_taken="Generated a report"))
+    data = request.form.to_dict()
+    action_taken = f"Generated a {data.get('report-type')} report on {data.get('attribute')} for {data.get('scheme')} " \
+        f"{data.get('year')} intake"
+    db.session.add(AuditEvent(user_id=current_user.id, action_taken=action_taken))
     db.session.commit()
+
 
 from app.reports import routes  # noqa: E402,F401
