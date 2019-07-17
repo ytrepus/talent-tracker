@@ -211,6 +211,3 @@ def clear_old_data():
     for table in tables:
         table.query.delete()
         db.session.commit()
-    if os.environ.get('ENV') == 'dev':
-        User.query.delete()
-        db.session.commit()
