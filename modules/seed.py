@@ -207,7 +207,10 @@ def commit_data():
 
 def clear_old_data():
     tables = [Application, Role, Candidate, Organisation, Profession, Grade, Location, Ethnicity, Scheme, AgeRange,
-              Gender, Sexuality, AgeRange, Belief, WorkingPattern, Promotion, User]
+              Gender, Sexuality, AgeRange, Belief, WorkingPattern, Promotion, AuditEvent]
     for table in tables:
         table.query.delete()
+        db.session.commit()
+    if os.environ.get('ENV') == 'dev':
+        User.query.delete()
         db.session.commit()
