@@ -13,11 +13,12 @@ def restrict_to_logged_in_users():
 
 @reports_bp.before_request
 def log_event():
-    data = request.form.to_dict()
-    action_taken = f"Generated a {data.get('report-type')} report on {data.get('attribute')} for {data.get('scheme')} " \
-        f"{data.get('year')} intake"
-    db.session.add(AuditEvent(user_id=current_user.id, action_taken=action_taken))
-    db.session.commit()
+    if request.method == "POST":
+        data = request.form.to_dict()
+        action_taken = f"Generated a {data.get('report-type')} report on {data.get('attribute')} for {data.get('scheme')} " \
+            f"{data.get('year')} intake"
+        db.session.add(AuditEvent(user_id=current_user.id, action_taken=action_taken))
+        db.session.commit()
 
 
 from app.reports import routes  # noqa: E402,F401
