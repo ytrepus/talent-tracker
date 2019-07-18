@@ -33,7 +33,8 @@ class TestCandidate:
             (  # substantive promotion after the date
                 [
                     {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
-                    {'date-started': date(2019, 12, 1), 'grade-value': "Grade 6", 'role-change': 'substantive'}
+                    {'date-started': date(2019, 12, 1), 'grade-value': "Grade 6",
+                     'role-change': 'substantive promotion'}
                 ],
                 True
 
@@ -41,7 +42,8 @@ class TestCandidate:
             (  # temporary promotion after the date
                 [
                     {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
-                    {'date-started': date(2019, 12, 1), 'grade-value': "Grade 6", 'role-change': 'temporary'}
+                    {'date-started': date(2019, 12, 1), 'grade-value': "Grade 6",
+                     'role-change': 'temporary promotion'}
                 ],
                 False
 
@@ -57,7 +59,8 @@ class TestCandidate:
             (  # a promotion that hasn't happened yet
                 [
                     {'date-started': date(2019, 1, 1), 'grade-value': "Grade 7"},
-                    {'date-started': date(2020, 3, 1), 'grade-value': "Grade 6", 'role-change': 'substantive'}
+                    {'date-started': date(2020, 3, 1), 'grade-value': "Grade 6",
+                     'role-change': 'substantive promotion'}
                 ],
                 False
 

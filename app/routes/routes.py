@@ -126,7 +126,8 @@ def check_your_answers():
                 date_started=date(role_data['start-date-year'], role_data['start-date-month'],
                                   role_data['start-date-day']), organisation_id=role_data['new-org'],
                 profession_id=role_data['new-profession'], location_id=role_data['new-location'],
-                grade_id=role_data['new-grade'], role_name=role_data['new-title']
+                grade_id=role_data['new-grade'], role_name=role_data['new-title'],
+                role_change_id=role_data['role-change']
             ))
             new_email = session.get('new-email')
             if new_email:

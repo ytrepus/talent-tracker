@@ -49,7 +49,7 @@ def test_session(db):
     db.session.add(test_user)
 
     db.session.add_all([Scheme(id=1, name='FLS'), Scheme(id=2, name='SLS')])
-    db.session.add_all([Promotion(id=1, value="temporary"), Promotion(id=2, value="substantive"),
+    db.session.add_all([Promotion(id=1, value="substantive promotion"), Promotion(id=2, value="temporary promotion"),
                         Promotion(id=3, value="level transfer"), Promotion(id=4, value="demotion")])
     db.session.add_all([
         Grade(id=2, value='Grade 7', rank=6), Grade(id=3, value='Grade 6', rank=5),
@@ -180,9 +180,9 @@ def disability_with_without_no_answer(test_session):
 def candidates_promoter():
     def _promoter(candidates_to_promote, decimal_ratio, temporary=False):
         if temporary:
-            change_type = Promotion.query.filter(Promotion.value == "temporary").first()
+            change_type = Promotion.query.filter(Promotion.value == "temporary promotion").first()
         else:
-            change_type = Promotion.query.filter(Promotion.value == "substantive").first()
+            change_type = Promotion.query.filter(Promotion.value == "substantive promotion").first()
         for candidate in candidates_to_promote[0:int(len(candidates_to_promote) * decimal_ratio)]:
             candidate.roles.extend([Role(date_started=date(2018, 1, 1)), Role(date_started=date(2019, 3, 1),
                                                                               role_change=change_type)])

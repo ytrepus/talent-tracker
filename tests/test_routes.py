@@ -1,7 +1,7 @@
 import pytest
 from flask import url_for, session
 
-from app.models import Grade, Organisation, Profession, Location, Role, AuditEvent
+from app.models import Grade, Organisation, Profession, Location, Role, AuditEvent, Promotion
 from flask_login import current_user
 
 
@@ -35,7 +35,7 @@ class TestUpdateType:
         assert option in result.data.decode("UTF-8")
 
 
-class TestSingleUpdate:
+class TestRoleUpdate:
     def test_get(self, test_client, test_candidate, logged_in_user, test_roles):
         with test_client.session_transaction() as sess:
             sess['candidate-id'] = 1
@@ -56,7 +56,7 @@ class TestSingleUpdate:
         data = {
             'new-grade': higher_grade.id, 'start-date-day': '1', 'start-date-month': '1', 'start-date-year': '2019',
             'new-org': str(new_org.id), 'new-profession': str(new_profession.id),
-            'new-location': str(new_location.id), 'temporary-promotion': '1', 'new-title': 'Senior dev',
+            'new-location': str(new_location.id), 'role-change': '1', 'new-title': 'Senior dev',
         }
         test_client.post('/update/role', data=data)
         assert data.keys() == session.get('new-role').keys()
@@ -101,10 +101,11 @@ def test_check_details(logged_in_user, test_client, test_session, test_candidate
     new_org = Organisation.query.first()
     new_profession = Profession.query.first()
     new_location = Location.query.first()
+    role_change = Promotion.query.first()
     with test_client.session_transaction() as sess:
         sess['new-role'] = {
             'new-grade': higher_grade.id, 'start-date-day': 1, 'start-date-month': 1, 'start-date-year': 2019,
-            'new-org': new_org.id, 'new-profession': new_profession.id,
+            'new-org': new_org.id, 'new-profession': new_profession.id, 'role-change': role_change.id,
             'new-location': new_location.id, 'new-title': 'Senior dev'
         }
         sess['data-update'] = dict()
@@ -113,6 +114,7 @@ def test_check_details(logged_in_user, test_client, test_session, test_candidate
     latest_role: Role = test_candidate.roles.order_by(Role.id.desc()).first()
     assert "Organisation 1" == Organisation.query.get(latest_role.organisation_id).name
     assert "Senior dev" == latest_role.role_name
+    assert "substantive promotion" == latest_role.role_change.value
 
 
 class TestAuthentication:
