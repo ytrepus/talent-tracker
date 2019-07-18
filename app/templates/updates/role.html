@@ -20,24 +20,13 @@
     <div class="govuk-form-group">
         <fieldset class="govuk-fieldset" aria-describedby="temporary-promotion-hint">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-                Is this a temporary promotion?
+                How has their role changed?
             </legend>
-            <span id="temporary-promotion-hint" class="govuk-hint">
-              Temporary promotion is also known as TP, or getting 'TDA' - temporary duties allowance
-            </span>
-            <div class="govuk-radios govuk-radios--inline">
-                <div class="govuk-radios__item">
-                    <input class="govuk-radios__input" id="temporary-promotion-1" name="temporary-promotion" type="radio" value="1">
-                    <label class="govuk-label govuk-radios__label" for="temporary-promotion-1">
-                        Yes
-                    </label> </div>
-                <div class="govuk-radios__item">
-                    <input class="govuk-radios__input" id="temporary-promotion-2" name="temporary-promotion" type="radio" value="0" checked>
-                    <label class="govuk-label govuk-radios__label" for="temporary-promotion-2">
-                        No
-                    </label>
-                </div>
-            </div>
+            <select class="govuk-select" id="role-change" name="role-change">
+            {% for change_type in data.role_changes %}
+                <option value={{ change_type.id }}>{{ change_type.value }}</option>
+            {% endfor %}
+            </select>
         </fieldset>
     </div>
     <div class="govuk-form-group">
