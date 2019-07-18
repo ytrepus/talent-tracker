@@ -17,16 +17,21 @@
             {% endfor %}
         </select>
     </div>
+
     <div class="govuk-form-group">
-        <fieldset class="govuk-fieldset" aria-describedby="temporary-promotion-hint">
-            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
                 How has their role changed?
             </legend>
-            <select class="govuk-select" id="role-change" name="role-change">
+        <div class="govuk-radios">
             {% for change_type in data.role_changes %}
-                <option value={{ change_type.id }}>{{ change_type.value }}</option>
+                <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="role-change-{{ loop.index }}" name="role-change" type="radio" value="{{ change_type.id }}">
+                <label class="govuk-label govuk-radios__label" for="role-change-{{ loop.index }}">
+                  {{ change_type.value }}
+                </label> </div>
             {% endfor %}
-            </select>
+        </div>
         </fieldset>
     </div>
     <div class="govuk-form-group">
