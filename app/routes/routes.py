@@ -2,7 +2,7 @@ from datetime import date
 from typing import Dict
 
 from flask import render_template, request, url_for, redirect, session
-from app.models import Candidate, Grade, db, Organisation, Location, Profession, Role
+from app.models import Candidate, Grade, db, Organisation, Location, Profession, Role, Promotion
 from app.routes import route_blueprint
 
 
@@ -69,9 +69,10 @@ def update_role():
     data = {
         "promotable_grades": Grade.new_grades(Candidate.query.get(candidate_id).current_grade()),
         "organisations": Organisation.query.all(), "locations": Location.query.all(),
-        "professions": Profession.query.all()
+        "professions": Profession.query.all(), "role_changes": Promotion.query.all()
     }
-    return render_template('updates/role.html', page_header="Role update", data=data, candidate=Candidate.query.get(candidate_id))
+    return render_template('updates/role.html', page_header="Role update", data=data,
+                           candidate=Candidate.query.get(candidate_id))
 
 
 @route_blueprint.route('/update/name', methods=["POST", "GET"])
@@ -126,7 +127,8 @@ def check_your_answers():
                 date_started=date(role_data['start-date-year'], role_data['start-date-month'],
                                   role_data['start-date-day']), organisation_id=role_data['new-org'],
                 profession_id=role_data['new-profession'], location_id=role_data['new-location'],
-                grade_id=role_data['new-grade'], role_name=role_data['new-title']
+                grade_id=role_data['new-grade'], role_name=role_data['new-title'],
+                role_change_id=role_data['role-change']
             ))
             new_email = session.get('new-email')
             if new_email:
@@ -161,7 +163,7 @@ def check_your_answers():
         data['New location'] = Location.query.get(data['New location']).value
         data['New org'] = Organisation.query.get(data['New org']).name
         data['New profession'] = Profession.query.get(data['New profession']).value
-        data['Temporary promotion'] = "Yes" if bool(data['Temporary promotion']) else "No"
+        data['Role change type'] = Promotion.query.get(data['Role change']).value
 
         return data
     if session.get('new-role'):
