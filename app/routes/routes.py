@@ -158,12 +158,13 @@ def check_your_answers():
         data.pop('start-date-day')
         data.pop('start-date-month')
         data.pop('start-date-year')
+        role_id = data.pop('role-change')
         data = {prettify_string(key): value for key, value in data.items()}
         data['New grade'] = Grade.query.get(data['New grade']).value
         data['New location'] = Location.query.get(data['New location']).value
         data['New org'] = Organisation.query.get(data['New org']).name
         data['New profession'] = Profession.query.get(data['New profession']).value
-        data['Role change type'] = Promotion.query.get(data['Role change']).value
+        data['Role change type'] = Promotion.query.get(role_id).value
 
         return data
     if session.get('new-role'):
