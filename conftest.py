@@ -79,7 +79,7 @@ def test_candidate(test_session):
     candidate.last_name = "Candidate"
     candidate.completed_fast_stream = True
     candidate.joining_date = date(2010, 5, 1)
-    candidate.joining_grade = 1
+    candidate.joining_grade_id = 1
     candidate.gender_id = 1
     candidate.ethnicity_id = 1
     candidate.working_pattern_id = 1
