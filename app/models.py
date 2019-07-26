@@ -72,12 +72,12 @@ class Candidate(db.Model):
     gender_id = db.Column(db.ForeignKey('gender.id'))
     ethnicity_id = db.Column(db.ForeignKey('ethnicity.id'))
     main_job_type_id = db.Column(db.ForeignKey('main_job_type.id'))
+    joining_grade_id = db.Column(db.ForeignKey('grade.id'))
 
-    joining_grade = db.Column(db.ForeignKey('grade.id'))
-
-    roles = db.relationship('Role', backref='candidate', lazy='dynamic')
+    roles = db.relationship('Role', backref='candidate', lazy='dynamic', order_by="Role.date_started.desc()")
     applications = db.relationship('Application', backref='candidate', lazy='dynamic',
                                    order_by="Application.scheme_start_date.desc()")
+    joining_grade = db.relationship('Grade', backref='candidate')
 
     def __repr__(self):
         return f'<Candidate email {self.email_address}>'
