@@ -121,7 +121,7 @@ def generate_known_candidate():
     return Candidate(
         email_address="staging.candidate@gov.uk", joining_date=date(2015, 9, 1),
         first_name="Test", last_name="Candidate", completed_fast_stream=True,
-        joining_grade=Grade.query.filter(Grade.value.like("%Faststream%")).first().id,
+        joining_grade=Grade.query.filter(Grade.value.like("%Faststream%")).first(),
         age_range_id=2, ethnicity_id=1, working_pattern_id=1, belief_id=1, gender_id=1, sexuality_id=1,
         roles=[Role(date_started=date(2015, 9, 2), profession_id=1, role_change_id=2,
                     organisation_id=Organisation.query.filter(Organisation.name == 'Cabinet Office').first().id,
@@ -137,7 +137,7 @@ def generate_random_candidate():
                      first_name=f"{random_string(8)}", last_name=f"{random_string(12)}",
                      joining_date=date(random.randrange(1960, 2018), random.randrange(1, 12), random.randrange(1, 28)),
                      completed_fast_stream=random.choice([True, False]),
-                     joining_grade=(Grade.query.filter_by(rank=6).first()).id,
+                     joining_grade=(Grade.query.filter_by(rank=6).first()),
                      ethnicity=random.choice(Ethnicity.query.all()),
                      age_range=random.choice(AgeRange.query.all()),
                      gender_id=random.choice(Gender.query.all()).id,

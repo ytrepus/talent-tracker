@@ -75,7 +75,7 @@ def test_candidate(test_session):
     candidate.last_name = "Candidate"
     candidate.completed_fast_stream = True
     candidate.joining_date = date(2010, 5, 1)
-    candidate.joining_grade = 1
+    candidate.joining_grade_id = 1
     candidate.roles.append(
         Role(date_started=date(2010, 5, 1), grade_id=2, location_id=1, role_change_id=2))
     test_data = {

@@ -133,4 +133,4 @@ class TestRole:
             Role(date_started=date(2020, 6, 1), grade=Grade.query.filter_by(value=new_grade).first(),
                  role_change_id=role_change_id)
         ])
-        assert test_candidate.roles[2].is_promotion() is expected_outcome
+        assert test_candidate.roles[0].is_promotion() is expected_outcome
