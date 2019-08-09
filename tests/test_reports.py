@@ -131,18 +131,17 @@ class TestDeltaOfferPromotionReport:
 
 
 class TestDetailedPromotionReport:
-    @pytest.mark.parametrize("promoted, expected_data", [
-        (
-            True,
-            # column headings: name, email, programme, offer, working pattern, belief, gender, sexuality, disability,
-            # caring, age range, ethnicity, profile url
-            {"Testy Candidate", "testcandidate@numberten.gov.uk", "FLS", "META", "24/7", "Don't forget to be awesome",
-             "Fork", "Pan", False, True, "Immortal", "Terran", "localhost:5000/candidates/candidate/1"}
-         ),
-        (
-            False,
-            set()
-        )
-    ])
-    def test_get_data(self, promoted, expected_data, test_candidate_applied_and_promoted):
-        pass
+    @pytest.mark.parametrize("intake_year", (2017, 2018, 2019))
+    @pytest.mark.parametrize("role_change_type", ("substantive promotion", "temporary promotion", "level transfer"))
+    @freeze_time(date(2020, 3, 1))
+    def test_get_data(self, role_change_type, detailed_candidate, intake_year):
+        report = DetailedReport(intake_year, 'FLS', role_change_type)
+        if intake_year == 2019 and role_change_type == "substantive promotion":
+            assert report.get_data() == [
+                "Testy Candidate", "test.candidate@numberten.gov.uk", 1, "META", "Director of Happiness",
+                "Director (SCS2)", "Stargate-1", "Department of Fun", date(2018, 9, 1), "Admin Assistant (AA)", True,
+                "Terran", True, True, True, "Fork", "Pan", True, "Immortal", "Don't forget to be awesome", "24/7",
+                "localhost:5000/candidates/candidate/1"
+            ]
+        else:
+            assert report.get_data() == []
