@@ -3,6 +3,7 @@ from typing import List
 from reporting.promotion_reports import CharacteristicPromotionReport, BooleanCharacteristicPromotionReport, \
     DeltaOfferPromotionReport
 from reporting.base_promotion_report import PromotionReport
+from reporting.detailed_report import DetailedReport
 from app.models import Ethnicity, Candidate, Application
 from datetime import date
 from freezegun import freeze_time
@@ -13,13 +14,9 @@ class TestReports:
         "parameters, white_british_promoted, black_british_promoted, scheme_id, expected_output",
         [
             (['FLS', 2019, 'ethnicity'], .5, .7, 1,
-             ['characteristic,number substantively promoted,percentage substantively promoted,'
-              'number temporarily promoted,percentage temporarily promoted,total in group\r',
-              'White British,5,50%,0,0%,10\r', 'Black British,7,70%,0,0%,10\r', '']),
+             ['White British', 5, 0.5, 0, 0.0, 10]),
             (['SLS', 2019, 'ethnicity'], .4, .6, 2,
-             ['characteristic,number substantively promoted,percentage substantively promoted,'
-              'number temporarily promoted,percentage temporarily promoted,total in group\r',
-              'White British,4,40%,0,0%,10\r', 'Black British,6,60%,0,0%,10\r', '']),
+             ['White British', 4, 0.4, 0, 0.0, 10]),
         ]
     )
     @freeze_time(date(2020, 1, 1))  # we're running this report on 1 Jan 2020
@@ -34,8 +31,8 @@ class TestReports:
         candidates_promoter(wb_candidates, white_british_promoted)
         scheme_appender(bb_candidates, scheme_id)
         scheme_appender(wb_candidates, scheme_id)
-        output = CharacteristicPromotionReport(*parameters).return_data()
-        assert output.data.decode("UTF-8").split('\n') == expected_output
+        output = CharacteristicPromotionReport(*parameters).get_data()
+        assert output[0] == expected_output
 
     def test_deferred_candidates_are_not_counted(self, test_session, candidates_promoter):
         """
@@ -43,10 +40,10 @@ class TestReports:
         following year. How many "successes" should be counted for the programme? The answer should be one, because only
         one is actually on the programme at the time
         """
-        test_session.add(Ethnicity(id=1, value="Prefer not to say"))
+        test_session.add(Ethnicity(id=4, value="Prefer not to say"))
         test_session.commit()
 
-        candidates = [Candidate(ethnicity_id=1) for i in range(2)]
+        candidates = [Candidate(ethnicity_id=4) for i in range(2)]
         # all candidates apply for the 2019 intake and are successful
         for candidate in candidates:
             candidate.applications.append(
@@ -62,13 +59,13 @@ class TestReports:
         test_session.commit()
 
         data = CharacteristicPromotionReport('FLS', '2019', 'ethnicity').get_data()
-        expected_output = [['Prefer not to say', 1, 1.0, 0, 0.0, 1]]
-        assert data == expected_output
+        expected_output = ['Prefer not to say', 1, 1.0, 0, 0.0, 1]
+        assert data[0] == expected_output
 
 
 class TestPromotionReport:
     def test_eligible_candidates(self, test_session, candidates_promoter):
-        test_session.add(Ethnicity(id=1, value="Prefer not to say"))
+        test_session.add(Ethnicity(id=4, value="Prefer not to say"))
         test_session.commit()
 
         candidates = [Candidate(ethnicity_id=1) for i in range(2)]
@@ -131,3 +128,20 @@ class TestDeltaOfferPromotionReport:
             ["Candidates not on DELTA", 2, 0.4, 0, 0.0, 5]
         ]
         assert expected_output == output
+
+
+class TestDetailedPromotionReport:
+    @pytest.mark.parametrize("intake_year", (2017, 2018, 2019))
+    @pytest.mark.parametrize("role_change_type", ("substantive promotion", "temporary promotion", "level transfer"))
+    @freeze_time(date(2020, 3, 1))
+    def test_get_data(self, role_change_type, detailed_candidate, intake_year):
+        report = DetailedReport(intake_year, 'FLS', role_change_type)
+        if intake_year == 2019 and role_change_type == "substantive promotion":
+            assert report.get_data() == [
+                "Testy Candidate", "test.candidate@numberten.gov.uk", 1, "META", "Director of Happiness",
+                "Director (SCS2)", "Stargate-1", "Department of Fun", date(2018, 9, 1), "Admin Assistant (AA)", True,
+                "Terran", True, True, True, "Fork", "Pan", True, "Immortal", "Don't forget to be awesome", "24/7",
+                "localhost:5000/candidates/candidate/1"
+            ]
+        else:
+            assert report.get_data() == []

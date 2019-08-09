@@ -4,7 +4,7 @@ from typing import List
 
 from sqlalchemy import and_
 
-from app.models import Scheme, Candidate, Application
+from app.models import Candidate, Application, Scheme
 from reporting import Report
 
 
@@ -15,12 +15,13 @@ class PromotionReport(Report, ABC):
     column headers and deal with a single intake year.
     """
     def __init__(self, scheme: str, year: str, attribute: str = None):
-        super().__init__()
+        super().__init__(scheme)
         self.attribute = attribute
         self.intake_date = date(int(year), 3, 1)  # assuming it starts in March every year
         self.scheme = Scheme.query.filter_by(name=f'{scheme}').first()
         # we only take credit for promotions that happen after candidates find out they're successful
         self.promotions_count_from = date(int(year) - 1, 12, 1)
+
         self.headers = ['characteristic', 'number substantively promoted', 'percentage substantively promoted',
                         'number temporarily promoted', 'percentage temporarily promoted', 'total in group']
         self.filename = f"promotions-by-{attribute}-{scheme}-{year}-generated-{date.today().strftime('5%d-%m-%Y')}"

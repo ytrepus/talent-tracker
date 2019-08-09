@@ -119,6 +119,9 @@ class Candidate(db.Model):
     def current_location(self):
         return self.roles.order_by(Role.id.desc()).first().location.value
 
+    def roles_since_date(self, since_date: datetime.date):
+        return [role for role in self.roles if role.date_started >= since_date]
+
 
 class Organisation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -239,6 +242,17 @@ class Application(db.Model):
         self.scheme_start_date = date_to_defer_to
         return None
 
+    def offer_status(self):
+        if self.delta:
+            output = "DELTA"
+        elif self.meta:
+            output = "META"
+        elif self.meta and self.delta:
+            output = "META and DELTA"
+        else:
+            output = None
+        return output
+
 
 class Leadership(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -277,7 +291,8 @@ class SLSLeadership(Leadership):
     }
 
 
-class MainJobType(db.Model):
+class MainJobType(CandidateGetterMixin, db.Model):
+    __table_name__ = 'main_job_type'
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(512))
     lower_socio_economic_background = db.Column(db.Boolean, default=False)

@@ -5,13 +5,16 @@ from io import StringIO
 from flask import Response, stream_with_context
 from werkzeug.datastructures import Headers
 
+from app.models import Scheme
+
 
 class Report(ABC):
     """
     This is the base report. All reports should be subclassed from it. They should implement the abstract methods but
     should not override any of the others.
     """
-    def __init__(self):
+    def __init__(self, scheme: str):
+        self.scheme: Scheme = Scheme.query.filter_by(name=f'{scheme}').first()
         self.filename = None
         self.headers = []
 

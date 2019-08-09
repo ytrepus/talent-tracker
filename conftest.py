@@ -55,9 +55,7 @@ def test_session(db):
         Grade(id=2, value='Grade 7', rank=6), Grade(id=3, value='Grade 6', rank=5),
         Grade(id=4, value='Deputy Director (SCS1)', rank=4), Grade(id=1, value='Admin Assistant (AA)', rank=7)
     ])
-    db.session.add_all([Gender(id=1, value="Fork"), Gender(id=2, value="Knife"), Gender(id=3, value="Chopsticks")])
     db.session.add(Candidate(id=1))
-    db.session.add(Location(id=1, value='Stargate-1'))
     db.session.commit()
 
     yield session_
@@ -76,11 +74,18 @@ def test_candidate(test_session):
     candidate.completed_fast_stream = True
     candidate.joining_date = date(2010, 5, 1)
     candidate.joining_grade_id = 1
+    candidate.gender_id = 1
+    candidate.ethnicity_id = 1
+    candidate.working_pattern_id = 1
+    candidate.belief_id = 1
+    candidate.sexuality_id = 1
+
     candidate.roles.append(
         Role(date_started=date(2010, 5, 1), grade_id=2, location_id=1, role_change_id=2))
     test_data = {
-        'grades': [Grade(value='Band A', rank=2), Grade(value='SCS3', rank=1)],
+        'grades': [Grade(id=10, value='Band A', rank=2), Grade(id=11, value='SCS3', rank=1)],
         'test_candidates': [candidate],
+        'locations': [Location(id=1, value="Test")]
     }
     for key in test_data.keys():
         test_session.add_all(test_data.get(key))
@@ -90,7 +95,8 @@ def test_candidate(test_session):
 
 @pytest.fixture
 def test_candidate_applied_to_fls(test_candidate, test_session):
-    test_candidate.applications.append(Application(application_date=date(2019, 6, 1), scheme_id=1))
+    test_candidate.applications.append(Application(application_date=date(2019, 6, 1), scheme_id=1,
+                                                   scheme_start_date=date(2020, 3, 1)))
     test_session.add(test_candidate)
     test_session.commit()
     yield Candidate.query.first()
@@ -137,15 +143,15 @@ def test_professions(test_session):
 
 @pytest.fixture
 def test_ethnicities(test_session):
-    test_session.add_all([Ethnicity(id=1, value="White British"), Ethnicity(id=2, value="Black British", bame=True)])
+    test_session.add_all([Ethnicity(id=2, value="White British"), Ethnicity(id=3, value="Black British", bame=True)])
     test_session.commit()
     yield
 
 
 @pytest.fixture
 def test_multiple_candidates_multiple_ethnicities(test_session, test_ethnicities):
-    test_session.add_all([Candidate(ethnicity_id=Ethnicity.query.filter_by(value="Black British").first().id) for i in range(10)])
-    test_session.add_all([Candidate(ethnicity_id=Ethnicity.query.filter_by(value="White British").first().id) for i in range(10)])
+    test_session.add_all([Candidate(ethnicity=Ethnicity.query.get(3)) for i in range(10)])
+    test_session.add_all([Candidate(ethnicity=Ethnicity.query.get(2)) for i in range(10)])
     test_session.commit()
     yield
 
@@ -155,7 +161,7 @@ def gender_ten_of_each(test_session):
     candidates = []
     for gender in Gender.query.all():
         for i in range(10):
-            candidates.append(Candidate(ethnicity_id=gender.id))
+            candidates.append(Candidate(gender=gender))
     test_session.add_all(candidates)
     test_session.commit()
     yield
@@ -200,6 +206,41 @@ def scheme_appender(test_session):
                 meta=meta, delta=delta)
             )
     return _add_scheme
+
+
+@pytest.fixture
+def detailed_candidate(test_candidate, test_session):
+    test_candidate: Candidate
+    test_session.add(Organisation(id=1, name="Department of Fun"))
+    test_session.add(Location(id=2, value='Stargate-1'))
+    test_session.add(WorkingPattern(id=1, value="24/7"))
+    test_session.add(Belief(id=1, value="Don't forget to be awesome"))
+    test_session.add(Sexuality(id=1, value="Pan"))
+    test_session.add(Ethnicity(id=1, value="Terran", bame=True))
+    test_session.add_all([Gender(id=1, value="Fork"), Gender(id=2, value="Knife"),
+                          Gender(id=3, value="Chopsticks")])
+    test_session.add(Grade(id=5, value="Director (SCS2)", rank=3))
+    test_session.add(MainJobType(id=1, value="Roboticist", lower_socio_economic_background=True))
+    test_session.add(AgeRange(id=1, value="Immortal"))
+
+    test_candidate.joining_date = date(2018, 9, 1)
+    test_candidate.joining_grade_id = 1
+    test_candidate.main_job_type_id = 1
+    test_candidate.working_pattern_id = 1
+    test_candidate.belief_id = 1
+    test_candidate.age_range_id = 1
+    test_candidate.caring_responsibility = True
+    test_candidate.long_term_health_condition = True
+
+    test_candidate.applications.append(Application(
+        application_date=date(2018, 6, 1), scheme_start_date=date(2019, 3, 1), meta=True, delta=False, cohort=1,
+        scheme_id=1
+    ))
+    test_candidate.roles.extend([
+        Role(date_started=date(2018, 6, 1)),
+        Role(date_started=date(2019, 1, 1), role_change_id=1, role_name="Director of Happiness", grade_id=5,
+             location_id=2, organisation_id=1)
+    ])
 
 
 @pytest.fixture
