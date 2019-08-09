@@ -119,6 +119,9 @@ class Candidate(db.Model):
     def current_location(self):
         return self.roles.order_by(Role.id.desc()).first().location.value
 
+    def roles_since_date(self, since_date: datetime.date):
+        return [role for role in self.roles if role.date_started >= since_date]
+
 
 class Organisation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
