@@ -1,45 +1,72 @@
 from reporting.base_report import Report
 from typing import List
-from app.models import Candidate, Application
-from sqlalchemy import and_
-from datetime import datetime
+from app.models import Candidate, Application, Promotion, Role
+from sqlalchemy import and_, extract
+from datetime import datetime, date
 
 
 class DetailedReport(Report):
-    def __init__(self, intake_years: List[int], schemes: List[str], temporary: bool):
+    """
+    The initial version of the detailed report will take one input year, one scheme, and one role_change_type
+    """
+    def __init__(self, intake_year: int, scheme: str, role_change_type: str):
         super().__init__(scheme)
-        self.cohorts = cohorts
-        self.promoted = promoted
+        self.intake = intake_year
+        self.role_change_type = Promotion.query.filter_by(value=role_change_type).first()
+        self.promoted_before_date = datetime.today()
         self.headers = [
-            "candidate name", "candidate email", "cohort"
+            "candidate name", "candidate email", "cohort", "offer", "current role title", "current grade",
+            "current location", "current department", "joining date", "joining grade", "completed Fast Stream",
+            "ethnic background", "from a minority ethnic background", "has a disability",
+            "from a lower socio-economic background", "gender", "sexuality", "has caring responsibilities",
+            "age range", "belief", "working pattern", "profile"
         ]
 
     def write_row(self, row_data, data_object, csv_writer):
         pass
 
+    def row_writer(self, candidate: Candidate):
+        application = candidate.most_recent_application()
+        current_role: Role = candidate.roles[0]
+        return [
+            f"{candidate.first_name} {candidate.last_name}", candidate.email_address,
+            application.cohort, application.offer_status(), current_role.role_name, current_role.grade.value,
+            current_role.location.value, current_role.organisation.name, candidate.joining_date,
+            candidate.joining_grade.value, candidate.completed_fast_stream, candidate.ethnicity.value,
+            candidate.ethnicity.bame,
+            candidate.long_term_health_condition, candidate.main_job_type.lower_socio_economic_background,
+            candidate.gender.value, candidate.sexuality.value, candidate.caring_responsibility,
+            candidate.age_range.value, candidate.belief.value, candidate.working_pattern.value,
+            f"localhost:5000/candidates/candidate/{candidate.id}"
+
+        ]
+
     def get_data(self):
-        if self.promoted:
-            return self.get_promoted_candidates()
-        else:
-            return self.get_unpromoted_candidates()
+        output = []
+        for candidate in self.candidates():
+            output.extend(self.row_writer(candidate))
+        return output
+
+    def candidates(self):
+        """
+        Iterate through the roles each candidate has held since beginning the programme and identifies if any of them
+        have been 'role_change_type'. If they have, return that candidate
+        :return:
+        :rtype:
+        """
+        return [candidate for candidate in self.eligible_candidates() if self.role_change_type in
+                {role.role_change for role in candidate.roles_since_date(date(self.intake, 1, 1))}
+                ]
 
     def eligible_candidates(self) -> List[Candidate]:
         """
-        Eligible candidates are those on `intake` and are on `scheme`
-        `intakes`
+        Eligible candidates are those in `intake` and on `scheme`. The year in the application start date is used as
+        shorthand for the intake year
         :return: List[Candidate]
         """
         return [application.candidate for application in Application.query.filter(
             and_(
-                Application.cohort in self.cohorts,
+                extract('year', Application.scheme_start_date) == self.intake,
                 Application.scheme_id == self.scheme.id
             )
-        )]
-
-    def get_promoted_candidates(self):
-        return [candidate for candidate in self.eligible_candidates()
-                if candidate.promoted(datetime.today(), temporary=True)
-                or candidate.promoted(datetime.today(), temporary=False)]
-
-    def get_unpromoted_candidates(self):
-        return list(set(self.eligible_candidates()) - set(self.get_promoted_candidates()))
+        ).all()]
