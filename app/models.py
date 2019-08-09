@@ -277,7 +277,8 @@ class SLSLeadership(Leadership):
     }
 
 
-class MainJobType(db.Model):
+class MainJobType(CandidateGetterMixin, db.Model):
+    __table_name__ = 'main_job_type'
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(512))
     lower_socio_economic_background = db.Column(db.Boolean, default=False)
