@@ -242,6 +242,17 @@ class Application(db.Model):
         self.scheme_start_date = date_to_defer_to
         return None
 
+    def offer_status(self):
+        if self.delta:
+            output = "DELTA"
+        elif self.meta:
+            output = "META"
+        elif self.meta and self.delta:
+            output = "META and DELTA"
+        else:
+            output = None
+        return output
+
 
 class Leadership(db.Model):
     id = db.Column(db.Integer, primary_key=True)
