@@ -32,7 +32,7 @@ class TestReports:
         scheme_appender(bb_candidates, scheme_id)
         scheme_appender(wb_candidates, scheme_id)
         output = CharacteristicPromotionReport(*parameters).get_data()
-        assert output[1] == expected_output
+        assert output[0] == expected_output
 
     def test_deferred_candidates_are_not_counted(self, test_session, candidates_promoter):
         """
@@ -60,7 +60,7 @@ class TestReports:
 
         data = CharacteristicPromotionReport('FLS', '2019', 'ethnicity').get_data()
         expected_output = ['Prefer not to say', 1, 1.0, 0, 0.0, 1]
-        assert data[1] == expected_output
+        assert data[0] == expected_output
 
 
 class TestPromotionReport:
