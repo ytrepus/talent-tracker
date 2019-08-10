@@ -2,7 +2,17 @@ from datetime import date
 from typing import List
 from sqlalchemy import and_
 
-from app.models import Ethnicity, Scheme, Gender, Candidate, Application, Sexuality, WorkingPattern, Belief, AgeRange
+from app.models import (
+    Ethnicity,
+    Scheme,
+    Gender,
+    Candidate,
+    Application,
+    Sexuality,
+    WorkingPattern,
+    Belief,
+    AgeRange,
+)
 from abc import ABC, abstractmethod
 from io import StringIO
 from werkzeug.datastructures import Headers
@@ -12,12 +22,10 @@ import csv
 
 class Report(ABC):
     def __init__(self):
-        self.tables = {
-            'ethnicity': Ethnicity
-        }
+        self.tables = {"ethnicity": Ethnicity}
         self.filename = None
         self.headers = []
-        self.filename = ''
+        self.filename = ""
 
     @abstractmethod
     def write_row(self, row_data, data_object, csv_writer):
@@ -61,7 +69,8 @@ class Report(ABC):
 
         return Response(
             stream_with_context(self.generate_report_data()),
-            mimetype='text/csv', headers=headers
+            mimetype="text/csv",
+            headers=headers,
         )
 
 
@@ -69,11 +78,21 @@ class PromotionReport(Report, ABC):
     def __init__(self, scheme: str, year: str, attribute: str = None):
         super().__init__()
         self.attribute = attribute
-        self.intake_date = date(int(year), 3, 1)  # assuming it starts in March every year
-        self.scheme = Scheme.query.filter_by(name=f'{scheme}').first()
-        self.promoted_before_date = date(int(year) + 1, 3, 1)  # can't take credit for promotions within first 3 months
-        self.headers = ['characteristic', 'number substantively promoted', 'percentage substantively promoted',
-                        'number temporarily promoted', 'percentage temporarily promoted', 'total in group']
+        self.intake_date = date(
+            int(year), 3, 1
+        )  # assuming it starts in March every year
+        self.scheme = Scheme.query.filter_by(name=f"{scheme}").first()
+        self.promoted_before_date = date(
+            int(year) + 1, 3, 1
+        )  # can't take credit for promotions within first 3 months
+        self.headers = [
+            "characteristic",
+            "number substantively promoted",
+            "percentage substantively promoted",
+            "number temporarily promoted",
+            "percentage temporarily promoted",
+            "total in group",
+        ]
         self.filename = f"promotions-by-{attribute}-{scheme}-{year}-generated-{date.today().strftime('5%d-%m-%Y')}"
 
     def get_data(self):
@@ -101,24 +120,31 @@ class PromotionReport(Report, ABC):
         :return:
         :rtype:
         """
-        eligible_applications = Application.query.filter(and_(
-            Application.scheme_start_date == self.intake_date,
-            Application.scheme_id == self.scheme.id
-        )).all()
+        eligible_applications = Application.query.filter(
+            and_(
+                Application.scheme_start_date == self.intake_date,
+                Application.scheme_id == self.scheme.id,
+            )
+        ).all()
         return [application.candidate for application in eligible_applications]
 
     def promoted_candidates(self, temporary, candidates: List[Candidate]):
-        return [candidate for candidate in candidates if candidate.promoted(self.promoted_before_date, temporary)]
+        return [
+            candidate
+            for candidate in candidates
+            if candidate.promoted(self.promoted_before_date, temporary)
+        ]
 
     def write_row(self, row_data, data_object, csv_writer):
-        csv_writer.writerow((
-            row_data[0],
-            row_data[1],
-            "{0:.0%}".format(row_data[2]),  # format decimal as percentage
-            row_data[3],
-            "{0:.0%}".format(row_data[4]),  # format decimal as percentage
-            row_data[5]
-        )
+        csv_writer.writerow(
+            (
+                row_data[0],
+                row_data[1],
+                "{0:.0%}".format(row_data[2]),  # format decimal as percentage
+                row_data[3],
+                "{0:.0%}".format(row_data[4]),  # format decimal as percentage
+                row_data[5],
+            )
         )
         return data_object.getvalue()
 
@@ -126,35 +152,57 @@ class PromotionReport(Report, ABC):
 class CharacteristicPromotionReport(PromotionReport):
     def __init__(self, scheme: str, year: str, attribute: str):
         super().__init__(scheme, year, attribute)
-        self.tables = {'ethnicity': Ethnicity, 'gender': Gender, 'sexuality': Sexuality, 'belief': Belief,
-                       'working_pattern': WorkingPattern, 'age_range': AgeRange}
+        self.tables = {
+            "ethnicity": Ethnicity,
+            "gender": Gender,
+            "sexuality": Sexuality,
+            "belief": Belief,
+            "working_pattern": WorkingPattern,
+            "age_range": AgeRange,
+        }
         self.table = self.tables.get(self.attribute)
 
     def get_row_metadata(self):
-        return [(row.value, self.candidates_with_characteristic(row)) for row in self.table.query.all()]
+        return [
+            (row.value, self.candidates_with_characteristic(row))
+            for row in self.table.query.all()
+        ]
 
     def candidates_with_characteristic(self, characteristic):
-        return [candidate for candidate in self.eligible_candidates()
-                if getattr(candidate, self.attribute) == characteristic]
+        return [
+            candidate
+            for candidate in self.eligible_candidates()
+            if getattr(candidate, self.attribute) == characteristic
+        ]
 
 
 class BooleanCharacteristicPromotionReport(PromotionReport):
     def __init__(self, scheme: str, year: str, attribute: str):
         super().__init__(scheme, year, attribute)
         self.human_readable_characteristics = {
-            'long_term_health_condition': {
-                True: "People with a disability", False: "People without a disability", None: "No answer provided"
+            "long_term_health_condition": {
+                True: "People with a disability",
+                False: "People without a disability",
+                None: "No answer provided",
             },
-            'caring_responsibility': {
-                True: "I have caring responsibilities", False: "I do not have caring responsibilities",
-                None: "No answer provided"
-            }
+            "caring_responsibility": {
+                True: "I have caring responsibilities",
+                False: "I do not have caring responsibilities",
+                None: "No answer provided",
+            },
         }
-        self.human_readable_row_titles = self.human_readable_characteristics.get(self.attribute)
+        self.human_readable_row_titles = self.human_readable_characteristics.get(
+            self.attribute
+        )
 
     def get_row_metadata(self):
         return [
-            (value, Candidate.query.filter(getattr(Candidate, self.attribute).is_(key)).all())
+            (
+                value,
+                Candidate.query.filter(
+                    getattr(Candidate, self.attribute).is_(key)
+                ).all(),
+            )
             for key, value in self.human_readable_row_titles.items()
         ]
 
@@ -165,19 +213,34 @@ class OfferPromotionReport(PromotionReport):
         self.upper_attribute = attribute.upper()
         self.human_readable_row_titles = {
             True: f"Candidates eligible for {self.upper_attribute}",
-            False: f"Candidates on {self.upper_attribute}"
+            False: f"Candidates on {self.upper_attribute}",
         }
 
     def get_row_metadata(self):
         return [
-            (f"Candidates eligible for {self.upper_attribute}", self.eligible_candidates()),
-            (f"Candidates on {self.upper_attribute}", self.candidates_on_offer(self.attribute)),
-            (f"Candidates not on {self.upper_attribute}",
-             list(set(self.eligible_candidates()) - set(self.candidates_on_offer(self.attribute))))
+            (
+                f"Candidates eligible for {self.upper_attribute}",
+                self.eligible_candidates(),
+            ),
+            (
+                f"Candidates on {self.upper_attribute}",
+                self.candidates_on_offer(self.attribute),
+            ),
+            (
+                f"Candidates not on {self.upper_attribute}",
+                list(
+                    set(self.eligible_candidates())
+                    - set(self.candidates_on_offer(self.attribute))
+                ),
+            ),
         ]
 
     def candidates_on_offer(self, offer):
-        return [candidate for candidate in super().eligible_candidates() if getattr(candidate.applications[0], offer)]
+        return [
+            candidate
+            for candidate in super().eligible_candidates()
+            if getattr(candidate.applications[0], offer)
+        ]
 
 
 class MetaOfferPromotionReport(OfferPromotionReport):
@@ -185,7 +248,11 @@ class MetaOfferPromotionReport(OfferPromotionReport):
         super().__init__(scheme, year, attribute)
 
     def eligible_candidates(self):
-        return [candidate for candidate in super().eligible_candidates() if candidate.ethnicity.bame]
+        return [
+            candidate
+            for candidate in super().eligible_candidates()
+            if candidate.ethnicity.bame
+        ]
 
 
 class DeltaOfferPromotionReport(OfferPromotionReport):
@@ -193,7 +260,11 @@ class DeltaOfferPromotionReport(OfferPromotionReport):
         super().__init__(scheme, year, attribute)
 
     def eligible_candidates(self):
-        return [candidate for candidate in super().eligible_candidates() if candidate.long_term_health_condition]
+        return [
+            candidate
+            for candidate in super().eligible_candidates()
+            if candidate.long_term_health_condition
+        ]
 
 
 class DetailedPromotionReport(Report):

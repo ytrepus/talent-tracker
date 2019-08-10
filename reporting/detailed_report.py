@@ -9,17 +9,37 @@ class DetailedReport(Report):
     """
     The initial version of the detailed report will take one input year, one scheme, and one role_change_type
     """
+
     def __init__(self, intake_year: int, scheme: str, role_change_type: str):
         super().__init__(scheme)
         self.intake = intake_year
-        self.role_change_type = Promotion.query.filter_by(value=role_change_type).first()
+        self.role_change_type = Promotion.query.filter_by(
+            value=role_change_type
+        ).first()
         self.promoted_before_date = datetime.today()
         self.headers = [
-            "candidate name", "candidate email", "cohort", "offer", "current role title", "current grade",
-            "current location", "current department", "joining date", "joining grade", "completed Fast Stream",
-            "ethnic background", "from a minority ethnic background", "has a disability",
-            "from a lower socio-economic background", "gender", "sexuality", "has caring responsibilities",
-            "age range", "belief", "working pattern", "profile"
+            "candidate name",
+            "candidate email",
+            "cohort",
+            "offer",
+            "current role title",
+            "current grade",
+            "current location",
+            "current department",
+            "joining date",
+            "joining grade",
+            "completed Fast Stream",
+            "ethnic background",
+            "from a minority ethnic background",
+            "has a disability",
+            "from a lower socio-economic background",
+            "gender",
+            "sexuality",
+            "has caring responsibilities",
+            "age range",
+            "belief",
+            "working pattern",
+            "profile",
         ]
 
     def write_row(self, row_data, data_object, csv_writer):
@@ -29,16 +49,28 @@ class DetailedReport(Report):
         application = candidate.most_recent_application()
         current_role: Role = candidate.roles[0]
         return [
-            f"{candidate.first_name} {candidate.last_name}", candidate.email_address,
-            application.cohort, application.offer_status(), current_role.role_name, current_role.grade.value,
-            current_role.location.value, current_role.organisation.name, candidate.joining_date,
-            candidate.joining_grade.value, candidate.completed_fast_stream, candidate.ethnicity.value,
+            f"{candidate.first_name} {candidate.last_name}",
+            candidate.email_address,
+            application.cohort,
+            application.offer_status(),
+            current_role.role_name,
+            current_role.grade.value,
+            current_role.location.value,
+            current_role.organisation.name,
+            candidate.joining_date,
+            candidate.joining_grade.value,
+            candidate.completed_fast_stream,
+            candidate.ethnicity.value,
             candidate.ethnicity.bame,
-            candidate.long_term_health_condition, candidate.main_job_type.lower_socio_economic_background,
-            candidate.gender.value, candidate.sexuality.value, candidate.caring_responsibility,
-            candidate.age_range.value, candidate.belief.value, candidate.working_pattern.value,
-            f"localhost:5000/candidates/candidate/{candidate.id}"
-
+            candidate.long_term_health_condition,
+            candidate.main_job_type.lower_socio_economic_background,
+            candidate.gender.value,
+            candidate.sexuality.value,
+            candidate.caring_responsibility,
+            candidate.age_range.value,
+            candidate.belief.value,
+            candidate.working_pattern.value,
+            f"localhost:5000/candidates/candidate/{candidate.id}",
         ]
 
     def get_data(self):
@@ -54,9 +86,15 @@ class DetailedReport(Report):
         :return:
         :rtype:
         """
-        return [candidate for candidate in self.eligible_candidates() if self.role_change_type in
-                {role.role_change for role in candidate.roles_since_date(date(self.intake, 1, 1))}
-                ]
+        return [
+            candidate
+            for candidate in self.eligible_candidates()
+            if self.role_change_type
+            in {
+                role.role_change
+                for role in candidate.roles_since_date(date(self.intake, 1, 1))
+            }
+        ]
 
     def eligible_candidates(self) -> List[Candidate]:
         """
@@ -64,9 +102,12 @@ class DetailedReport(Report):
         shorthand for the intake year
         :return: List[Candidate]
         """
-        return [application.candidate for application in Application.query.filter(
-            and_(
-                extract('year', Application.scheme_start_date) == self.intake,
-                Application.scheme_id == self.scheme.id
-            )
-        ).all()]
+        return [
+            application.candidate
+            for application in Application.query.filter(
+                and_(
+                    extract("year", Application.scheme_start_date) == self.intake,
+                    Application.scheme_id == self.scheme.id,
+                )
+            ).all()
+        ]
