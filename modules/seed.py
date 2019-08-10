@@ -34,7 +34,7 @@ def generate_random_fixed_data():
                    'Government Corporate Finance', 'Government Economics Service', 'Government Finance',
                    'Government Legal Service', 'Government Operational Research', 'Government Property Profession',
                    'Government Social Research', 'Government Statistical Service', 'Government Veterinary Profession',
-                   'Human Resources', 'Intelligance Analysis', 'Internal Audit', 'Knowledge and Information Management',
+                   'Human Resources', 'Intelligence Analysis', 'Internal Audit', 'Knowledge and Information Management',
                    'Medical profession', 'Operational delivery', 'Other', 'Planning professions', 'Policy',
                    'Prefer not to say', 'Project delivery', 'Psychology profession', 'Science & engineering',
                    'Security profession', 'Tax']
@@ -114,7 +114,8 @@ def generate_random_fixed_data():
     return {'organisations': organisations, 'grades': grades, 'professions': professions, 'locations': locations,
             'ethnicities': ethnic_groups, 'schemes': [Scheme(id=1, name='FLS'), Scheme(id=2, name='SLS')],
             'ages': ages, 'genders': genders, 'sexuality': sexual_orientation, 'beliefs': beliefs,
-            'working_patterns': working_patterns, 'promotions': promotions}
+            'working_patterns': working_patterns, 'promotions': promotions,
+            'job_types': [MainJobType(id=1, value='Civil Servant', lower_socio_economic_background=True)]}
 
 
 def generate_known_candidate():
@@ -149,7 +150,8 @@ def generate_random_candidate():
                                  organisation_id=random.choice(Organisation.query.all()).id,
                                  grade=Grade.query.filter(Grade.value.like("%Faststream%")).first(),
                                  location=random.choice(Location.query.all()), role_change_id=2),
-                            ]
+                            ],
+                     main_job_type=MainJobType.query.first()
                      )
 
 
@@ -167,9 +169,11 @@ def promote_candidate(candidate: Candidate, role_change_type=None):
         role_change_type = random.choice(["substantive", "temporary", "level transfer"])
     candidate.roles.extend([
         Role(date_started=date(2018, 1, 1),
-             role_change=Promotion.query.filter(Promotion.value == "substantive").first()),
+             role_change=Promotion.query.filter(Promotion.value == "substantive").first(),
+             organisation_id=14, location_id=2, role_name="First role", grade_id=5),
         Role(date_started=date(2019, 6, 1),
-             role_change=Promotion.query.filter(Promotion.value == f"{role_change_type}").first())
+             role_change=Promotion.query.filter(Promotion.value == f"{role_change_type}").first(),
+             organisation_id=14, location_id=2, role_name="Second role", grade_id=4)
     ])
     return candidate
 
@@ -207,7 +211,7 @@ def commit_data():
 
 def clear_old_data():
     tables = [Application, Role, Candidate, Organisation, Profession, Grade, Location, Ethnicity, Scheme, AgeRange,
-              Gender, Sexuality, AgeRange, Belief, WorkingPattern, Promotion, AuditEvent]
+              Gender, Sexuality, AgeRange, Belief, WorkingPattern, Promotion, AuditEvent, MainJobType]
     for table in tables:
         table.query.delete()
         db.session.commit()
