@@ -3,9 +3,9 @@ from app.candidates import candidates_bp
 from flask import render_template, abort
 
 
-@candidates_bp.route('/candidate/<int:candidate_id>', methods=["POST", "GET"])
+@candidates_bp.route("/candidate/<int:candidate_id>", methods=["POST", "GET"])
 def candidate_profile(candidate_id):
     candidate = Candidate.query.get(candidate_id)
     if not candidate:
         return abort(404)
-    return render_template('candidates/profile.html', candidate=candidate)
+    return render_template("candidates/profile.html", candidate=candidate)

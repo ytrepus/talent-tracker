@@ -35,7 +35,7 @@ class User(UserMixin, db.Model):
         self.password_hash = generate_password_hash(password)
 
     def __repr__(self):
-        return '<User {}>'.format(self.email)
+        return "<User {}>".format(self.email)
 
 
 @login_manager.user_loader
@@ -48,6 +48,7 @@ class Ethnicity(CandidateGetterMixin, db.Model):
     The ethnicity table has a boolean flag for bame, allowing us to query candidates (and therefore data connected to
     candidates) according to ethnicity at a broad, BAME level
     """
+
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(512))
     bame = db.Column(db.Boolean)
@@ -62,30 +63,43 @@ class Candidate(db.Model):
     email_address = db.Column(db.String(120), unique=True)
 
     # protected characteristics
-    caring_responsibility = db.Column(db.Boolean())  # TRUE: yes, FALSE: no, NULL: Prefer not to say
+    caring_responsibility = db.Column(
+        db.Boolean()
+    )  # TRUE: yes, FALSE: no, NULL: Prefer not to say
     long_term_health_condition = db.Column(db.Boolean())
 
-    age_range_id = db.Column(db.ForeignKey('age_range.id'), nullable=False, default=1)
-    working_pattern_id = db.Column(db.ForeignKey('working_pattern.id'))
-    belief_id = db.Column(db.ForeignKey('belief.id'))
-    sexuality_id = db.Column(db.ForeignKey('sexuality.id'))
-    gender_id = db.Column(db.ForeignKey('gender.id'))
-    ethnicity_id = db.Column(db.ForeignKey('ethnicity.id'))
-    main_job_type_id = db.Column(db.ForeignKey('main_job_type.id'))
-    joining_grade_id = db.Column(db.ForeignKey('grade.id'))
+    age_range_id = db.Column(db.ForeignKey("age_range.id"), nullable=False, default=1)
+    working_pattern_id = db.Column(db.ForeignKey("working_pattern.id"))
+    belief_id = db.Column(db.ForeignKey("belief.id"))
+    sexuality_id = db.Column(db.ForeignKey("sexuality.id"))
+    gender_id = db.Column(db.ForeignKey("gender.id"))
+    ethnicity_id = db.Column(db.ForeignKey("ethnicity.id"))
+    main_job_type_id = db.Column(db.ForeignKey("main_job_type.id"))
+    joining_grade_id = db.Column(db.ForeignKey("grade.id"))
 
-    roles = db.relationship('Role', backref='candidate', lazy='dynamic', order_by="Role.date_started.desc()")
-    applications = db.relationship('Application', backref='candidate', lazy='dynamic',
-                                   order_by="Application.scheme_start_date.desc()")
-    joining_grade = db.relationship('Grade', backref='candidate')
+    roles = db.relationship(
+        "Role", backref="candidate", lazy="dynamic", order_by="Role.date_started.desc()"
+    )
+    applications = db.relationship(
+        "Application",
+        backref="candidate",
+        lazy="dynamic",
+        order_by="Application.scheme_start_date.desc()",
+    )
+    joining_grade = db.relationship("Grade", backref="candidate")
 
     def __repr__(self):
-        return f'<Candidate email {self.email_address}>'
+        return f"<Candidate email {self.email_address}>"
 
-    def current_grade(self) -> 'Grade':
+    def current_grade(self) -> "Grade":
         return self.roles.order_by(Role.date_started.desc()).first().grade
 
-    def promoted(self, promoted_after_date: datetime.date, promoted_before_date=None, temporary=False):
+    def promoted(
+        self,
+        promoted_after_date: datetime.date,
+        promoted_before_date=None,
+        temporary=False,
+    ):
         """
         Returns whether this candidate was promoted after the passed date. Promotions are only considered if they're
         substantive. There is a flag is users want to see temporary promotions instead
@@ -97,24 +111,37 @@ class Candidate(db.Model):
         :rtype:
         """
         if temporary:
-            role_change = Promotion.query.filter(Promotion.value.like("%temporary%")).first()
+            role_change = Promotion.query.filter(
+                Promotion.value.like("%temporary%")
+            ).first()
         else:
-            role_change = Promotion.query.filter(Promotion.value.like("%substantive%")).first()
+            role_change = Promotion.query.filter(
+                Promotion.value.like("%substantive%")
+            ).first()
         if not promoted_before_date:
             promoted_before_date = datetime.today()
-        roles_after_date = self.roles.filter(and_(
-            Role.date_started >= promoted_after_date,
-            Role.date_started <= promoted_before_date,
-            Role.role_change == role_change,
-        )).all()
+        roles_after_date = self.roles.filter(
+            and_(
+                Role.date_started >= promoted_after_date,
+                Role.date_started <= promoted_before_date,
+                Role.role_change == role_change,
+            )
+        ).all()
         return len(roles_after_date) > 0
 
-    def current_scheme(self) -> 'Scheme':
-        return Scheme.query.get(self.applications.order_by(Application.application_date.desc()).first().scheme_id)
+    def current_scheme(self) -> "Scheme":
+        return Scheme.query.get(
+            self.applications.order_by(Application.application_date.desc())
+            .first()
+            .scheme_id
+        )
 
-    def most_recent_application(self) -> 'Application':
-        return Application.query.filter(Application.candidate_id == self.id).\
-            order_by(Application.application_date.desc()).first()
+    def most_recent_application(self) -> "Application":
+        return (
+            Application.query.filter(Application.candidate_id == self.id)
+            .order_by(Application.application_date.desc())
+            .first()
+        )
 
     def current_location(self):
         return self.roles.order_by(Role.id.desc()).first().location.value
@@ -126,14 +153,14 @@ class Candidate(db.Model):
 class Organisation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), index=True, unique=True)
-    parent_organisation_id = db.Column(db.ForeignKey('organisation.id'), unique=False)
+    parent_organisation_id = db.Column(db.ForeignKey("organisation.id"), unique=False)
     department = db.Column(db.Boolean())
     arms_length_body = db.Column(db.Boolean())
 
-    roles = db.relationship('Role', backref='organisation', lazy='dynamic')
+    roles = db.relationship("Role", backref="organisation", lazy="dynamic")
 
     def __repr__(self):
-        return f'<Org {self.name}>'
+        return f"<Org {self.name}>"
 
 
 class Grade(db.Model):
@@ -150,14 +177,14 @@ class Grade(db.Model):
         :return: A list of eligible Grades
         :rtype: List[Grade]
         """
-        if scheme == 'FLS':
-            eligible_grades = Grade.query.filter(Grade.value.like('Grade%')).all()
+        if scheme == "FLS":
+            eligible_grades = Grade.query.filter(Grade.value.like("Grade%")).all()
         else:
-            eligible_grades = Grade.query.filter(Grade.value.like('Deputy%'))
+            eligible_grades = Grade.query.filter(Grade.value.like("Deputy%"))
         return eligible_grades
 
     @staticmethod
-    def new_grades(current_grade: 'Grade'):
+    def new_grades(current_grade: "Grade"):
         """
         Grades that are one below, equal to, or more senior than, `current_grade`. We include grades one below because
         candidates may be coming off temporary promotion. Remember that the more senior the role, the lower the rank
@@ -168,7 +195,11 @@ class Grade(db.Model):
         :rtype: List[Grade]
         """
         current_rank = current_grade.rank
-        return Grade.query.filter(Grade.rank <= (current_rank + 1)).order_by(Grade.rank.asc()).all()
+        return (
+            Grade.query.filter(Grade.rank <= (current_rank + 1))
+            .order_by(Grade.rank.asc())
+            .all()
+        )
 
     def __repr__(self):
         return f"Grade {self.value}"
@@ -184,6 +215,7 @@ class Location(db.Model):
     The location_tag value is for one of four values: London, Region, Overseas, or Devolved. This allows for easier
     data retrieval when searching for promotions or applications from a broad space
     """
+
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(128))
     location_tag = db.Column(db.String(16), index=True)
@@ -194,23 +226,25 @@ class Role(db.Model):
     date_started = db.Column(db.Date())
     role_name = db.Column(db.String(256))
 
-    organisation_id = db.Column(db.ForeignKey('organisation.id'))
-    candidate_id = db.Column(db.ForeignKey('candidate.id'))
-    profession_id = db.Column(db.ForeignKey('profession.id'))
-    location_id = db.Column(db.ForeignKey('location.id'))
-    grade_id = db.Column(db.ForeignKey('grade.id'))
-    role_change_id = db.Column(db.ForeignKey('promotion.id'))
+    organisation_id = db.Column(db.ForeignKey("organisation.id"))
+    candidate_id = db.Column(db.ForeignKey("candidate.id"))
+    profession_id = db.Column(db.ForeignKey("profession.id"))
+    location_id = db.Column(db.ForeignKey("location.id"))
+    grade_id = db.Column(db.ForeignKey("grade.id"))
+    role_change_id = db.Column(db.ForeignKey("promotion.id"))
 
-    grade = db.relationship('Grade', lazy='select')
-    location = db.relationship('Location', lazy='select')
-    profession = db.relationship('Profession', lazy='select')
-    role_change = db.relationship('Promotion', lazy='select')
+    grade = db.relationship("Grade", lazy="select")
+    location = db.relationship("Location", lazy="select")
+    profession = db.relationship("Profession", lazy="select")
+    role_change = db.relationship("Promotion", lazy="select")
 
     def __repr__(self):
-        return f'<Role held by {self.candidate} at {self.organisation_id}>'
+        return f"<Role held by {self.candidate} at {self.organisation_id}>"
 
     def is_promotion(self):
-        role_before_this = self.candidate.roles.order_by(Role.date_started.desc()).limit(2).all()[1]
+        role_before_this = (
+            self.candidate.roles.order_by(Role.date_started.desc()).limit(2).all()[1]
+        )
         return self.grade.rank < role_before_this.grade.rank
 
 
@@ -222,9 +256,9 @@ class Scheme(db.Model):
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
-    aspirational_grade_id = db.Column(db.ForeignKey('grade.id'))
-    scheme_id = db.Column(db.ForeignKey('scheme.id'))
-    candidate_id = db.Column(db.ForeignKey('candidate.id'), nullable=False)
+    aspirational_grade_id = db.Column(db.ForeignKey("grade.id"))
+    scheme_id = db.Column(db.ForeignKey("scheme.id"))
+    candidate_id = db.Column(db.ForeignKey("candidate.id"), nullable=False)
 
     application_date = db.Column(db.Date())
     scheme_start_date = db.Column(db.Date(), index=True)
@@ -236,7 +270,7 @@ class Application(db.Model):
     cohort = db.Column(db.Integer, unique=False)
     withdrawn = db.Column(db.Boolean(), default=False)
 
-    aspirational_grade = db.relationship('Grade', lazy='select')
+    aspirational_grade = db.relationship("Grade", lazy="select")
 
     def defer(self, date_to_defer_to: datetime.date):
         self.scheme_start_date = date_to_defer_to
@@ -261,51 +295,44 @@ class Leadership(db.Model):
     when_new_role = db.Column(db.String(256))
     confidence_built = db.Column(db.Integer())
 
-    application_id = db.Column(db.ForeignKey('application.id'), nullable=False)
+    application_id = db.Column(db.ForeignKey("application.id"), nullable=False)
 
     type = db.Column(db.String(50))
 
-    __mapper_args__ = {
-        'polymorphic_identity': 'leadership',
-        'polymorphic_on': type
-    }
+    __mapper_args__ = {"polymorphic_identity": "leadership", "polymorphic_on": type}
 
 
 class FLSLeadership(Leadership):
-    id = db.Column(db.Integer(), db.ForeignKey('leadership.id'), primary_key=True)
+    id = db.Column(db.Integer(), db.ForeignKey("leadership.id"), primary_key=True)
     increased_visibility = db.Column(db.Integer())
 
-    __mapper_args__ = {
-        'polymorphic_identity': 'fls_leadership',
-    }
+    __mapper_args__ = {"polymorphic_identity": "fls_leadership"}
 
 
 class SLSLeadership(Leadership):
-    id = db.Column(db.Integer(), db.ForeignKey('leadership.id'), primary_key=True)
+    id = db.Column(db.Integer(), db.ForeignKey("leadership.id"), primary_key=True)
     work_differently = db.Column(db.Integer())
     using_tools = db.Column(db.Integer())
     feel_ready = db.Column(db.Integer())
 
-    __mapper_args__ = {
-        'polymorphic_identity': 'sls_leadership',
-    }
+    __mapper_args__ = {"polymorphic_identity": "sls_leadership"}
 
 
 class MainJobType(CandidateGetterMixin, db.Model):
-    __table_name__ = 'main_job_type'
+    __table_name__ = "main_job_type"
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(512))
     lower_socio_economic_background = db.Column(db.Boolean, default=False)
 
 
 class AgeRange(CandidateGetterMixin, db.Model):
-    __table_name__ = 'age_range'
+    __table_name__ = "age_range"
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(10))
 
 
 class WorkingPattern(CandidateGetterMixin, db.Model):
-    __table_name__ = 'working_pattern'
+    __table_name__ = "working_pattern"
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(128))
 
@@ -327,7 +354,7 @@ class Sexuality(CandidateGetterMixin, db.Model):
 
 class AuditEvent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.ForeignKey("user.id"), nullable=False)
     action_taken = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, server_default=func.now())
 

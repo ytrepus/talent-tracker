@@ -5,23 +5,23 @@ from flask import flash
 from app.auth import auth_blueprint
 
 
-@auth_blueprint.route('/login', methods=["POST", "GET"])
+@auth_blueprint.route("/login", methods=["POST", "GET"])
 def login():
     if request.method == "POST":
-        user = User.query.filter_by(email=request.form.get('email-address')).first()
-        if user is None or not user.check_password(request.form.get('password')):
-            return redirect(url_for('auth_bp.login'))
+        user = User.query.filter_by(email=request.form.get("email-address")).first()
+        if user is None or not user.check_password(request.form.get("password")):
+            return redirect(url_for("auth_bp.login"))
         login_user(user)
 
-        flash('Logged in successfully.')
+        flash("Logged in successfully.")
 
-        next = request.args.get('next')
+        next = request.args.get("next")
 
-        return redirect(next or url_for('route_blueprint.hello_world'))
-    return render_template('login.html')
+        return redirect(next or url_for("route_blueprint.hello_world"))
+    return render_template("login.html")
 
 
-@auth_blueprint.route('/logout')
+@auth_blueprint.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for('auth_bp.login'))
+    return redirect(url_for("auth_bp.login"))

@@ -14,16 +14,25 @@ class PromotionReport(Report, ABC):
     that might be a protected characteristic or a grouping like META or DELTA. All promotion reports have the same
     column headers and deal with a single intake year.
     """
+
     def __init__(self, scheme: str, year: str, attribute: str = None):
         super().__init__(scheme)
         self.attribute = attribute
-        self.intake_date = date(int(year), 3, 1)  # assuming it starts in March every year
-        self.scheme = Scheme.query.filter_by(name=f'{scheme}').first()
+        self.intake_date = date(
+            int(year), 3, 1
+        )  # assuming it starts in March every year
+        self.scheme = Scheme.query.filter_by(name=f"{scheme}").first()
         # we only take credit for promotions that happen after candidates find out they're successful
         self.promotions_count_from = date(int(year) - 1, 12, 1)
 
-        self.headers = ['characteristic', 'number substantively promoted', 'percentage substantively promoted',
-                        'number temporarily promoted', 'percentage temporarily promoted', 'total in group']
+        self.headers = [
+            "characteristic",
+            "number substantively promoted",
+            "percentage substantively promoted",
+            "number temporarily promoted",
+            "percentage temporarily promoted",
+            "total in group",
+        ]
         self.filename = f"promotions-by-{attribute}-{scheme}-{year}-generated-{date.today().strftime('5%d-%m-%Y')}"
 
     def get_data(self):
@@ -54,27 +63,33 @@ class PromotionReport(Report, ABC):
         :return:
         :rtype:
         """
-        eligible_applications = Application.query.filter(and_(
-            Application.scheme_start_date == self.intake_date,
-            Application.scheme_id == self.scheme.id
-        )).all()
+        eligible_applications = Application.query.filter(
+            and_(
+                Application.scheme_start_date == self.intake_date,
+                Application.scheme_id == self.scheme.id,
+            )
+        ).all()
         return [application.candidate for application in eligible_applications]
 
     def promoted_candidates(self, temporary, candidates: List[Candidate]):
-        return [candidate for candidate in candidates if candidate.promoted(self.promotions_count_from,
-                                                                            temporary=temporary)]
+        return [
+            candidate
+            for candidate in candidates
+            if candidate.promoted(self.promotions_count_from, temporary=temporary)
+        ]
 
     def write_row(self, row_data, data_object, csv_writer):
         """
         Format the row data in a human-readable form and write it out
         """
-        csv_writer.writerow((
-            row_data[0],
-            row_data[1],
-            "{0:.0%}".format(row_data[2]),  # format decimal as percentage
-            row_data[3],
-            "{0:.0%}".format(row_data[4]),  # format decimal as percentage
-            row_data[5]
-        )
+        csv_writer.writerow(
+            (
+                row_data[0],
+                row_data[1],
+                "{0:.0%}".format(row_data[2]),  # format decimal as percentage
+                row_data[3],
+                "{0:.0%}".format(row_data[4]),  # format decimal as percentage
+                row_data[5],
+            )
         )
         return data_object.getvalue()
