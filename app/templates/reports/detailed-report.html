@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <form class="form" action="" method="post">
+        <div class="govuk-form-group">
+            <legend class="govuk-fieldset__legend--m">
+                <h2 class="govuk-fieldset__heading">
+                    Select report requirements
+                </h2>
+            </legend>
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="promotion-type">
+                    Promotion type
+                </label>
+                {# for promotion in promotions...               #}
+                <select class="govuk-select" id="promotion-type" name="promotion-type">
+                    {% for role_change in promotion_types %}
+                        <option value={{ role_change.id }}>{{ role_change.value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {#  keep below this line #}
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="scheme">
+                    Select scheme
+                </label>
+                <select class="govuk-select" id="scheme" name="scheme">
+                    <option value="FLS">Future Leaders Scheme</option>
+                    <option value="SLS">Senior Leaders Scheme</option>
+                </select>
+            </div>
+
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="year">
+                    Select year this group started
+                </label>
+                <select class="govuk-select" id="year" name="year">
+                    <option value="2018">2018</option>
+                    <option value="2019">2019</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="input submit">
+            <input type="submit" value="Generate report" class="govuk-button">
+        </div>
+    </form>
+{% endblock %}
