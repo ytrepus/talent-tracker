@@ -215,11 +215,7 @@ class TestReports:
         assert "Detailed Report" in result.data.decode("utf-8")
 
     def test_post_detailed_report(self, test_client, logged_in_user):
-        data = {
-            "scheme": "FLS",
-            "year": "2018",
-            "promotion-type": 1
-        }
+        data = {"scheme": "FLS", "year": "2018", "promotion-type": 1}
         result = test_client.post("/reports/detailed", data=data)
         assert 200 == result.status_code
 

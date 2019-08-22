@@ -21,7 +21,14 @@ def reports():
 def detailed_reports():
     if request.method == "POST":
         form_data = request.form.to_dict()
-        report = DetailedReport(form_data.get('year'), form_data.get('scheme'), form_data.get('promotion-type'))
+        report = DetailedReport(
+            form_data.get("year"),
+            form_data.get("scheme"),
+            form_data.get("promotion-type"),
+        )
         return report.return_data()
-    return render_template("reports/detailed-report.html", page_header="Detailed Report",
-                           promotion_types=Promotion.query.all())
+    return render_template(
+        "reports/detailed-report.html",
+        page_header="Detailed Report",
+        promotion_types=Promotion.query.all(),
+    )
