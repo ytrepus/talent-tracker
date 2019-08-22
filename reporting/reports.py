@@ -50,7 +50,6 @@ class Report(ABC):
         output = self.get_data()
         data = StringIO()
         w = csv.writer(data)
-
         # write header
         yield self.write_headers(data, w)
         data.seek(0)

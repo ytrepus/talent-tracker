@@ -10,12 +10,11 @@ class DetailedReport(Report):
     The initial version of the detailed report will take one input year, one scheme, and one role_change_type
     """
 
-    def __init__(self, intake_year: int, scheme: str, role_change_type: str):
+    def __init__(self, intake_year: str, scheme: str, role_change_type: int):
         super().__init__(scheme)
-        self.intake = intake_year
-        self.role_change_type = Promotion.query.filter_by(
-            value=role_change_type
-        ).first()
+        self.intake = int(intake_year)
+        self.role_change_type: Promotion = Promotion.query.get(role_change_type)
+        self.filename = f"detailed-report-{self.intake}-{self.role_change_type.value}-{scheme}"
         self.promoted_before_date = datetime.today()
         self.headers = [
             "candidate name",
@@ -43,9 +42,11 @@ class DetailedReport(Report):
         ]
 
     def write_row(self, row_data, data_object, csv_writer):
-        pass
+        print(row_data)
+        csv_writer.writerow(row_data)
+        return data_object.getvalue()
 
-    def row_writer(self, candidate: Candidate):
+    def row_writer(self, candidate: Candidate) -> List:
         application = candidate.most_recent_application()
         current_role: Role = candidate.roles[0]
         return [
@@ -76,7 +77,7 @@ class DetailedReport(Report):
     def get_data(self):
         output = []
         for candidate in self.candidates():
-            output.extend(self.row_writer(candidate))
+            output.append(self.row_writer(candidate))
         return output
 
     def candidates(self):
