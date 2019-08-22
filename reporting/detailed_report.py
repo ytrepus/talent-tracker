@@ -14,7 +14,9 @@ class DetailedReport(Report):
         super().__init__(scheme)
         self.intake = int(intake_year)
         self.role_change_type: Promotion = Promotion.query.get(role_change_type)
-        self.filename = f"detailed-report-{self.intake}-{self.role_change_type.value}-{scheme}"
+        self.filename = (
+            f"detailed-report-{self.intake}-{self.role_change_type.value}-{scheme}"
+        )
         self.promoted_before_date = datetime.today()
         self.headers = [
             "candidate name",
