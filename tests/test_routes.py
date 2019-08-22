@@ -210,6 +210,19 @@ class TestReports:
         result = test_client.post("/reports/", data=data)
         assert 200 == result.status_code
 
+    def test_get_detailed_report(self, test_client, logged_in_user):
+        result = test_client.get("/reports/detailed")
+        assert "Detailed Report" in result.data.decode("utf-8")
+
+    def test_post_detailed_report(self, test_client, logged_in_user):
+        data = {
+            "scheme": "FLS",
+            "year": "2018",
+            "promotion-type": 1
+        }
+        result = test_client.post("/reports/detailed", data=data)
+        assert 200 == result.status_code
+
 
 class TestProfile:
     def test_get(self, test_client, logged_in_user, test_candidate_applied_to_fls):
